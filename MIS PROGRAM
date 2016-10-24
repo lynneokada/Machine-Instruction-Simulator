@@ -1,0 +1,36 @@
+MIS PROGRAM
+
+Variable handling options:
+	Array/Vector of single type
+		-Key/Value mapping
+			-Third party library
+			-Make our own
+			-Find a way to natively do it
+			-Hashing
+		-Map by index (use binary search?)
+			-Process file twice (once for # of vars and second for filling values)
+			-Fill values at same time (allocate space dynamically)
+	Dynamic variable creations
+		-Doesn't look possible
+
+Function handling:
+
+
+Object Structure:
+
+VAR(object)
+Math[]
+String[]
+Char[]
+
+-ASSIGN
+-OUT
+	MATH(no constructor)
+	-ADD(variadic & auto return type)
+	-SUB(same)
+		NUMERIC(object)
+
+		REAL(object)
+
+
+JMP(object)
