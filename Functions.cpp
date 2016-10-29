@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <typeinfo>
 
 class Math
 {
@@ -10,43 +12,52 @@ class Math
 			value = a;
 		};
 		~Math(){};
-		template <typename T> int sub(T b, T c);
-		template <typename T> int div(T b, T c);
+		template <typename T, typename W> void sub(T b, W c);
+		template <typename T> void div(T b, T c);
 		template <typename T> void assign(T b);
-
+		void out();
 };
-		
-		template <typename T>
-		int Math::sub(T b, T c)
+
+		void Math::out()
 		{
-			return b.value - c.value;
+			std::cout << this->value << std::endl;
+		}
+		
+		template <typename T, typename W>
+		void Math::sub(T b, W c)
+		{
+			int checkB, checkC = 0;
+			if(typeid(b).name() == "i")
+			{
+
+			}
 		}
 
 		template <>
-		int Math::sub<int>(int b, int c)
+		void Math::sub<int>(int b, int c)
 		{
-			return b - c;
+			this->value = b - c;
 		}
 
 		template <typename T>
-		int Math::div(T b, T c)
+		void Math::div(T b, T c)
 		{
 			if (c.value == 0)
 			{
 				throw; //should throw an exception instead
 			}
-			return b.value/c.value;
+			this->value = b.value/c.value;
 		}
 
 		template <>
-		int Math::div<int>(int b, int c)
+		void Math::div<int>(int b, int c) //needs to be able to mix and match int and object
 		{
 			if(c == 0)
 			{
 				throw; //should throw an exception instead
 			}
 
-			return b/c;	
+			this->value = b/c;	
 		}
 
 		template <typename T>
@@ -61,11 +72,21 @@ int main()
 	Math a;
 	Math b(23);
 	Math c(1);
+	int myint = 12;
 
-	int d = a.sub(b, c);
-	int e = a.sub(23, 1);
-	std::cout << "Testing SUB of objects: " << d << "\n";
-	std::cout << "Testing SUB of ints: " << e << "\n";
+	// a.sub(b, c);
+	std::cout << "Testing SUB of objects: " << "\n";
+	a.out();
+
+	std::cout << "Type is: " << typeid(b).name() << std::endl;
+
+	// a.sub(b, 12);
+	// std::cout << "Testing SUB of mixed types: " << "\n";
+	// a.out();
+
+	// a.sub(23, 1);
+	std::cout << "Testing SUB of ints: " << "\n";
+	a.out();
 
 	return 0;
 }
