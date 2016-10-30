@@ -1,5 +1,4 @@
 #include <iostream>
-<<<<<<< HEAD
 #include <fstream>
 #include <cstring>
 #include <vector>
@@ -8,10 +7,10 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 
-int main() {
+int main(int argc, char *argv[]) {
 	std::string STRING;
-	ifstream input_file;
-	input_file.open("test.txt");
+	ifstream input_file (argv[1]);
+	
 	if (!input_file.good()) {
 		return 1;
 		cout << "error: file cannot be found" << endl;
