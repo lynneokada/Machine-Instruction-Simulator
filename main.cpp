@@ -7,8 +7,6 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 
-const int MAX_CHARS_PER_LINE = 512;
-
 int main() {
 	std::string STRING;
 	ifstream input_file;
@@ -18,19 +16,19 @@ int main() {
 		cout << "error: file cannot be found" << endl;
 	}
 
-	//create array to store each line
-	char buf[MAX_CHARS_PER_LINE];
+	//create vector to store each line
 	std::vector<std::string> v;
 
 	//read each line of input file
 	while(!input_file.eof()) {
 		// read line into memory
 		getline(input_file, STRING);
+		cout << "string: " << STRING << endl;
 		v.push_back(STRING);
 	}
 
-	cout << "array size " << sizeof(v) << endl;
-	for (int i = 0; i < sizeof(v); i++) {
-			cout << v[i] << endl;	
+	cout << "vector size " << v.size() << endl;
+	for (int i = 0; i < v.size(); i++) {
+			cout << i <<" " << v[i] << endl;	
 	}
 }
