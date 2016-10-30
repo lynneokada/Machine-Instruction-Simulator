@@ -1,4 +1,5 @@
 #include <iostream>
+<<<<<<< HEAD
 #include <fstream>
 #include <cstring>
 #include <vector>

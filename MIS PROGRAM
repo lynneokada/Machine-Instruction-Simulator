@@ -14,23 +14,14 @@ Variable handling options:
 		-Doesn't look possible
 
 Function handling:
+-Switch statement (not optimal)
 
 
-Object Structure:
-
-VAR(object)
-Math[]
-String[]
-Char[]
-
--ASSIGN
--OUT
-	MATH(no constructor)
-	-ADD(variadic & auto return type)
-	-SUB(same)
-		NUMERIC(object)
-
-		REAL(object)
+Labels
+-Store in array/vector with line # and name
 
 
-JMP(object)
+Ask about:
+-Can variables be created mid-function
+-Better example of how to declare a variable
+-How to implement calling of functions
