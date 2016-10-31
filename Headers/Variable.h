@@ -1,11 +1,14 @@
 #include <string>
 
 class Variable {
+
+protected:
 	string name;
 	string value;
 
-protected:
-	void assign();
-
+public:
+	string getName();
+	void getStringValue();
+	void setValue(string str);
 	void out();
 }

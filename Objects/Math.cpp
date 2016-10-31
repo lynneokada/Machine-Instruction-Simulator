@@ -1,5 +1,5 @@
-class Math : public Variable {
-	// add
+#include "Math.h"
 
-	// sub
+void add() {
+
 }
