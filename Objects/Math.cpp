@@ -1,3 +1,5 @@
-class Math {
-	
+class Math : public Variable {
+	// add
+
+	// sub
 }

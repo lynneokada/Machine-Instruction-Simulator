@@ -1,0 +1,3 @@
+class Real : public Math {
+	
+}
