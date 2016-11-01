@@ -5,8 +5,9 @@
 class Math
 {
 	private:
-		int value = 0;
+		
 	public:
+		int value;
 		Math(int a = 0)
 		{
 			value = a;
@@ -27,7 +28,7 @@ class Math
 		void Math::sub(T b, W c)
 		{
 			int checkB, checkC = 0;
-			if(typeid(b).name() == "i")
+			if(strcmp(typeid(b).name(), "i") == 0)
 			{
 
 			}
