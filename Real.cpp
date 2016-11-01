@@ -6,5 +6,5 @@ Real::Real(string name, string value):
 }
 
 double getValue() {
-	return atof(this.value);
+	return std::stof(this.value);
 }

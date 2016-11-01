@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
 	ifstream input_file (argv[1]);
 	
 	if (!input_file.good()) {
-		return 1;
 		cout << "error: file cannot be found" << endl;
+		return 1;
 	}
 
 	//create vector to store each line
