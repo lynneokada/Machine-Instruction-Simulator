@@ -1,4 +1,7 @@
 #include <string>
+#include <iostream>
+
+using std::string;
 
 class Variable {
 
@@ -8,7 +11,8 @@ protected:
 
 public:
 	string getName();
-	void getStringValue();
+	string getStringValue();
+	string getValue();
 	void setValue(string str);
 	void out();
-}
+};

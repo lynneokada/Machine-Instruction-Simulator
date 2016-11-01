@@ -1,5 +1,5 @@
 #include "Math.h"
 
-void add() {
+void Math::add() {
 
 }
