@@ -41,7 +41,7 @@ class Math
 		template <typename T, typename W>
 		void Math::sub(T b, W c)
 		{
-			this->value = (decltype(this))(b.getValue() - c.getValue());
+			this->value = (b - c);
 		}
 
 		template <typename T, typename W>
@@ -65,7 +65,7 @@ int main()
 	int myint = 12;
 	int tryint = 1;
 
-	a.sub(b, Math(6));
+	// a.sub(b, Math(6));
 
 	Math test;
 	test.out();
