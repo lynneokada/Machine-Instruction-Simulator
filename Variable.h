@@ -1,9 +1,12 @@
 #include <string>
 #include <iostream>
+#include <stdlib.h>
 #include <thread> //for the sleep function
 #include <chrono> //for the sleep function
 
-using std::string;
+using namespace std;
+
+// using std::string;
 
 class Variable {
 

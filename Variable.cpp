@@ -13,5 +13,5 @@ string Variable::getStringValue() {
 }
 
 void Variable::out() {
-	std::cout << this->getStringValue() << std::endl;
+	cout << this->getStringValue() << endl;
 }
