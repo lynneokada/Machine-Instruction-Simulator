@@ -1,10 +1,15 @@
 #include "Real.h"
 
-Real::Real(string name, string value):
-	name(name), value(value)
+Real::Real(std::string p_name = "", double p_value = 0.0):name(p_name), value(p_value){};
+Real::Real()
 {
-}
+	name = "";
+	value = 0.0;
+};
 
-double getValue() {
-	return std::stof(this.value);
+Real::~Real(){};
+
+double Real::getValue()
+{
+	return value;
 }
