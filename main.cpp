@@ -16,9 +16,8 @@ const int MAX_CHARS_PER_INSTRUCTION = 100;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
-
 int main(int argc, char *argv[]) {
-	string STRING;
+	string LINE;
 	ifstream input_file (argv[1]);
 	
 	if (!input_file.good()) {
@@ -27,35 +26,38 @@ int main(int argc, char *argv[]) {
 	}
 
 	//create vector to store each line
-	vector<string> v;
+	vector<string> v_line;
+	vector<string> v_args;
 
 	//read each line of input file
 	while(!input_file.eof()) {
 		// read line into memory
-		getline(input_file, STRING);
-		v.push_back(STRING);
+		getline(input_file, LINE);
+		v_line.push_back(LINE);	// append the line
 
-		char* instruction = strdup(STRING.c_str());
+		char* instruction_type = strdup(LINE.c_str());
 
 		// grab instruction
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
-		token[0] = std::strtok(instruction, DELIMITER_SPACE);
+		token[0] = std::strtok(instruction_type, DELIMITER_SPACE);
+
+		
 		token[1] = std::strtok(NULL, DELIMITER_SPACE);
 
-		// const char* pos = strchr(strdup(STRING.c_str()),DELIMITER_SPACE);
-		cout << instruction << endl;
+		// const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
+		cout << "instruction type: " << instruction_type << endl;
 		
-		std::size_t pos = STRING.find(DELIMITER_SPACE);
-		cout << pos << endl;
-		string a = STRING.substr(pos);
+		std::size_t pos = LINE.find(DELIMITER_SPACE);
+		cout << "pos: " << pos << endl;
+		string a = LINE.substr(pos);
 		cout << "substring: " << a << endl;
 
 		token[2] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
 		cout << "comma: " << token[2] << endl;
 	}
 
-	cout << "vector size " << v.size() << endl;
-	for (int i = 0; i < v.size()-1; i++) {
-			cout << i <<" " << v[i] << endl;	
+	cout << "vector size " << v_line.size() << endl;
+	for (int i = 0; i < v_line.size()-1; i++) {
+			cout << i <<" " << v_line[i] << endl;	
 	}
 }
