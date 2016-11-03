@@ -1,3 +1,0 @@
-class Numeric : public Math {
-	
-}

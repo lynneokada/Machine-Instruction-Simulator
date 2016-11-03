@@ -2,8 +2,12 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+<<<<<<< HEAD
 #include <vector>
 #include <array>
+=======
+#include "Math.h"
+>>>>>>> c0bf3b4653dc9abffb8c1732b3e27f4573a37a81
 
 using std::cout;
 using std::endl;
@@ -60,4 +64,5 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < v_line.size()-1; i++) {
 			cout << i <<" " << v_line[i] << endl;	
 	}
+
 }
