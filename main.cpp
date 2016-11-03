@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <vector>
+#include "Math.h"
 
 using std::cout;
 using std::endl;
@@ -31,4 +31,5 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < v.size(); i++) {
 			cout << i <<" " << v[i] << endl;	
 	}
+
 }
