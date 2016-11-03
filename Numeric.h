@@ -1,7 +1,14 @@
 #include <string>
+#include "Math.h"
 
-class Numeric : public Math {
-
-public:
-	int getValue();
-}
+class Numeric : public Math 
+{
+	private:
+		std::string name;
+		int value;
+	public:
+		Numeric();
+		Numeric(std::string name, int value);
+		~Numeric();
+		int getValue();
+};

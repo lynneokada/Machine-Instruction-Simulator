@@ -3,16 +3,20 @@
 #include <stdlib.h>
 #include "Variable.h"
 
-class Math
+class Math : public Variable
 {
 	private:
 	public:
-		int value = 0;
-		Math(int a);
-		~Math();
+		std::string name;
+		int value;
+		Math();
+		Math(std::string p_name, double p_value);
+		virtual ~Math();
+		template <typename T> void add(T list);
 		template <typename T, typename W> void sub(T b, W c);
+		template <typename T> void mul(T list);
 		template <typename T, typename W> void div(T b, W c);
 		template <typename T> void assign(T b);
 		void sleep(int seconds);
-		void out();
+		virtual void out();
 };
