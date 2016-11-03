@@ -7,8 +7,7 @@ class Numeric : public Math
 		std::string name;
 		int value;
 	public:
-		Numeric();
-		Numeric(std::string p_name, int p_value);
+		Numeric(std::string p_name="", int p_value=0);
 		~Numeric();
 		int getValue();
 };

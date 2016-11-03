@@ -1,13 +1,7 @@
 #include "Numeric.h"
 
 
-Numeric::Numeric(std::string p_name = "", int p_value=0):name(p_name), value(p_value){};
-
-Numeric::Numeric()
-{
-	name = "";
-	value = 0;
-};
+Numeric::Numeric(std::string p_name, int p_value):name(p_name), value(p_value){};
 
 Numeric::~Numeric()
 {
