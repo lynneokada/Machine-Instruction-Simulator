@@ -2,11 +2,13 @@
 
 class Real : public Math {
 
-public:
-	// string name;
+private:
 	string name;
 	double value;
+
+public:
 	Real(std::string p_name = "", double p_value = 0.0);
 	~Real();
 	double getValue();
+	void out();
 };

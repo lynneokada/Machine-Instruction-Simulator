@@ -1,22 +1,23 @@
 #include <typeinfo>
 #include <vector>
 #include <stdlib.h>
+#include <map>
+
 #include "Variable.h"
 
 class Math : public Variable
 {
 	private:
-	public:
 		std::string name;
-		int value;
-		Math();
-		Math(std::string p_name, double p_value);
+		double value;
+	public:
+		Math(std::string p_name = "", double p_value= 0.0);
 		virtual ~Math();
-		template <typename T> void add(T list);
-		template <typename T, typename W> void sub(T b, W c);
-		template <typename T> void mul(T list);
-		template <typename T, typename W> void div(T b, W c);
+		template <typename T, typename W> void add(T names, W map);
+		template <typename T, typename W> void sub(T names, W map);
+		template <typename T, typename W> void mul(T names, W map);
+		template <typename T, typename W> void div(T names, W map);
 		template <typename T> void assign(T b);
-		void sleep(int seconds);
+		void sleep(int seconds); //needs to be in Variable
 		virtual void out();
 };

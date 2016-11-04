@@ -10,4 +10,5 @@ class Numeric : public Math
 		Numeric(std::string p_name="", int p_value=0);
 		~Numeric();
 		int getValue();
+		void out();
 };

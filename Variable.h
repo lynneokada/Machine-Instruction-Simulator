@@ -17,7 +17,7 @@ protected:
 public:
 	string getName();
 	string getStringValue();
-	string getValue();
-	void setValue(string str);
-	void out();
+	// auto getValue(auto val);
+	template <typename T> void setValue(T val);
+	virtual void out();
 };
