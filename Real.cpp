@@ -8,3 +8,9 @@ double Real::getValue()
 {
 	return value;
 }
+
+void Real::out()
+{
+	printf("%f\n", value);
+}
+

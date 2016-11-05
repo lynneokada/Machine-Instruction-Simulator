@@ -4,14 +4,19 @@ string Variable::getName() {
 	return name;
 }
 
-void Variable::setValue(string str) {
-	this->value = str;
+template <typename T>
+void Variable::setValue(T val) {
+	value = val;
 }
 
 string Variable::getStringValue() {
-	return this->value;
+	return value;
 }
 
+// auto Variable::getValue(auto val) {
+// 	return value;
+// }
+
 void Variable::out() {
-	cout << this->getStringValue() << endl;
+	cout << getStringValue() << endl;
 }

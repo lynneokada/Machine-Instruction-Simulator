@@ -1,10 +1,5 @@
 #include "Math.h"
 using namespace std;
-// Operator() overload to return value of the object or int
-// Implicit constructor constructor from primitive to object
-// Use enableif to check types
-// Printout in implicit
-
 
 // How to possibly feed in list/array of objects as parameters (not vector) - not likely without weird stuff
 // How to convert primitives to objects and determine correct type - can implicitly convert to Math type for operations
@@ -16,31 +11,25 @@ Math::Math(std::string p_name, double p_value):name(p_name),value(p_value)
 {
 };
 
-Math::Math()
-{
-	name = "";
-	value = 0.0;
-};
-
 Math::~Math()
 {
 }
 
 void Math::out()
 {
-	cout << this->value << endl;
+	printf("%f\n", value);
 }
 
 template <typename T, typename W>
-void Math::sub(T b, W c)
+void Math::sub(T names, W map)
 {
-	this->value = (decltype(this->value))(b.value - c.value);
+	
 }
 
 template <typename T, typename W>
-void Math::div(T b, W c)
+void Math::div(T names, W map)
 {
-	this->value = (b.value / c.value);
+	// this->value = decltype(this->value)(params[0].value / params[1].value);
 }
 
 template <typename T>
@@ -55,71 +44,71 @@ void Math::sleep(int sec)
 	this_thread::sleep_for(chrono::seconds(sec));
 }
 
-template <typename T>
-void Math::add(T list)
+template <typename T, typename W>
+void Math::add(T names, W map)
 {
-	int sum = 0;
-	for (int i = 0; i < list.size(); i++)
-    {
-    	sum += list[i].value;
-    }
-    this->value = sum;
+	decltype(value) sum = 0;
+	for (auto it = names.begin; it != names.end; ++it)
+	{
+		sum += map[it]->value;
+	}
+	value = sum;
 }
 
-template <typename T>
-void Math::mul(T list)
+template <typename T, typename W>
+void Math::mul(T names, W map)
 {
-	int product = 0;
-	for (int i = 0; i < list.size(); i++)
-    {
-    	product *= list[i].value;
-    }
-    this->value = product;
+	decltype(value) product = 0;
+	for (auto it = names.begin; it != names.end; ++it)
+	{
+		product *= map[it]->value;
+	}
+	value = product;
 }
 
-int main()
-{
+// int main()
+// {
 
 	
-	Math a;
-	Math b("test", 23);
-	// Math c(1);
-	// int test1 = 12;
-	// int test2 = 1;
+// 	Math a;
+// 	Math b("test", 23);
+// 	// Math c(1);
+// 	// int test1 = 12;
+// 	// int test2 = 1;
 
-	// Math test;
-	// test.out();
+// 	// Math test;
+// 	// test.out();
 
-	// // setting function pointer
-	// void (Math::*pSub)(Math, Math);
-	// pSub = &Math::sub;
-	// (test.*pSub)(test1, test2);
-	// test.out();
+// 	// // setting function pointer
+// 	// void (Math::*pSub)(Math, Math);
+// 	// pSub = &Math::sub;
+// 	// (test.*pSub)(test1, test2);
+// 	// test.out();
 
-	// void (Math::*pDiv)(Math, Math);
-	// pDiv = &Math::div;
-	// (test.*pDiv)(test1, test2);
-	// test.out();
+// 	// void (Math::*pDiv)(Math, Math);
+// 	// pDiv = &Math::div;
+// 	// (test.*pDiv)(test1, test2);
+// 	// test.out();
 
-	// std::vector<Math> m;
-	// m.push_back(test);
-	// m.push_back(b);
-	// m[1].out();
+// 	// std::vector<Math> m;
+// 	// m.push_back(test);
+// 	// m.push_back(b);
+// 	// m[1].out();
 
-	// // std::vector<Variable> v;
-	// // Variable test3;
-	// Math * pMath = new Math(100);
-
-
-	// auto myTuple = make_tuple("Foo", 1337, 42, b);
+// 	// // std::vector<Variable> v;
+// 	// // Variable test3;
+// 	// Math * pMath = new Math(100);
 
 
-	// cout << get<0>(myTuple) << endl; // Access element by index: "Foo"
-	// cout << get<1>(myTuple) << endl; // Access element by index: 1337
-	// cout << get<2>(myTuple) << endl; // Access element by index: 42
-	// get<3>(myTuple).out();
+// 	// auto myTuple = make_tuple("Foo", 1337, 42, b);
 
-	// auto myTuple = tuple_cat(myTuple, make_tuple(c));
-	// get<4>(myTuple).out();
-	return 0;
-}
+
+// 	// cout << get<0>(myTuple) << endl; // Access element by index: "Foo"
+// 	// cout << get<1>(myTuple) << endl; // Access element by index: 1337
+// 	// cout << get<2>(myTuple) << endl; // Access element by index: 42
+// 	// get<3>(myTuple).out();
+
+// 	// auto myTuple = tuple_cat(myTuple, make_tuple(c));
+// 	// get<4>(myTuple).out();
+// 	return 0;
+// }
