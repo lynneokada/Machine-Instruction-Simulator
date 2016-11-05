@@ -1,7 +1,7 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #	Makefile for Unix & Linux Systems	#
 #	using a GNU C++ compiler	#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # compiler flags
 #	-g	--Enable debugging
@@ -13,12 +13,26 @@
 GPP = g++ -std=c++14
 GPPFLAGS = -O3 -Wall
 
-all: main
+all : main
 
 #Link command:
-main: Math.o Real.o Numeric.o Variable.o String.o Char.o mis.o
-	$(GPP) $(GPPFLAGS) Variable.o Math.o Real.o Numeric.o String.o Char.o mis.o -o main
+main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o
+	$(GPP) $(GPPFLAGS) mis.o Variable.o Math.o String.o Char.o \
+	Numeric.o Real.o -o main
 
 #Compilation commands:
 %.o : %.cpp
 	$(GPP) $(GPPFLAGS) -c $<
+
+clean :
+	- rm *.o main 
+
+# Dependencies
+
+mis.o: mis.cpp Variable.h Math.h String.h Char.h Numeric.h Real.h
+Variable.o: Variable.cpp Variable.h
+Math.o: Math.cpp Math.h Variable.h
+String.o: String.cpp String.h Variable.h Numeric.h Char.h
+Char.o: Char.cpp Char.h Variable.h
+Numeric.o: Numeric.cpp Numeric.h Math.h
+Real.o: Real.cpp Real.h Math.h

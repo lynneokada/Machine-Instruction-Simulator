@@ -9,25 +9,29 @@ string String::getValue() {
 	return this->value;
 }
 
-void setStrChar(Variable index, Variable ch) {
-	int i = index->getValue();
+// template <typename T, typename W>
+void String::setStrChar(Numeric index, Char ch) {
+	int i = index.getValue();
+
+
 
 	if (i < this->value.length() && i >= 0) {
-		this->value[i] = ch->getValue();
+		this->value[i] = ch.getValue();
 	} else {
-		printf("Error: index out of range - index %d in string %s\n",
-			   i, this->getValue());
+		cout << "Error: index out of range - index " << i 
+		<< " in string " << this->getValue() << endl;
 	}
 }
 
-void getStrChar(Variable index, Variable ch) {
-	int i = index->getValue();
+// template <typename T, typename W>
+void String::getStrChar(Numeric index, Char ch) {
+	int i = index.getValue();
 
 	if (i < this->value.length() && i >= 0) {
-		ch->setValue(this->value[i]);
+		ch.setValue(this->value[i]);
 	} else {
-		printf("Error: index out of range - index %d in string %s\n",
-			   i, this->getValue());
+		cout << "Error: index out of range - index " << i 
+		<< " in string " << this->getValue() << endl;
 	}
 }
 

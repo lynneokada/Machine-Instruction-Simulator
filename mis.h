@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <map>
+#include "Variable.h"
 #include "Numeric.h"
 #include "Char.h"
 #include "String.h"

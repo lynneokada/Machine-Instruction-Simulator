@@ -1,3 +1,6 @@
+#ifndef __CHAR_H_
+#define __CHAR_H_
+
 #include <string>
 #include "Variable.h"
 
@@ -12,3 +15,5 @@ public:
 	char getValue();
 	void setValue(char val);
 };
+
+#endif
