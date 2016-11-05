@@ -15,7 +15,7 @@ Mis::Mis() {
 
 }
 
-Mis::instruction(string ) {
+void Mis::instruction(string instruction_type) {
 
 }
 
@@ -31,8 +31,8 @@ int main(int argc, char *argv[]) {
 
 	//create vector to store each line
 	vector<string> v_test;
-	vector<vector<string>> v_line;
-	vector<string> v_args;
+	
+	vector< vector<string> > v_line;
 
 	//map that stores all of the default constructors
 	std::map<std::string, Variable*> variables;
@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
 	//read each line of input file
 	while(!input_file.eof()) {
 		line_number++;
+		vector<string> v_args;
 		// read line into memory
 		getline(input_file, LINE);
 		v_test.push_back(LINE);
@@ -57,25 +58,31 @@ int main(int argc, char *argv[]) {
 		// grab instruction
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
 		token[0] = std::strtok(instruction_line, DELIMITER_SPACE);
+		v_args.push_back(token[0]);
 		cout << token[0] << endl;
 
-		token[1] = std::strtok(NULL, DELIMITER_COMMA);
-		cout << token[1] << endl;
-
-		// // const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
-		// cout << "instruction type: " << instruction_type << endl;
+		// find first instance of ' ' and create substring of arguments
+		std::size_t pos = LINE.find(DELIMITER_SPACE);
+		string a = LINE.substr(pos+1);
+		cout << "substring: " << a << endl;
+		token[1] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
 		
-		// std::size_t pos = LINE.find(DELIMITER_SPACE);
-		// // cout << "pos: " << pos << endl;
-		// string a = LINE.substr(pos);
-		// cout << "substring: " << a << endl;
+		char * p = std::strtok(strdup(a.c_str()),DELIMITER_COMMA);
+  		while (p!=0)
+  		{
+    		std::cout << "p " << p << '\n';
+    		v_args.push_back(p);
+    		p = std::strtok(NULL,DELIMITER_COMMA);
+ 		}
 
-		// token[2] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
-		// cout << "comma: " << token[2] << endl;
+		v_line.push_back(v_args);	// add arguments to v_line 
 	}
 
-	// cout << "vector size " << v_line.size() << endl;
-	// for (int i = 0; i < v_line.size(); i++) {
-	// 		cout << i <<" " << v_line[i] << endl;	
-	// }
+	cout << "vector size " << v_line.size() << endl;
+	for (int i = 0; i < v_line.size(); i++) {
+		cout << i << endl;
+		for (int j=0; j < v_line[i].size(); j++) {
+			cout << "arguments: " << v_line[i][j] << endl;
+		}
+	}
 }

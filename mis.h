@@ -13,5 +13,6 @@
 class Mis {
 public:
 	Mis();	// constructor
+	void instruction(string instruction_type);
 	~Mis();	// destructor
 };
