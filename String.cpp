@@ -38,5 +38,17 @@ void String::getStrChar(Numeric index, Char ch) {
 // int main() {
 // 	String *str = new String();
 
+
+	// String str("$var1", "testing123");
+	// Numeric index("$var2", 3);
+	// Char ch("$var3", 'T');
+	// Numeric index2("$var4", 5);
+
+	// str.setStrChar(index, ch);
+	// cout << str.getValue() << endl;
+
+	// str.getStrChar(index2, ch);
+	// cout << ch.getValue() << endl;
+
 // 	str->out();
 // }
