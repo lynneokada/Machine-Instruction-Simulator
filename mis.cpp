@@ -13,13 +13,14 @@ using std::vector;
 using std::array;
 using std::string;
 
-const int MAX_CHARS_PER_INSTRUCTION = 100;
+const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
 int main(int argc, char *argv[]) {
 	string LINE;
 	ifstream input_file (argv[1]);
+	static int line_number = 0;
 	
 	if (!input_file.good()) {
 		cout << "error: file cannot be found" << endl;
@@ -32,33 +33,40 @@ int main(int argc, char *argv[]) {
 
 	//read each line of input file
 	while(!input_file.eof()) {
+		line_number++;
 		// read line into memory
 		getline(input_file, LINE);
-		v_line.push_back(LINE);	// append the line
+		v_line.push_back(LINE);
 
-		char* instruction_type = strdup(LINE.c_str());
+		char* instruction_line = strdup(LINE.c_str());
+		cout << instruction_line << endl;
 
 		// grab instruction
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
-		token[0] = std::strtok(instruction_type, DELIMITER_SPACE);
+		token[0] = std::strtok(instruction_line, DELIMITER_SPACE);
+		cout << token[0] << endl;
 
+		token[1] = std::strtok(NULL, DELIMITER_COMMA);
+		while(token[1]!=0) {
+			cout << token[1] << /n << endl;
+		}
+
+		cout << token[1] << endl;
+
+		// // const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
+		// cout << "instruction type: " << instruction_type << endl;
 		
-		token[1] = std::strtok(NULL, DELIMITER_SPACE);
+		// std::size_t pos = LINE.find(DELIMITER_SPACE);
+		// // cout << "pos: " << pos << endl;
+		// string a = LINE.substr(pos);
+		// cout << "substring: " << a << endl;
 
-		// const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
-		cout << "instruction type: " << instruction_type << endl;
-		
-		std::size_t pos = LINE.find(DELIMITER_SPACE);
-		// cout << "pos: " << pos << endl;
-		string a = LINE.substr(pos);
-		cout << "substring: " << a << endl;
-
-		token[2] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
-		cout << "comma: " << token[2] << endl;
+		// token[2] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
+		// cout << "comma: " << token[2] << endl;
 	}
 
-	cout << "vector size " << v_line.size() << endl;
-	for (int i = 0; i < v_line.size()-1; i++) {
-			cout << i <<" " << v_line[i] << endl;	
-	}
+	// cout << "vector size " << v_line.size() << endl;
+	// for (int i = 0; i < v_line.size(); i++) {
+	// 		cout << i <<" " << v_line[i] << endl;	
+	// }
 }
