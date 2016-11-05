@@ -13,20 +13,20 @@ void Numeric::out()
 	std::cout << getValue() << std::endl;
 }
 
-int main()
-{
-	Numeric *a = new Numeric("test", 12.0);
+// int main()
+// {
+// 	Numeric *a = new Numeric("test", 12.0);
 
-	Variable *b = dynamic_cast<Variable*>(a);
-	Variable c;
+// 	Variable *b = dynamic_cast<Variable*>(a);
+// 	Variable c;
 
-	a->out();
+// 	a->out();
 
-	b->out();
-	c.out();
+// 	b->out();
+// 	c.out();
 
 
-	delete(a);
+// 	delete(a);
 
-	return 0;
-}
+// 	return 0;
+// }

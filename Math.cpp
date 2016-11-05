@@ -38,12 +38,6 @@ void Math::assign(T b)
 	this->value = b.value;
 }
 
-// Needs to be a VAR function
-void Math::sleep(int sec)
-{
-	this_thread::sleep_for(chrono::seconds(sec));
-}
-
 template <typename T, typename W>
 void Math::add(T names, W map)
 {

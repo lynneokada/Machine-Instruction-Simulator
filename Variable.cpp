@@ -13,9 +13,9 @@ string Variable::getStringValue() {
 	return value;
 }
 
-// auto Variable::getValue(auto val) {
-// 	return value;
-// }
+void Variable::sleep(int sec) {
+	this_thread::sleep_for(chrono::seconds(sec));
+}
 
 void Variable::out() {
 	cout << getStringValue() << endl;

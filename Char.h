@@ -1,3 +1,4 @@
+#include <string>
 #include "Variable.h"
 
 class Char : public Variable {

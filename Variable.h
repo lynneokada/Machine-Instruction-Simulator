@@ -1,3 +1,6 @@
+#ifndef __VAR_H_
+#define __VAR_H_
+
 #include <string>
 #include <iostream>
 #include <stdlib.h>
@@ -16,8 +19,10 @@ protected:
 
 public:
 	string getName();
+	void sleep(int sec);
 	string getStringValue();
-	// auto getValue(auto val);
 	template <typename T> void setValue(T val);
 	virtual void out();
 };
+
+#endif

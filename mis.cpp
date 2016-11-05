@@ -1,10 +1,4 @@
 #include "mis.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <vector>
-#include <array>
 
 using std::cout;
 using std::endl;
@@ -30,6 +24,16 @@ int main(int argc, char *argv[]) {
 	vector<string> v_line;
 	vector<string> v_args;
 
+	//map that stores all of the default constructors
+	std::map<std::string, Variable*> variables;
+	variables["VARIABLE"] = new Variable();
+	variables["MATH"] = new Math();
+	variables["NUMERIC"] = new Numeric();
+	variables["CHAR"] = new Char();
+	variables["STRING"] = new String();
+	variables["REAL"] = new Real();
+
+
 	//read each line of input file
 	while(!input_file.eof()) {
 		// read line into memory
@@ -42,7 +46,6 @@ int main(int argc, char *argv[]) {
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
 		token[0] = std::strtok(instruction_type, DELIMITER_SPACE);
 
-		
 		token[1] = std::strtok(NULL, DELIMITER_SPACE);
 
 		// const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
