@@ -16,8 +16,8 @@ GPPFLAGS = -O3 -Wall
 all: main
 
 #Link command:
-main: Math.o Real.o Numeric.o Variable.o
-	$(GPP) $(GPPFLAGS) Variable.o Math.o Real.o Numeric.o -o main
+main: Math.o Real.o Numeric.o Variable.o String.o Char.o mis.o
+	$(GPP) $(GPPFLAGS) Variable.o Math.o Real.o Numeric.o String.o Char.o mis.o -o main
 
 #Compilation commands:
 Variable.o: Variable.cpp
@@ -31,6 +31,18 @@ Real.o: Real.cpp
 
 Numeric.o: Numeric.cpp
 	$(GPP) $(GPPFLAGS) -c Numeric.cpp -o Numeric.o
+
+String.o: String.cpp
+	$(GPP) $(GPPFLAGS) -c String.cpp -o String.o
+
+
+Char.o: Char.cpp
+	$(GPP) $(GPPFLAGS) -c Char.cpp -o Char.o
+
+
+mis.o: mis.cpp
+	$(GPP) $(GPPFLAGS) -c mis.cpp -o mis.o
+
 
 #make clean
 clean:

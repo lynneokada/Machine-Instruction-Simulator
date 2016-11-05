@@ -1,4 +1,3 @@
-#include <string>
 #include "Math.h"
 
 class Numeric : public Math 

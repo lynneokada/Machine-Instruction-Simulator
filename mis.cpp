@@ -1,10 +1,4 @@
 #include "mis.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <vector>
-#include <array>
 
 using std::cout;
 using std::endl;
@@ -17,6 +11,14 @@ const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
+Mis::Mis() {
+
+}
+
+Mis::instruction(string ) {
+
+}
+
 int main(int argc, char *argv[]) {
 	string LINE;
 	ifstream input_file (argv[1]);
@@ -28,15 +30,26 @@ int main(int argc, char *argv[]) {
 	}
 
 	//create vector to store each line
-	vector<string> v_line;
+	vector<string> v_test;
+	vector<vector<string>> v_line;
 	vector<string> v_args;
+
+	//map that stores all of the default constructors
+	std::map<std::string, Variable*> variables;
+	variables["VARIABLE"] = new Variable();
+	variables["MATH"] = new Math();
+	variables["NUMERIC"] = new Numeric();
+	variables["CHAR"] = new Char();
+	variables["STRING"] = new String();
+	variables["REAL"] = new Real();
+
 
 	//read each line of input file
 	while(!input_file.eof()) {
 		line_number++;
 		// read line into memory
 		getline(input_file, LINE);
-		v_line.push_back(LINE);
+		v_test.push_back(LINE);
 
 		char* instruction_line = strdup(LINE.c_str());
 		cout << instruction_line << endl;
