@@ -37,9 +37,9 @@ void Mis::parse_file(ifstream & input_file) {
 	//read each line of input file
 	while(!input_file.eof()) {
 		
-		vector<string> v_args;
-		// read line into memory
-		getline(input_file, LINE);
+		vector<string> v_args;	// create vector to hold instruction arguments
+		
+		getline(input_file, LINE);	// read line into memory
 		v_test.push_back(LINE);
 
 		char* instruction_line = strdup(LINE.c_str());
@@ -75,7 +75,8 @@ void Mis::parse_file(ifstream & input_file) {
 }
 
 void Mis::instruction(string instruction_type) {
-
+	cout << "hit" << endl;
+	variables.find(instruction_type);
 }
 
 Mis::~Mis() {
@@ -87,6 +88,32 @@ int main(int argc, char *argv[]) {
 	Mis mis;
 	ifstream input_file (argv[1]);
 	mis.parse_file(input_file);
+
+	for (int i=0; i<v_line.size(); i++) {
+		if (v_line[i][0] == "VAR") {
+			mis.instruction(v_line[i][2]);
+		} else if (v_line[i][0] == "ADD") {
+
+		} else if (v_line[i][0] == "SUB") {
+
+		} else if (v_line[i][0] == "MUL") {
+
+		} else if (v_line[i][0] == "DIV") {
+
+		} else if (v_line[i][0] == "ASSIGN") {
+
+		} else if (v_line[i][0] == "OUT") {
+
+		} else if (v_line[i][0] == "SET_STR_CHAR") {
+
+		} else if (v_line[i][0] == "GET_STR_CHAR") {
+
+		} else if (v_line[i][0] == "LABEL") {
+
+		} else if (v_line[i][0] == "JMP") {
+
+		}
+	}
 	
 	return 1;
 }
