@@ -47,10 +47,6 @@ int main(int argc, char *argv[]) {
 		cout << token[0] << endl;
 
 		token[1] = std::strtok(NULL, DELIMITER_COMMA);
-		while(token[1]!=0) {
-			cout << token[1] << /n << endl;
-		}
-
 		cout << token[1] << endl;
 
 		// // const char* pos = strchr(strdup(LINE.c_str()),DELIMITER_SPACE);
