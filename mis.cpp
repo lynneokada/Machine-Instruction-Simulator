@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 
 	//create vector to store each line
 	vector<string> v_test;
-	
 	vector< vector<string> > v_line;
 
 	//map that stores all of the default constructors
@@ -42,7 +41,6 @@ int main(int argc, char *argv[]) {
 	variables["CHAR"] = new Char();
 	variables["STRING"] = new String();
 	variables["REAL"] = new Real();
-
 
 	//read each line of input file
 	while(!input_file.eof()) {
