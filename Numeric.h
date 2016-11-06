@@ -1,3 +1,6 @@
+#ifndef __NUMERIC_H_
+#define __NUMERIC_H_
+
 #include "Math.h"
 
 class Numeric : public Math 
@@ -11,3 +14,5 @@ class Numeric : public Math
 		int getValue();
 		void out();
 };
+
+#endif

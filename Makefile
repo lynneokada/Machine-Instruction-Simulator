@@ -1,7 +1,7 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #	Makefile for Unix & Linux Systems	#
 #	using a GNU C++ compiler	#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # compiler flags
 #	-g	--Enable debugging
@@ -13,41 +13,26 @@
 GPP = g++ -std=c++14
 GPPFLAGS = -O3 -Wall
 
-all: main
+all : main
 
 #Link command:
-main: Math.o Real.o Numeric.o Variable.o String.o Char.o mis.o
-	$(GPP) $(GPPFLAGS) Variable.o Math.o Real.o Numeric.o String.o Char.o mis.o -o main
+main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o
+	$(GPP) $(GPPFLAGS) mis.o Variable.o Math.o String.o Char.o \
+	Numeric.o Real.o -o main
 
 #Compilation commands:
-Variable.o: Variable.cpp
-	$(GPP) $(GPPFLAGS) -c Variable.cpp -o Variable.o
+%.o : %.cpp
+	$(GPP) $(GPPFLAGS) -c $<
 
-Math.o: Math.cpp
-	$(GPP) $(GPPFLAGS) -c Math.cpp -o Math.o
+clean :
+	- rm *.o main 
 
-Real.o: Real.cpp
-	$(GPP) $(GPPFLAGS) -c Real.cpp -o Real.o
+# Dependencies
 
-Numeric.o: Numeric.cpp
-	$(GPP) $(GPPFLAGS) -c Numeric.cpp -o Numeric.o
-
-String.o: String.cpp
-	$(GPP) $(GPPFLAGS) -c String.cpp -o String.o
-
-
-Char.o: Char.cpp
-	$(GPP) $(GPPFLAGS) -c Char.cpp -o Char.o
-
-
-mis.o: mis.cpp
-	$(GPP) $(GPPFLAGS) -c mis.cpp -o mis.o
-
-
-#make clean
-clean:
-	rm -f *.exe
-	rm -f *.o
-
-%.o: %.cc
-	g++ -c $< -o $@
+mis.o: mis.cpp Variable.h Math.h String.h Char.h Numeric.h Real.h
+Variable.o: Variable.cpp Variable.h
+Math.o: Math.cpp Math.h Variable.h
+String.o: String.cpp String.h Variable.h Numeric.h Char.h
+Char.o: Char.cpp Char.h Variable.h
+Numeric.o: Numeric.cpp Numeric.h Math.h
+Real.o: Real.cpp Real.h Math.h

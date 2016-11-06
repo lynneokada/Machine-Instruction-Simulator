@@ -13,5 +13,7 @@
 class Mis {
 public:
 	Mis();	// constructor
+	void parse_file(ifstream & input_file);
+	void instruction(string instruction_type);
 	~Mis();	// destructor
 };
