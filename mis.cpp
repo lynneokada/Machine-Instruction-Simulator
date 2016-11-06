@@ -12,6 +12,7 @@ const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
 int main(int argc, char *argv[]) {
+
 	string LINE;
 	ifstream input_file (argv[1]);
 	
@@ -32,7 +33,6 @@ int main(int argc, char *argv[]) {
 	variables["CHAR"] = new Char();
 	variables["STRING"] = new String();
 	variables["REAL"] = new Real();
-
 
 	//read each line of input file
 	while(!input_file.eof()) {
