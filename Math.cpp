@@ -7,57 +7,59 @@ using namespace std;
 // Pass in vector of Math objects as parameter for function - need to dynamic_cast
 // Make sure we can pass vector of base level objects even when instantiated as child objects - upcast/downcast
 
-Math::Math(std::string p_name, double p_value):name(p_name),value(p_value)
-{
-};
 
-Math::~Math()
-{
-}
+//Dynamic cast as type and make type a variable of each object
+
+Math::Math(std::string p_name, double p_value):name(p_name),value(p_value) {};
+
+Math::~Math() {}
 
 void Math::out()
 {
+	//what actually goes in here?
 	printf("%f\n", value);
 }
 
-template <typename T, typename W>
-void Math::sub(T names, W map)
+void Math::sub(std::vector<string> names, std::map<string, Variable*> map)
 {
-	
+	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()-dynamic_cast<Math*>(map[names[1]])->getValue());
 }
 
-template <typename T, typename W>
-void Math::div(T names, W map)
+void Math::div(std::vector<string> names, std::map<string, Variable*> map)
 {
-	// this->value = decltype(this->value)(params[0].value / params[1].value);
+	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()/dynamic_cast<Math*>(map[names[1]])->getValue());
 }
 
 template <typename T>
 void Math::assign(T b)
 {
-	this->value = b.value;
+	//maybe should make Math::setValue assign rather than other way round
+	this->setValue(b.getValue);
 }
 
-template <typename T, typename W>
-void Math::add(T names, W map)
+void Math::add(std::vector<string> names, std::map<string, Variable*> map)
 {
 	decltype(value) sum = 0;
-	for (auto it = names.begin; it != names.end; ++it)
+	for (int i = 0; i < names.size(); ++i)
 	{
-		sum += map[it]->value;
+		sum += dynamic_cast<Math*>(map[names[i]])->getValue();
 	}
 	value = sum;
 }
 
-template <typename T, typename W>
-void Math::mul(T names, W map)
+void Math::mul(std::vector<string> names, std::map<string, Variable*> map)
 {
 	decltype(value) product = 0;
-	for (auto it = names.begin; it != names.end; ++it)
+	for (int i = 0; i < names.size(); ++i)
 	{
-		product *= map[it]->value;
+		product *= dynamic_cast<Math*>(map[names[i]])->getValue();
 	}
 	value = product;
+}
+
+double Math::getValue()
+{
+	return this->value;
 }
 
 // int main()
@@ -65,44 +67,26 @@ void Math::mul(T names, W map)
 
 	
 // 	Math a;
-// 	Math b("test", 23);
-// 	// Math c(1);
-// 	// int test1 = 12;
-// 	// int test2 = 1;
+// // 	Math b("test", 23);
+// // 	// Math c(1);
+// // 	// int test1 = 12;
+// // 	// int test2 = 1;
 
-// 	// Math test;
-// 	// test.out();
+// 	Math test;
+// 	test.sub(a, a);
+// test.out();	
 
-// 	// // setting function pointer
-// 	// void (Math::*pSub)(Math, Math);
-// 	// pSub = &Math::sub;
-// 	// (test.*pSub)(test1, test2);
-// 	// test.out();
+// // setting function pointer
+// void (Math::*pSub)(Math, Math);
+// pSub = &Math::sub;
+// (test.*pSub)(test1, test2);
+// test.out();
 
-// 	// void (Math::*pDiv)(Math, Math);
-// 	// pDiv = &Math::div;
-// 	// (test.*pDiv)(test1, test2);
-// 	// test.out();
-
-// 	// std::vector<Math> m;
-// 	// m.push_back(test);
-// 	// m.push_back(b);
-// 	// m[1].out();
-
-// 	// // std::vector<Variable> v;
-// 	// // Variable test3;
-// 	// Math * pMath = new Math(100);
+// void (Math::*pDiv)(Math, Math);
+// pDiv = &Math::div;
+// (test.*pDiv)(test1, test2);
+// test.out();
 
 
-// 	// auto myTuple = make_tuple("Foo", 1337, 42, b);
-
-
-// 	// cout << get<0>(myTuple) << endl; // Access element by index: "Foo"
-// 	// cout << get<1>(myTuple) << endl; // Access element by index: 1337
-// 	// cout << get<2>(myTuple) << endl; // Access element by index: 42
-// 	// get<3>(myTuple).out();
-
-// 	// auto myTuple = tuple_cat(myTuple, make_tuple(c));
-// 	// get<4>(myTuple).out();
 // 	return 0;
 // }

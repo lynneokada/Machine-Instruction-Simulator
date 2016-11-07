@@ -16,9 +16,9 @@ GPPFLAGS = -O3 -Wall
 all : main
 
 #Link command:
-main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o
+main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o
 	$(GPP) $(GPPFLAGS) mis.o Variable.o Math.o String.o Char.o \
-	Numeric.o Real.o -o main
+	Numeric.o Real.o Jump.o -o main
 
 #Compilation commands:
 %.o : %.cpp
@@ -36,3 +36,4 @@ String.o: String.cpp String.h Variable.h Numeric.h Char.h
 Char.o: Char.cpp Char.h Variable.h
 Numeric.o: Numeric.cpp Numeric.h Math.h
 Real.o: Real.cpp Real.h Math.h
+Jump.o: Jump.cpp Jump.h Math.h

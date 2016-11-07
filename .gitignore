@@ -2,3 +2,4 @@
 *.o
 *.stackdump
 .DS_Store
+main

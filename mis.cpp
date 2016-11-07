@@ -7,6 +7,8 @@ using std::vector;
 using std::array;
 using std::string;
 
+
+//maybe make hash defined instead? not sure if that'll work/whats more beneficial
 const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
@@ -20,6 +22,15 @@ std::map<string, Variable*> variables;
 std::map<string, Math*> instruction_math_map;
 std::map<string, String*> instruction_string_map;
 std::map<string, Char*> instruction_char_map;
+
+// declare types and maps
+typedef int(Numeric::*numFunction)(Variable*);
+typedef int(Real::*realFunction)(Variable*, Variable*);
+typedef int(Char::*charFunction)(Variable*);
+typedef int(String::*strFunction)(Variable*, Variable*);
+typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>);
+
+std::map<std::string, jumpFunction> jumpInstructions;
 
 Mis::Mis() {
 	//map that stores all of the default constructors
@@ -36,7 +47,6 @@ Mis::Mis() {
 	// instruction_math_map["SUB"] = pSub;
 	// instruction_math_map.insert(std::make_pair("SUB",pSub));
 	instruction_math_map.emplace("SUB", pSub);
-}
 
 void Mis::parse_file(ifstream & input_file) {
 	// check if file input is valid
@@ -89,47 +99,61 @@ void Mis::instruction(string instruction_type) {
 	variables.find(instruction_type);
 }
 
-Mis::~Mis() {
-
-}
+Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
+//------------Working example of jump functionality-----------------
+	Jump a;
+	std::vector<string> v;
+	v.push_back("Label");
+	v.push_back("b");
+	v.push_back("c");
+	string type = "JMPLT";
+	std::map<string, Variable*> map;
+	Math *b = new Math();
+	Math *c = new Math("test", 12.0);
+	map["b"] = b;
+	map["c"] = c;
+
+	a.storeLabel("Label", 6);
+	cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+//------------------------------------------------------------------
+
+
+	// Mis mis;
+	// ifstream input_file (argv[1]);
+	// mis.parse_file(input_file);
+
+	// for (int i=0; i<v_line.size(); i++) {
+	// 	if (v_line[i][0] == "VAR") {
+	// 		mis.instruction(v_line[i][2]);
+	// 	} else if (v_line[i][0] == "ADD") {
+	//		vector<string> params;
+	//		for(int j = 2; i < v_line[i].size(); j++){
+	//		params.push_back(v_lines[i][j]);
+	//		} 
+	//		variables[v_line[i][1]]->mathInstructions[v_line[i][0]](params, variables);
+	// 	} else if (v_line[i][0] == "SUB") {
+
+	// 	} else if (v_line[i][0] == "MUL") {
+
+	// 	} else if (v_line[i][0] == "DIV") {
+
+	// } else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
+	// this->setValue(value);
+	// 	} else if (v_line[i][0] == "OUT") { //<--- should work for most all
+
+	// 	} else if (v_line[i][0] == "SET_STR_CHAR") {
+
+	// 	} else if (v_line[i][0] == "GET_STR_CHAR") {
+
+	// 	} else if (v_line[i][0] == "LABEL") {
+	//		Junmp a;
+	//		a.storeLabel();
+	// 	} else if (v_line[i][0].find("JMP") != string::npos) {
+
+	// 	}
+	// }
 	
-	Mis mis;
-	ifstream input_file (argv[1]);
-	mis.parse_file(input_file);
-
-	for (int i=0; i<v_line.size(); i++) {
-		std::vector<string> arguments;
-		for (int j = 2; j < v_line[j].size(); ++j)
-		{
-			arguments.push_back(v_line[i][j]);
-		}
-		if (v_line[i][0] == "VAR") {
-			mis.instruction(v_line[i][2]);
-		} else if (v_line[i][0] == "ADD") {
-			// variables.find(varA).instruction_math_map.find("ADD")(arg1, arg2);
-			variables.find(v_line[i][1]).add(arguments, variables);
-		} else if (v_line[i][0] == "SUB") {
-
-		} else if (v_line[i][0] == "MUL") {
-
-		} else if (v_line[i][0] == "DIV") {
-
-		} else if (v_line[i][0] == "ASSIGN") {
-
-		} else if (v_line[i][0] == "OUT") {
-
-		} else if (v_line[i][0] == "SET_STR_CHAR") {
-
-		} else if (v_line[i][0] == "GET_STR_CHAR") {
-
-		} else if (v_line[i][0] == "LABEL") {
-
-		} else if (v_line[i][0] == "JMP") {
-
-		}
-	}
-	
-	return 1;
+	return 0;
 }
