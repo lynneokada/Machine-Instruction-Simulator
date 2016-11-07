@@ -42,11 +42,12 @@ Mis::Mis() {
 	variables["REAL"] = new Real();
 
 	//map that stores all of instructions
-	typedef void (Math::*pSub)(Math, Math);
-	pSub = &Math::sub;
+	// typedef void (Math::*pSub)(Math, Math);
+	// pSub = &Math::sub;
 	// instruction_math_map["SUB"] = pSub;
 	// instruction_math_map.insert(std::make_pair("SUB",pSub));
-	instruction_math_map.emplace("SUB", pSub);
+	// instruction_math_map.emplace("SUB", pSub);
+}
 
 void Mis::parse_file(ifstream & input_file) {
 	// check if file input is valid
@@ -85,75 +86,87 @@ void Mis::parse_file(ifstream & input_file) {
 		v_line.push_back(v_args);	// add arguments to v_line 
 	}
 
-	// cout v_args
-	cout << "vector size " << v_line.size() << endl;
-	for (int i = 0; i < v_line.size(); i++) {
-		cout << i << endl;
-		for (int j=0; j < v_line[i].size(); j++) {
-			cout << "args: " << v_line[i][j] << endl;
-		}
-	}
+	// // cout v_args
+	// cout << "vector size " << v_line.size() << endl;
+	// for (int i = 0; i < v_line.size(); i++) {
+	// 	cout << i << endl;
+	// 	for (int j=0; j < v_line[i].size(); j++) {
+	// 		cout << "args: " << v_line[i][j] << endl;
+	// 	}
+	// }
 }
 
 void Mis::instruction(string instruction_type) {
 	variables.find(instruction_type);
 }
 
+// void Mis::(vector<string> v_) {
+// 	for(int j = 2; i < v_line[i].size(); j++){
+// 				params.push_back(v_lines[i][j]);
+// 			}
+// }
+
 Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
-//------------Working example of jump functionality-----------------
-	Jump a;
-	std::vector<string> v;
-	v.push_back("Label");
-	v.push_back("b");
-	v.push_back("c");
-	string type = "JMPLT";
-	std::map<string, Variable*> map;
-	Math *b = new Math();
-	Math *c = new Math("test", 12.0);
-	map["b"] = b;
-	map["c"] = c;
+// //------------Working example of jump functionality-----------------
+// 	Jump a;
+// 	std::vector<string> v;
+// 	v.push_back("Label");
+// 	v.push_back("b");
+// 	v.push_back("c");
+// 	string type = "JMPLT";
+// 	std::map<string, Variable*> map;
+// 	Math *b = new Math();
+// 	Math *c = new Math("test", 12.0);
+// 	map["b"] = b;
+// 	map["c"] = c;
 
-	a.storeLabel("Label", 6);
-	cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
-//------------------------------------------------------------------
+// 	a.storeLabel("Label", 6);
+// 	cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+// //------------------------------------------------------------------
 
+	Mis mis;
+	ifstream input_file (argv[1]);
+	mis.parse_file(input_file);
 
-	// Mis mis;
-	// ifstream input_file (argv[1]);
-	// mis.parse_file(input_file);
+	for (int i=0; i<v_line.size(); i++) {
 
-	// for (int i=0; i<v_line.size(); i++) {
-	// 	if (v_line[i][0] == "VAR") {
-	// 		mis.instruction(v_line[i][2]);
-	// 	} else if (v_line[i][0] == "ADD") {
-	//		vector<string> params;
-	//		for(int j = 2; i < v_line[i].size(); j++){
-	//		params.push_back(v_lines[i][j]);
-	//		} 
-	//		variables[v_line[i][1]]->mathInstructions[v_line[i][0]](params, variables);
-	// 	} else if (v_line[i][0] == "SUB") {
+		cout << v_line[i][0] << endl;
 
-	// 	} else if (v_line[i][0] == "MUL") {
+		if (v_line[i][0] == "VAR") {
+			mis.instruction(v_line[i][2]);
+		} else if (v_line[i][0] == "ADD") {
+			// retrieve all args and store in separate params vector
+			vector<string> params;
+			for(int j = 2; j < v_line[i].size(); j++){
+				cout << "push_back " << v_line[i][j] << endl;
+				params.push_back(v_line[i][j]);
+			}
+			// variables[v_line[i][1]]->mathInstructions[v_line[i][0]](params, variables);
+			
+				
+		} else if (v_line[i][0] == "SUB") {
 
-	// 	} else if (v_line[i][0] == "DIV") {
+		} else if (v_line[i][0] == "MUL") {
 
-	// } else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
-	// this->setValue(value);
-	// 	} else if (v_line[i][0] == "OUT") { //<--- should work for most all
+		} else if (v_line[i][0] == "DIV") {
 
-	// 	} else if (v_line[i][0] == "SET_STR_CHAR") {
+		} else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
+			// this->setValue(value);
+		} else if (v_line[i][0] == "OUT") { //<--- should work for most all
 
-	// 	} else if (v_line[i][0] == "GET_STR_CHAR") {
+		} else if (v_line[i][0] == "SET_STR_CHAR") {
 
-	// 	} else if (v_line[i][0] == "LABEL") {
-	//		Junmp a;
-	//		a.storeLabel();
-	// 	} else if (v_line[i][0].find("JMP") != string::npos) {
+		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
-	// 	}
-	// }
+		} else if (v_line[i][0] == "LABEL") {
+			Jump a;
+			// a.storeLabel();
+		} else if (v_line[i][0].find("JMP") != string::npos) {
+
+		}
+	}
 	
 	return 0;
 }
