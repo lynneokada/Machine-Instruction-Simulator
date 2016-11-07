@@ -9,6 +9,6 @@ private:
 public:
 	Real(std::string p_name = "", double p_value = 0.0);
 	~Real();
-	double getValue();
+	// double getValue();
 	void out();
 };

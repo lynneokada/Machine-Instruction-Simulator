@@ -24,7 +24,7 @@ Mis::Mis() {
 	variables["NUMERIC"] = new Numeric();
 	variables["CHAR"] = new Char();
 	variables["STRING"] = new String();
-	variables["REAL"] = new Real();	
+	variables["REAL"] = new Real();
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -84,36 +84,65 @@ Mis::~Mis() {
 }
 
 int main(int argc, char *argv[]) {
+
+	// std::map<std::string, Variable*> test;
+
+	// Math *a = new Math();
+	// Math b("test", 7);
+
+	// test["Test"] = a;
+
+	// Math guess;
+	// Math example;
+	// example.sub(guess, guess);
+	Jump a;
+	std::vector<string> v;
+	v.push_back("Label");
+	v.push_back("Test");
+	string type = "JUMPZ";
+	std::map<string, Variable*> map;
+	Math *b = new Math();
+	map["Test"] = b;
+
 	
-	Mis mis;
-	ifstream input_file (argv[1]);
-	mis.parse_file(input_file);
+	a.storeLabel("Label", 6);
+	cout << a.compare(v, type, map);
 
-	for (int i=0; i<v_line.size(); i++) {
-		if (v_line[i][0] == "VAR") {
-			mis.instruction(v_line[i][2]);
-		} else if (v_line[i][0] == "ADD") {
+	// a->sub<Math, Math>(b, b);
 
-		} else if (v_line[i][0] == "SUB") {
-
-		} else if (v_line[i][0] == "MUL") {
-
-		} else if (v_line[i][0] == "DIV") {
-
-		} else if (v_line[i][0] == "ASSIGN") {
-
-		} else if (v_line[i][0] == "OUT") {
-
-		} else if (v_line[i][0] == "SET_STR_CHAR") {
-
-		} else if (v_line[i][0] == "GET_STR_CHAR") {
-
-		} else if (v_line[i][0] == "LABEL") {
-
-		} else if (v_line[i][0] == "JMP") {
-
-		}
-	}
+	// a->test();
+	// Math *c = dynamic_cast<Math*>(test["Test"]);
+	// dynamic_cast<Math*>(test["Test"])->test();
 	
-	return 1;
+	// Mis mis;
+	// ifstream input_file (argv[1]);
+	// mis.parse_file(input_file);
+
+	// for (int i=0; i<v_line.size(); i++) {
+	// 	if (v_line[i][0] == "VAR") {
+	// 		mis.instruction(v_line[i][2]);
+	// 	} else if (v_line[i][0] == "ADD") {
+
+	// 	} else if (v_line[i][0] == "SUB") {
+
+	// 	} else if (v_line[i][0] == "MUL") {
+
+	// 	} else if (v_line[i][0] == "DIV") {
+
+	// 	} else if (v_line[i][0] == "ASSIGN") {
+
+	// 	} else if (v_line[i][0] == "OUT") {
+
+	// 	} else if (v_line[i][0] == "SET_STR_CHAR") {
+
+	// 	} else if (v_line[i][0] == "GET_STR_CHAR") {
+
+	// 	} else if (v_line[i][0] == "LABEL") {
+
+	// 	} else if (v_line[i][0] == "JMP") {
+
+	// 	}
+	// }
+	
+	return 0;
 }

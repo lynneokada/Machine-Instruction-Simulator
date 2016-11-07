@@ -39,29 +39,29 @@ void String::getStrChar(T index, W &ch) {
 	}
 }
 
-int main() {
-	//String *str = new String();
+// int main() {
+// 	String *str = new String();
 
 
-	String str("$var1", "testing123");
-	Numeric index("$var2", 3);
-	Char ch("$var3", 'T');
-	Numeric index2("$var4", 5);
+// 	String str("$var1", "testing123");
+// 	Numeric index("$var2", 3);
+// 	Char ch("$var3", 'T');
+// 	Numeric index2("$var4", 5);
 
-	// str.setStrChar(index, ch);
-	// cout << str.getValue() << endl;
+// 	str.setStrChar(index, ch);
+// 	cout << str.getValue() << endl;
 
-	// str.getStrChar(index2, ch);
-	// cout << ch.value << endl;
+// 	str.getStrChar(index2, ch);
+// 	cout << ch.value << endl;
 
-	// cout << str.getValue() << endl;
+// 	cout << str.getValue() << endl;
 
-	cout << ch.getValue() << endl;
-	cout << str.getValue()[index2.getValue()] << endl;
-	str.getStrChar(index2, ch);
-	cout << ch.getValue() << endl;
+// 	cout << ch.getValue() << endl;
+// 	cout << str.getValue()[index2.getValue()] << endl;
+// 	str.getStrChar(index2, ch);
+// 	cout << ch.getValue() << endl;
 
-	ch.setValue('S');
-	cout << ch.getValue() << endl;
+// 	ch.setValue('S');
+// 	cout << ch.getValue() << endl;
 
-}
+// }
