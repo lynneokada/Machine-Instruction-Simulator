@@ -9,18 +9,18 @@ using namespace std;
 typedef int(Jump::*single)(Variable*);
 typedef int(Jump::*dual)(Variable*, Variable*);
 
-		std::map<std::string, single> jumpSingle;
-		std::map<std::string, dual> jumpDual;
+std::map<std::string, single> jumpSingle;
+std::map<std::string, dual> jumpDual;
 
 
-Jump::Jump() {
-			jumpSingle["JUMPZ"] = &Jump::zero;
-		jumpSingle["JUMPNZ"] = &Jump::notZero;
-		jumpDual["JUMPGT"] = &Jump::greater;
-		jumpDual["JUMPGTE"] = &Jump::greaterEqual;
-		jumpDual["JUMPLT"] = &Jump::less;
-		jumpDual["JUMPLTE"] = &Jump::lessEqual;
-
+Jump::Jump()
+{
+	jumpSingle["JMPZ"] = &Jump::zero;
+	jumpSingle["JMPNZ"] = &Jump::notZero;
+	jumpDual["JMPGT"] = &Jump::greater;
+	jumpDual["JMPGTE"] = &Jump::greaterEqual;
+	jumpDual["JMPLT"] = &Jump::less;
+	jumpDual["JMPLTE"] = &Jump::lessEqual;
 };
 
 Jump::~Jump() {};

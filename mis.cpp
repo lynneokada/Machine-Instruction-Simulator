@@ -7,6 +7,8 @@ using std::vector;
 using std::array;
 using std::string;
 
+
+//maybe make hash defined instead? not sure if that'll work/whats more beneficial
 const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
@@ -16,6 +18,15 @@ vector<string> v_test;
 vector< vector<string> > v_line;
 string LINE;
 std::map<std::string, Variable*> variables;
+
+// declare types and maps
+typedef int(Numeric::*numFunction)(Variable*);
+typedef int(Real::*realFunction)(Variable*, Variable*);
+typedef int(Char::*charFunction)(Variable*);
+typedef int(String::*strFunction)(Variable*, Variable*);
+typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>);
+
+std::map<std::string, jumpFunction> jumpInstructions;
 
 Mis::Mis() {
 	//map that stores all of the default constructors
@@ -79,37 +90,28 @@ void Mis::instruction(string instruction_type) {
 	variables.find(instruction_type);
 }
 
-Mis::~Mis() {
-
-}
+Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
 
-	// std::map<std::string, Variable*> test;
-
-	// Math *a = new Math();
-	// Math b("test", 7);
-
-	// test["Test"] = a;
-
-	// Math guess;
-	// Math example;
-	// example.sub(guess, guess);
+//------------Working example of jump functionality-----------------
 	Jump a;
 	std::vector<string> v;
 	v.push_back("Label");
 	v.push_back("b");
 	v.push_back("c");
-	string type = "JUMPLT";
+	string type = "JMPLT";
 	std::map<string, Variable*> map;
 	Math *b = new Math();
 	Math *c = new Math("test", 12.0);
 	map["b"] = b;
 	map["c"] = c;
 
-	
+
 	a.storeLabel("Label", 6);
-	cout << a.compare(v, type, map);
+	cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+//------------------------------------------------------------------
+
 
 	// Mis mis;
 	// ifstream input_file (argv[1]);
@@ -119,24 +121,29 @@ int main(int argc, char *argv[]) {
 	// 	if (v_line[i][0] == "VAR") {
 	// 		mis.instruction(v_line[i][2]);
 	// 	} else if (v_line[i][0] == "ADD") {
-
+	//		vector<string> params;
+	//		for(int j = 2; i < v_line[i].size(); j++){
+	//		params.push_back(v_lines[i][j]);
+	//		} 
+	//		variables[v_line[i][1]]->mathInstructions[v_line[i][0]](params, variables);
 	// 	} else if (v_line[i][0] == "SUB") {
 
 	// 	} else if (v_line[i][0] == "MUL") {
 
 	// 	} else if (v_line[i][0] == "DIV") {
 
-	// 	} else if (v_line[i][0] == "ASSIGN") {
-
-	// 	} else if (v_line[i][0] == "OUT") {
+	// } else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
+	// this->setValue(value);
+	// 	} else if (v_line[i][0] == "OUT") { //<--- should work for most all
 
 	// 	} else if (v_line[i][0] == "SET_STR_CHAR") {
 
 	// 	} else if (v_line[i][0] == "GET_STR_CHAR") {
 
 	// 	} else if (v_line[i][0] == "LABEL") {
-
-	// 	} else if (v_line[i][0] == "JMP") {
+	//		Junmp a;
+	//		a.storeLabel();
+	// 	} else if (v_line[i][0].find("JMP") != string::npos) {
 
 	// 	}
 	// }

@@ -10,55 +10,49 @@ using namespace std;
 
 //Dynamic cast as type and make type a variable of each object
 
-Math::Math(std::string p_name, double p_value):name(p_name),value(p_value)
-{
-};
+Math::Math(std::string p_name, double p_value):name(p_name),value(p_value) {};
 
-Math::~Math()
-{
-}
+Math::~Math() {}
 
 void Math::out()
 {
+	//what actually goes in here?
 	printf("%f\n", value);
 }
 
-template <typename T, typename W>
-void Math::sub(T names, W map)
+void Math::sub(std::vector<string> names, std::map<string, Variable*> map)
 {
-	
+	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()-dynamic_cast<Math*>(map[names[1]])->getValue());
 }
 
-template <typename T, typename W>
-void Math::div(T names, W map)
+void Math::div(std::vector<string> names, std::map<string, Variable*> map)
 {
-	// this->value = decltype(this->value)(params[0].value / params[1].value);
+	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()/dynamic_cast<Math*>(map[names[1]])->getValue());
 }
 
 template <typename T>
 void Math::assign(T b)
 {
-	this->value = b.value;
+	//maybe should make Math::setValue assign rather than other way round
+	this->setValue(b.getValue);
 }
 
-template <typename T, typename W>
-void Math::add(T names, W map)
+void Math::add(std::vector<string> names, std::map<string, Variable*> map)
 {
 	decltype(value) sum = 0;
-	for (auto it = names.begin; it != names.end; ++it)
+	for (int i = 0; i < names.size(); ++i)
 	{
-		sum += map[it]->value;
+		sum += dynamic_cast<Math*>(map[names[i]])->getValue();
 	}
 	value = sum;
 }
 
-template <typename T, typename W>
-void Math::mul(T names, W map)
+void Math::mul(std::vector<string> names, std::map<string, Variable*> map)
 {
 	decltype(value) product = 0;
-	for (auto it = names.begin; it != names.end; ++it)
+	for (int i = 0; i < names.size(); ++i)
 	{
-		product *= map[it]->value;
+		product *= dynamic_cast<Math*>(map[names[i]])->getValue();
 	}
 	value = product;
 }
