@@ -15,7 +15,11 @@ const char* const DELIMITER_COMMA = ",";
 vector<string> v_test;
 vector< vector<string> > v_line;
 string LINE;
-std::map<std::string, Variable*> variables;
+std::map<string, Variable*> variables;
+
+std::map<string, Math*> instruction_math_map;
+std::map<string, String*> instruction_string_map;
+std::map<string, Char*> instruction_char_map;
 
 Mis::Mis() {
 	//map that stores all of the default constructors
@@ -24,7 +28,14 @@ Mis::Mis() {
 	variables["NUMERIC"] = new Numeric();
 	variables["CHAR"] = new Char();
 	variables["STRING"] = new String();
-	variables["REAL"] = new Real();	
+	variables["REAL"] = new Real();
+
+	//map that stores all of instructions
+	typedef void (Math::*pSub)(Math, Math);
+	pSub = &Math::sub;
+	// instruction_math_map["SUB"] = pSub;
+	// instruction_math_map.insert(std::make_pair("SUB",pSub));
+	instruction_math_map.emplace("SUB", pSub);
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -75,7 +86,6 @@ void Mis::parse_file(ifstream & input_file) {
 }
 
 void Mis::instruction(string instruction_type) {
-	cout << "hit" << endl;
 	variables.find(instruction_type);
 }
 
@@ -90,10 +100,16 @@ int main(int argc, char *argv[]) {
 	mis.parse_file(input_file);
 
 	for (int i=0; i<v_line.size(); i++) {
+		std::vector<string> arguments;
+		for (int j = 2; j < v_line[j].size(); ++j)
+		{
+			arguments.push_back(v_line[i][j]);
+		}
 		if (v_line[i][0] == "VAR") {
 			mis.instruction(v_line[i][2]);
 		} else if (v_line[i][0] == "ADD") {
-
+			// variables.find(varA).instruction_math_map.find("ADD")(arg1, arg2);
+			variables.find(v_line[i][1]).add(arguments, variables);
 		} else if (v_line[i][0] == "SUB") {
 
 		} else if (v_line[i][0] == "MUL") {
