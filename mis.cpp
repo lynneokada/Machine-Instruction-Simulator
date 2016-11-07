@@ -98,22 +98,19 @@ int main(int argc, char *argv[]) {
 	Jump a;
 	std::vector<string> v;
 	v.push_back("Label");
-	v.push_back("Test");
-	string type = "JUMPZ";
+	v.push_back("b");
+	v.push_back("c");
+	string type = "JUMPLT";
 	std::map<string, Variable*> map;
 	Math *b = new Math();
-	map["Test"] = b;
+	Math *c = new Math("test", 12.0);
+	map["b"] = b;
+	map["c"] = c;
 
 	
 	a.storeLabel("Label", 6);
 	cout << a.compare(v, type, map);
 
-	// a->sub<Math, Math>(b, b);
-
-	// a->test();
-	// Math *c = dynamic_cast<Math*>(test["Test"]);
-	// dynamic_cast<Math*>(test["Test"])->test();
-	
 	// Mis mis;
 	// ifstream input_file (argv[1]);
 	// mis.parse_file(input_file);

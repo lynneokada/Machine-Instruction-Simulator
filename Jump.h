@@ -1,7 +1,9 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "Variable.h"
+#include <iostream>
+#include <utility>
+#include <functional>
 #include "Math.h"
 
 class Jump
@@ -9,7 +11,8 @@ class Jump
 	private:
 		std::map<string, int> labels;
 	public:
-		// int jumpTo(string name);
+		Jump();
+		~Jump();
 		void storeLabel(string names, int lineNum);
 		int compare(vector<string> names, string type, map<string, Variable*> variables);
 		template <typename T> int zero(T var);

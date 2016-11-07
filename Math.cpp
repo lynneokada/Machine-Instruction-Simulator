@@ -35,11 +35,6 @@ void Math::div(T names, W map)
 	// this->value = decltype(this->value)(params[0].value / params[1].value);
 }
 
-void Math::test()
-{
-
-}
-
 template <typename T>
 void Math::assign(T b)
 {
@@ -85,19 +80,18 @@ double Math::getValue()
 
 // 	Math test;
 // 	test.sub(a, a);
-// // 	// test.out();	
+// test.out();	
 
-// 	// // setting function pointer
-// 	// void (Math::*pSub)(Math, Math);
-// 	// pSub = &Math::sub;
-// 	// (test.*pSub)(test1, test2);
-// 	// test.map["ADD"](x, y)
-// // 	// test.out();
+// // setting function pointer
+// void (Math::*pSub)(Math, Math);
+// pSub = &Math::sub;
+// (test.*pSub)(test1, test2);
+// test.out();
 
-// // void (Math::*pDiv)(Math, Math);
-// // pDiv = &Math::div;
-// // (test.*pDiv)(test1, test2);
-// // test.out();
+// void (Math::*pDiv)(Math, Math);
+// pDiv = &Math::div;
+// (test.*pDiv)(test1, test2);
+// test.out();
 
 
 // 	return 0;

@@ -19,7 +19,6 @@ class Math : public Variable
 		template <typename T, typename W> void mul(T names, W map);
 		template <typename T, typename W> void div(T names, W map);
 		template <typename T> void assign(T b);
-		void test();
 		virtual void out();
 		double getValue();
 };
