@@ -96,15 +96,17 @@ void Mis::parse_file(ifstream & input_file) {
 	// }
 }
 
-void Mis::instruction(string instruction_type) {
+void Mis::find_instruction(string instruction_type) {
 	variables.find(instruction_type);
 }
 
-// void Mis::(vector<string> v_) {
-// 	for(int j = 2; i < v_line[i].size(); j++){
-// 				params.push_back(v_lines[i][j]);
-// 			}
-// }
+vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
+	vector<string> params;
+	for(int j = 2; j < v_single_line.size(); j++){
+		cout << "push_back " << v_line[index][j] << endl;
+		params.push_back(v_line[index][j]);
+	}
+}
 
 Mis::~Mis() {}
 
@@ -135,17 +137,11 @@ int main(int argc, char *argv[]) {
 		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
-			mis.instruction(v_line[i][2]);
+			mis.find_instruction(v_line[i][2]);
 		} else if (v_line[i][0] == "ADD") {
 			// retrieve all args and store in separate params vector
-			vector<string> params;
-			for(int j = 2; j < v_line[i].size(); j++){
-				cout << "push_back " << v_line[i][j] << endl;
-				params.push_back(v_line[i][j]);
-			}
-			// variables[v_line[i][1]]->mathInstructions[v_line[i][0]](params, variables);
-			
-				
+			vector<string> a = mis.obtain_args(i,v_line[i]);
+			// variables["MATH"]->add[v_line[i][0]](params, variables);
 		} else if (v_line[i][0] == "SUB") {
 
 		} else if (v_line[i][0] == "MUL") {
