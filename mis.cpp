@@ -174,8 +174,16 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	for(int j = 2; j < v_single_line.size(); j++){
 		cout << "push_back " << v_line[index][j] << endl;
 
-		// convert  
-		params.push_back(v_line[index][j]);
+		//convert to double
+		if (p_list[i][0] == '$') {
+			cout << "this is a variable" << endl;
+			params.push_back(v_line[index][j]);
+		} else {
+			char *a;
+			double d = stod(p_list[i]);
+			cout << d << endl;
+			params.push_back(v_line[index][j]);
+		}
 	}
 }
 
