@@ -288,44 +288,52 @@ int main(int argc, char *argv[])
 			vector<string> params = mis.obtain_args(i,v_line[i]);
 			mathVariables[var]->div(params, mathVariables);
 
-		} else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
+		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
 			
 			//vector<string> params = mis.obtain_args(i,v_line[i]);
 
 			if(mathVariables.find(var) != mathVariables.end()) {
-				cout << "Math found" << endl;
+				// cout << "Math found" << endl;
 				// Math *first = (mathVariables[v_line[i][1]]);
 				// Math *second = (mathVariables[v_line[i][2]]);
-				cout << typeid(mathVariables[v_line[i][2]]).name() << endl;
+				// cout << typeid(mathVariables[v_line[i][2]]).name() << endl;
 				// mathVariables[v_line[i][2]]->setValue(2);
 
 
-				cout << "1st value: " << mathVariables[v_line[i][1]]->getValue() << endl;
-				cout << "Second value: " << mathVariables[v_line[i][2]]->getValue() << endl;
+				// cout << "1st value: " << mathVariables[v_line[i][1]]->getValue() << endl;
+				// cout << "Second value: " << mathVariables[v_line[i][2]]->getValue() << endl;
 
 				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
 				map<string, Math*>::iterator itTwo =  mathVariables.find(v_line[i][2]);
 
-				mathVariables[v_line[i][1]]->setValue(mathVariables[v_line[i][2]]->getValue(), *mathVariables[v_line[i][2]]);
-				itOne->second->out();
-				cout << "test" << endl;
+				itOne->second->setValue(itTwo->second->getValue);
+				// itOne->second->out();
+				// cout << "test" << endl;
 
-				cout << "Set to: " << mathVariables[v_line[i][1]]->getValue() << endl;
+				// cout << "Set to: " << mathVariables[v_line[i][1]]->getValue() << endl;
 			} else if(charVariables.find(var) != charVariables.end()) {
-				cout << "Char found" << endl;
-				Char *first = (charVariables[v_line[i][1]]);
-				Char *second = (charVariables[v_line[i][2]]);
-				first->setValue(second->getValue());
+				// cout << "Char found" << endl;
+				// Char *first = (charVariables[v_line[i][1]]);
+				// Char *second = (charVariables[v_line[i][2]]);
+				// first->setValue(second->getValue());
+
+				map<string, Char*>::iterator itOne =  charVariables.find(v_line[i][1]);
+				map<string, Char*>::iterator itTwo =  charVariables.find(v_line[i][2]);
+
+				itOne->second->setValue(itTwo->second->getValue);
 			} else if(stringVariables.find(var) != stringVariables.end()) {
-				cout << "Str found" << endl;
-				String *first = (stringVariables[v_line[i][1]]);
-				String *second = (stringVariables[v_line[i][2]]);
-				first->setValue(second->getValue());
+
+				map<string, String*>::iterator itOne =  stringVariables.find(v_line[i][1]);
+				map<string, String*>::iterator itTwo =  stringVariables.find(v_line[i][2]);
+
+				itOne->second->setValue(itTwo->second->getValue); //--------------double check if its actually setValue
+				// cout << "Str found" << endl;
+				// String *first = (stringVariables[v_line[i][1]]);
+				// String *second = (stringVariables[v_line[i][2]]);
+				// first->setValue(second->getValue());
 			}
 
-
-
-		} else if (v_line[i][0] == "OUT") { //<--- should work for most all
+		} else if (v_line[i][0] == "OUT") { //<--- needs work
 
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
 
@@ -334,13 +342,12 @@ int main(int argc, char *argv[])
 		} else if (v_line[i][0] == "LABEL") { //need to preprocess this in beginning of scan
 			//mis.jmp.storeLabel(v_line[i][1], v_line[i][2]);
 		} else if (v_line[i][0].find("JMP") != string::npos) {
-
-			// mis.jmp.compare();
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			mis.jmp.compare(params, v_line[i][0], mathVariables);
 		}
 		else
 		{
 			//something went wrong
-		
 		}
 	
 	}
