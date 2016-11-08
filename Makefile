@@ -25,7 +25,7 @@ main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o
 	$(GPP) $(GPPFLAGS) -c $<
 
 clean :
-	- rm *.o main 
+	- rm *.o main *.out *.err
 
 # Dependencies
 

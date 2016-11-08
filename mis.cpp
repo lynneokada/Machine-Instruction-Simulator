@@ -264,4 +264,20 @@ int main(int argc, char *argv[]) {
 	}
 	
 	return 0;
+
+	// Mis mis;
+	// Numeric a("$var1", 12);
+
+	// string filename = argv[argc-1];
+	// ifstream testStream = mis.openFiles(filename);
+
+	// mis.parse_file(testStream);
+
+	// cout << a.getValue() << endl;
+	// cout << "test " << a.getName() << endl;
+	// a.out();
+
+	// outfile << "test" <<endl;
+
+	// return 0;
 }
