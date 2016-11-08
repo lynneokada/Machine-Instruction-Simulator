@@ -19,7 +19,8 @@ class Math : public Variable
 		void sub(std::vector<string> names, std::map<string, Variable*> map);
 		void mul(std::vector<string> names, std::map<string, Variable*> map);
 		void div(std::vector<string> names, std::map<string, Variable*> map);
-		template <typename T> void assign(T b);
+		// template <typename T> void assign(T b);
+		void assign(std::vector<string> names, std::map<string, Variable*> map);
 		virtual void out();
 		double getValue();
 };

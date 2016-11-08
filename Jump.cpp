@@ -95,7 +95,7 @@ int Jump::compare(vector<string> names, string type, map<string, Variable*> vari
 		}
 	}
 
-	return -1; 	//condition does not hold true
+	return -2; 	//condition caused an error
 }
 
 void Jump::storeLabel(string name, int lineNum)

@@ -7,6 +7,8 @@ using std::vector;
 using std::array;
 using std::string;
 
+ofstream outfile;
+ofstream errfile;
 
 //maybe make hash defined instead? not sure if that'll work/whats more beneficial
 const int MAX_CHARS_PER_INSTRUCTION = 2;
@@ -24,13 +26,14 @@ std::map<string, String*> instruction_string_map;
 std::map<string, Char*> instruction_char_map;
 
 // declare types and maps
-typedef int(Numeric::*numFunction)(Variable*);
-typedef int(Real::*realFunction)(Variable*, Variable*);
+typedef void(Math::*mathFunction)(vector<string>, map<string, Variable*>);
+
 typedef int(Char::*charFunction)(Variable*);
 typedef int(String::*strFunction)(Variable*, Variable*);
 typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>);
 
-std::map<std::string, jumpFunction> jumpInstructions;
+std::map<std::string, jumpFunction> jumpInstructions; //may not need
+std::map<std::string, mathFunction> mathInstructions;
 
 Mis::Mis() {
 	//map that stores all of the default constructors
@@ -41,12 +44,39 @@ Mis::Mis() {
 	variables["STRING"] = new String();
 	variables["REAL"] = new Real();
 
-	//map that stores all of instructions
-	// typedef void (Math::*pSub)(Math, Math);
-	// pSub = &Math::sub;
-	// instruction_math_map["SUB"] = pSub;
-	// instruction_math_map.insert(std::make_pair("SUB",pSub));
-	// instruction_math_map.emplace("SUB", pSub);
+	mathInstructions["ADD"] = &Math::add;
+	mathInstructions["MUL"] = &Math::mul;
+	mathInstructions["DIV"] = &Math::div;
+	mathInstructions["SUB"] = &Math::sub;
+	mathInstructions["ASSIGN"] = &Math::assign;
+}
+
+void Mis::openFiles(string filename) {
+	size_t i = filename.rfind('.', filename.length());
+
+	if (i == string::npos || filename.substr(i, 
+		filename.length()-i) != ".mis") {
+        cerr << "Incorrect input file. Please provide a .mis file" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+	string basefile(basename(const_cast<char*> (filename.c_str())));
+
+    char* out = strdup((basefile.substr(0, basefile.length()-3) + 
+                        "out").c_str());
+    outfile.open(out);
+    if (!outfile.is_open()) {
+        cerr << "Error opening outfile";
+        exit(EXIT_FAILURE);
+    }
+
+    char* err = strdup((basefile.substr(0, basefile.length()-3) + 
+                        "err").c_str());
+    errfile.open(err);
+    if (!errfile.is_open()) {
+    	cerr << "Error opening errfile";
+    	exit(EXIT_FAILURE);
+    }
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -96,8 +126,26 @@ void Mis::parse_file(ifstream & input_file) {
 	// }
 }
 
-void Mis::find_instruction(string instruction_type) {
-	variables.find(instruction_type);
+void Mis::find_instruction(string instruction_type, string name, string value) {
+	
+}
+
+void Mis::create_variable(string var_type, string name, string value) {
+	// Variable *obj = variables[instruction_type](name, value);
+	// obj->out();
+
+	if (var_type == "REAL") {
+		double real_value = stod(value);
+	} else if (var_type == "NUMERIC") {
+		int num_value = stoi(value);
+	} else if (var_type == "STRING") {
+		string string_value = value;
+	} else if (var_type == "CHAR") {
+		const char *char_value = value.c_str();
+	} else {
+		cout << "wrong" << endl;
+		return;
+	}
 }
 
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
@@ -111,43 +159,66 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
-// //------------Working example of jump functionality-----------------
-// 	Jump a;
-// 	std::vector<string> v;
-// 	v.push_back("Label");
-// 	v.push_back("b");
-// 	v.push_back("c");
-// 	string type = "JMPLT";
-// 	std::map<string, Variable*> map;
-// 	Math *b = new Math();
-// 	Math *c = new Math("test", 12.0);
-// 	map["b"] = b;
-// 	map["c"] = c;
 
-// 	a.storeLabel("Label", 6);
-// 	cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
-// //------------------------------------------------------------------
+//------------Working example of jump functionality-----------------
+	Jump a;
+	std::vector<string> v;
+	// v.push_back("Label");
+	v.push_back("b");
+	v.push_back("c");
+	string type = "JMPLT";
+	std::map<string, Variable*> map;
+	Math *b = new Math("testing", 45.0);
+
+	Math *c = new Math("test", 12.0);
+	map["b"] = b;
+	map["c"] = c;
+	Math d;
+	d.add(v, map);
+	d.out();
+
+	a.storeLabel("Label", 6);
+	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+//------------------------------------------------------------------
 
 	Mis mis;
 	ifstream input_file (argv[1]);
 	mis.parse_file(input_file);
 
 	for (int i=0; i<v_line.size(); i++) {
+		// if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
+		// {
+		// 	//then use Char function map
+		// }
+
+		// if(variables[v_line[i][1]]->getType() == "Real" || variables[v_line[i][1]]->getType() == "Numeric")
+		// {
+		// 	vector<string> params = mis.obtain_args(i, v_line[i]);
+
+		// 	(dynamic_cast<Math*>(variables[v_line[i][1]])->*mathInstructions[v_line[i][0]])(params, variables);
+		// }
+
+		// if(variables[v_line[i][1]]->getType() == "String")
+		// {
+		// 	//then use String function map
+		// }
 
 		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
-			mis.find_instruction(v_line[i][2]);
+			mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);
 		} else if (v_line[i][0] == "ADD") {
-			// retrieve all args and store in separate params vector
-			vector<string> a = mis.obtain_args(i,v_line[i]);
-			// variables["MATH"]->add[v_line[i][0]](params, variables);
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->add(params, variables);
 		} else if (v_line[i][0] == "SUB") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->sub(params, variables);
 		} else if (v_line[i][0] == "MUL") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->mul(params, variables);
 		} else if (v_line[i][0] == "DIV") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->div(params, variables);
 		} else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
 			// this->setValue(value);
 		} else if (v_line[i][0] == "OUT") { //<--- should work for most all

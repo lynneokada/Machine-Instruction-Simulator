@@ -15,13 +15,14 @@ class Variable {
 
 protected:
 	string name;
-	string value;
-
+	string val;
+	string type;
 public:
 	string getName();
 	void sleep(int sec);
+	virtual string getType();
 	string getStringValue();
-	template <typename T> void setValue(T val);
+	// template <typename T> void setValue(T val);
 	virtual void out();
 };
 
