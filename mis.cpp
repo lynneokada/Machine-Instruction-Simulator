@@ -19,7 +19,13 @@ const char* const DELIMITER_COMMA = ",";
 vector<string> v_test;
 vector< vector<string> > v_line;
 string LINE;
-std::map<std::string, Variable*> variables;
+std::map<string, Variable*> constructors;
+
+std::map<string, Math*> instruction_math_map;
+std::map<string, String*> instruction_string_map;
+std::map<string, Char*> instruction_char_map;
+
+std::map<string, Variable*> variables;
 
 // declare types and maps
 typedef void(Math::*mathFunction)(vector<string>, map<string, Variable*>);
@@ -31,34 +37,20 @@ typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>)
 std::map<std::string, jumpFunction> jumpInstructions; //may not need
 std::map<std::string, mathFunction> mathInstructions;
 
-
-
 Mis::Mis() {
 	//map that stores all of the default constructors
-	variables["VARIABLE"] = new Variable();
-	variables["MATH"] = new Math();
-	variables["NUMERIC"] = new Numeric();
-	variables["CHAR"] = new Char();
-	variables["STRING"] = new String();
-	variables["REAL"] = new Real();
+	// constructors["VARIABLE"] = new Variable();
+	// constructors["MATH"] = new Math();
+	// constructors["NUMERIC"] = new Numeric();
+	// constructors["CHAR"] = new Char();
+	// constructors["STRING"] = new String();
+	// constructors["REAL"] = new Real();
 
 	mathInstructions["ADD"] = &Math::add;
 	mathInstructions["MUL"] = &Math::mul;
 	mathInstructions["DIV"] = &Math::div;
 	mathInstructions["SUB"] = &Math::sub;
 	mathInstructions["ASSIGN"] = &Math::assign;
-}
-
-
-vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
-	// retrieve all args and store in separate params vector
-	vector<string> params;
-	for(int j = 2; j<v_single_line.size(); j++){
-		cout << "push_back " << v_line[index][j] << endl;
-		params.push_back(v_line[index][j]);
-	}
-
-	return params;
 }
 
 void Mis::openFiles(string filename) {
@@ -126,83 +118,115 @@ void Mis::parse_file(ifstream & input_file) {
 		v_line.push_back(v_args);	// add arguments to v_line 
 	}
 
-	// cout v_args
-	cout << "vector size " << v_line.size() << endl;
-	for (int i = 0; i < v_line.size(); i++) {
-		cout << i << endl;
-		for (int j=0; j < v_line[i].size(); j++) {
-			cout << "args: " << v_line[i][j] << endl;
-		}
+	// // cout v_args
+	// cout << "vector size " << v_line.size() << endl;
+	// for (int i = 0; i < v_line.size(); i++) {
+	// 	cout << i << endl;
+	// 	for (int j=0; j < v_line[i].size(); j++) {
+	// 		cout << "args: " << v_line[i][j] << endl;
+	// 	}
+	// }
+}
+
+void Mis::find_instruction(string instruction_type, string name, string value) {
+	
+}
+
+void Mis::create_variable(string var_type, string name, string value) {
+	// Variable *obj = constructors[instruction_type](name, value);
+	// obj->out();
+
+	if (var_type == "REAL") {
+		double real_value = stod(value);
+		variables[name] = new Real(name, real_value);
+	} else if (var_type == "NUMERIC") {
+		int num_value = stoi(value);
+		variables[name] = new Numeric(name, num_value);
+	} else if (var_type == "STRING") {
+		string string_value = value;
+		variables[name] = new String(name, string_value);
+	} else if (var_type == "CHAR") {
+		char char_value = value[0];
+		variables[name] = new Char(name, char_value);
+	} else {
+		cout << "wrong" << endl;
+		return;
 	}
 }
 
-void Mis::instruction(string instruction_type) {
-	cout << "hit" << endl;
-	// variables.find(instruction_type);
-	Variable * obj = variables[instruction_type]; 
+vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
+	vector<string> params;
+	for(int j = 2; j < v_single_line.size(); j++){
+		cout << "push_back " << v_line[index][j] << endl;
+		params.push_back(v_line[index][j]);
+	}
 }
 
 Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
 
-//------------Working example of jump functionality-----------------
-	Jump a;
-	std::vector<string> v;
-	// v.push_back("Label");
-	v.push_back("b");
-	v.push_back("c");
-	string type = "JMPLT";
-	std::map<string, Variable*> map;
-	Math *b = new Math("testing", 45.0);
-
-	Math *c = new Math("test", 12.0);
-	map["b"] = b;
-	map["c"] = c;
-	Math d;
-	d.add(v, map);
-	d.out();
-
-	a.storeLabel("Label", 6);
-	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
-//------------------------------------------------------------------
-
-
 	Mis mis;
 	ifstream input_file (argv[1]);
 	mis.parse_file(input_file);
 
+//------------Working example of jump functionality-----------------
+	// Jump a;
+	// std::vector<string> v;
+	// // v.push_back("Label");
+	// v.push_back("b");
+	// v.push_back("c");
+	// string type = "JMPLT";
+	// std::map<string, Variable*> map;
+	// Math *b = new Math("testing", 45.0);
+
+	// Math *c = new Math("test", 12.0);
+	// map["b"] = b;
+	// map["c"] = c;
+	// Math d;
+	// d.add(v, map);
+	// d.out();
+
+	// a.storeLabel("Label", 6);
+	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+//------------------------------------------------------------------
+
+
 	for (int i=0; i<v_line.size(); i++) {
-		if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
-		{
-			//then use Char function map
-		}
+		// if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
+		// {
+		// 	//then use Char function map
+		// }
 
-		if(variables[v_line[i][1]]->getType() == "Real" || variables[v_line[i][1]]->getType() == "Numeric")
-		{
-			vector<string> params = mis.obtain_args(i, v_line[i]);
+		// if(variables[v_line[i][1]]->getType() == "Real" || variables[v_line[i][1]]->getType() == "Numeric")
+		// {
+		// 	vector<string> params = mis.obtain_args(i, v_line[i]);
 
-			(dynamic_cast<Math*>(variables[v_line[i][1]])->*mathInstructions[v_line[i][0]])(params, variables);
-		}
+		// 	(dynamic_cast<Math*>(variables[v_line[i][1]])->*mathInstructions[v_line[i][0]])(params, variables);
+		// }
 
-		if(variables[v_line[i][1]]->getType() == "String")
-		{
-			//then use String function map
-		}
+		// if(variables[v_line[i][1]]->getType() == "String")
+		// {
+		// 	//then use String function map
+		// }
 
+		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
-			mis.instruction(v_line[i][2]);
-
+			mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);
 		} else if (v_line[i][0] == "ADD") {
-			
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->add(params, variables);
 		} else if (v_line[i][0] == "SUB") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->sub(params, variables);
 		} else if (v_line[i][0] == "MUL") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->mul(params, variables);
 		} else if (v_line[i][0] == "DIV") {
-
-		} else if (v_line[i][0] == "ASSIGN") { //can be replaced by function pointers?
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// a->div(params, variables);
+		} else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
 			// this->setValue(value);
 		} else if (v_line[i][0] == "OUT") { //<--- should work for most all
 
@@ -211,7 +235,7 @@ int main(int argc, char *argv[]) {
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
 		} else if (v_line[i][0] == "LABEL") {
-			// Junmp a;
+			Jump a;
 			// a.storeLabel();
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 

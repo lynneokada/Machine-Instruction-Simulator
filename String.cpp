@@ -3,6 +3,7 @@
 String::String(string p_name, string p_value):name(p_name), value(p_value)
 {
 	type = "String";
+	std::cout << "String created" << std::endl;
 };
 
 String::~String() {};
