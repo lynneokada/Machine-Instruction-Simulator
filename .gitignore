@@ -3,3 +3,5 @@
 *.stackdump
 .DS_Store
 main
+*.out
+*.err
