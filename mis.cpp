@@ -37,7 +37,7 @@ typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>)
 std::map<std::string, jumpFunction> jumpInstructions; //may not need
 std::map<std::string, mathFunction> mathInstructions;
 
-Mis::Mis() {
+Mis::Mis() {	// constructor
 	//map that stores all of the default constructors
 	// constructors["VARIABLE"] = new Variable();
 	// constructors["MATH"] = new Math();
@@ -168,78 +168,50 @@ void Mis::create_variable(string var_type, string name, string value) {
 	}
 }
 
-vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
-	vector<string> params;	// returning vector
+vector<Math*> Mis::obtain_args(int index, vector<string> v_single_line) {
+	vector<Math*> params;	// returning vector
 	// populate params with arguments for operations
 	for(int j = 2; j < v_single_line.size(); j++){
-		
 
-		// //convert to double
-		// if (v_single_line[j][0] == '$') {
-		// 	cout << "this is a variable" << endl;
-		// 	params.push_back(v_line[index][j]);
-		// } else {
-		// 	char *a;
-		// 	double d = stod(v_single_line[j]);
-		// 	cout << d << endl;
-		// 	params.push_back(v_line[index][j]);
-		// }
-
-		if (v_single_line[j][0] == '$') {
+		if (v_single_line[j][0] == '$') {	// find variable names
+			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
+			params.push_back(mathVariables[v_single_line[j]]);
 		} else  {
 			int ch;
 			for (int k = 0; k < v_single_line[j].size(); k++) {
 				ch = v_single_line[j][k];
 				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' 
 					|| ch == '.') {
-					
+					// validate individual characters
 				} else {
 					cout << v_single_line[j] << " is not a valid argument." << endl;
-					break;
+					exit(EXIT_FAILURE);
 				}		
 			}
-			char *a;
+			// cast double value as Math
 			double d = stod(v_single_line[j]);
-			cout << d << endl;
-
+			Math * myD = new Math(v_single_line[j], d);
+			// add Math object to params vector
 			cout << "push_back " << v_line[index][j] << endl;
-			params.push_back(v_line[index][j]);
+			params.push_back(myD);
 		}
+	}
+
+	for (int a=0; a<params.size(); a++) {
+		cout << "push back " << params[a] << endl;
 	}
 
 	return params;
 }
 
-Mis::~Mis() {}
+Mis::~Mis() {} // destructor
 
 int main(int argc, char *argv[]) {
 
 	Mis mis;
 	ifstream input_file = mis.openFiles(argv[1]);
 	mis.parse_file(input_file);
-
-//------------Working example of jump functionality-----------------
-	// Jump a;
-	// std::vector<string> v;
-	// // v.push_back("Label");
-	// v.push_back("b");
-	// v.push_back("c");
-	// string type = "JMPLT";
-	// std::map<string, Variable*> map;
-	// Math *b = new Math("testing", 45.0);
-
-	// Math *c = new Math("test", 12.0);
-	// map["b"] = b;
-	// map["c"] = c;
-	// Math d;
-	// d.add(v, map);
-	// d.out();
-
-	// a.storeLabel("Label", 6);
-	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
-//------------------------------------------------------------------
-
 
 	for (int i=0; i<v_line.size(); i++) {
 		cout << v_line[i][0] << endl;
