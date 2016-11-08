@@ -10,7 +10,10 @@ using namespace std;
 
 //Dynamic cast as type and make type a variable of each object
 
-Math::Math(std::string p_name, double p_value):name(p_name),value(p_value) {};
+Math::Math(std::string p_name, double p_value):name(p_name),value(p_value) 
+{
+	type = "Math";
+};
 
 Math::~Math() {}
 
@@ -30,11 +33,10 @@ void Math::div(std::vector<string> names, std::map<string, Variable*> map)
 	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()/dynamic_cast<Math*>(map[names[1]])->getValue());
 }
 
-template <typename T>
-void Math::assign(T b)
+void Math::assign(std::vector<string> names, std::map<string, Variable*> map)
 {
 	//maybe should make Math::setValue assign rather than other way round
-	this->setValue(b.getValue);
+	value = (dynamic_cast<Math*>(map[names[0]]))->getValue();
 }
 
 void Math::add(std::vector<string> names, std::map<string, Variable*> map)

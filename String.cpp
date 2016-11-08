@@ -1,7 +1,9 @@
 #include "String.h"
 
-String::String(string p_name, string p_value):
-	name(p_name), value(p_value){};
+String::String(string p_name, string p_value):name(p_name), value(p_value)
+{
+	type = "String";
+};
 
 String::~String() {};
 

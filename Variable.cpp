@@ -4,13 +4,17 @@ string Variable::getName() {
 	return name;
 }
 
-template <typename T>
-void Variable::setValue(T val) {
-	value = val;
+string Variable::getType() {
+	return this->type;
 }
 
+// template <typename T>
+// void Variable::setValue(T val) {
+// 	value = val;
+// }
+
 string Variable::getStringValue() {
-	return value;
+	return val;
 }
 
 void Variable::sleep(int sec) {
@@ -19,4 +23,5 @@ void Variable::sleep(int sec) {
 
 void Variable::out() {
 	cout << getStringValue() << endl;
+	//outfile << this->value << endl;
 }
