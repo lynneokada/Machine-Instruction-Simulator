@@ -19,11 +19,13 @@ const char* const DELIMITER_COMMA = ",";
 vector<string> v_test;
 vector< vector<string> > v_line;
 string LINE;
-std::map<string, Variable*> variables;
+std::map<string, Variable*> constructors;
 
 std::map<string, Math*> instruction_math_map;
 std::map<string, String*> instruction_string_map;
 std::map<string, Char*> instruction_char_map;
+
+std::map<string, Variable*> variables;
 
 // declare types and maps
 typedef void(Math::*mathFunction)(vector<string>, map<string, Variable*>);
@@ -37,12 +39,12 @@ std::map<std::string, mathFunction> mathInstructions;
 
 Mis::Mis() {
 	//map that stores all of the default constructors
-	variables["VARIABLE"] = new Variable();
-	variables["MATH"] = new Math();
-	variables["NUMERIC"] = new Numeric();
-	variables["CHAR"] = new Char();
-	variables["STRING"] = new String();
-	variables["REAL"] = new Real();
+	// constructors["VARIABLE"] = new Variable();
+	// constructors["MATH"] = new Math();
+	// constructors["NUMERIC"] = new Numeric();
+	// constructors["CHAR"] = new Char();
+	// constructors["STRING"] = new String();
+	// constructors["REAL"] = new Real();
 
 	mathInstructions["ADD"] = &Math::add;
 	mathInstructions["MUL"] = &Math::mul;
@@ -131,17 +133,21 @@ void Mis::find_instruction(string instruction_type, string name, string value) {
 }
 
 void Mis::create_variable(string var_type, string name, string value) {
-	// Variable *obj = variables[instruction_type](name, value);
+	// Variable *obj = constructors[instruction_type](name, value);
 	// obj->out();
 
 	if (var_type == "REAL") {
 		double real_value = stod(value);
+		variables[name] = new Real(name, real_value);
 	} else if (var_type == "NUMERIC") {
 		int num_value = stoi(value);
+		variables[name] = new Numeric(name, num_value);
 	} else if (var_type == "STRING") {
 		string string_value = value;
+		variables[name] = new String(name, string_value);
 	} else if (var_type == "CHAR") {
-		const char *char_value = value.c_str();
+		char char_value = value[0];
+		variables[name] = new Char(name, char_value);
 	} else {
 		cout << "wrong" << endl;
 		return;
@@ -160,30 +166,31 @@ Mis::~Mis() {}
 
 int main(int argc, char *argv[]) {
 
-//------------Working example of jump functionality-----------------
-	Jump a;
-	std::vector<string> v;
-	// v.push_back("Label");
-	v.push_back("b");
-	v.push_back("c");
-	string type = "JMPLT";
-	std::map<string, Variable*> map;
-	Math *b = new Math("testing", 45.0);
-
-	Math *c = new Math("test", 12.0);
-	map["b"] = b;
-	map["c"] = c;
-	Math d;
-	d.add(v, map);
-	d.out();
-
-	a.storeLabel("Label", 6);
-	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
-//------------------------------------------------------------------
-
 	Mis mis;
 	ifstream input_file (argv[1]);
 	mis.parse_file(input_file);
+
+//------------Working example of jump functionality-----------------
+	// Jump a;
+	// std::vector<string> v;
+	// // v.push_back("Label");
+	// v.push_back("b");
+	// v.push_back("c");
+	// string type = "JMPLT";
+	// std::map<string, Variable*> map;
+	// Math *b = new Math("testing", 45.0);
+
+	// Math *c = new Math("test", 12.0);
+	// map["b"] = b;
+	// map["c"] = c;
+	// Math d;
+	// d.add(v, map);
+	// d.out();
+
+	// a.storeLabel("Label", 6);
+	// cout << a.compare(v, type, map); //compare is only interaction needed with JMP object
+//------------------------------------------------------------------
+
 
 	for (int i=0; i<v_line.size(); i++) {
 		// if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
