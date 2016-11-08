@@ -14,7 +14,7 @@ class Jump
 		Jump();
 		~Jump();
 		void storeLabel(string names, int lineNum);
-		int compare(vector<string> names, string type, map<string, Variable*> variables);
+		int compare(vector<string> names, string type, map<string, Math*> variables);
 		template <typename T> int zero(T var);
 		template <typename T> int notZero(T var);
 		template <typename T, typename W> int greater(T varA, W varB);

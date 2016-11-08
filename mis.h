@@ -15,6 +15,7 @@
 class Mis {
 public:
 	Mis();	// constructor
+	Jump jmp;
 	void parse_file(ifstream & input_file);
 	void find_instruction(string instruction_type, string name, string value);
 	void create_variable(string var_type, string name, string value);

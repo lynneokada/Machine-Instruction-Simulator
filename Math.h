@@ -15,14 +15,16 @@ class Math : public Variable
 	public:
 		Math(std::string p_name = "", double p_value= 0.0);
 		virtual ~Math();
-		void add(std::vector<string> names, std::map<string, Variable*> map);
-		void sub(std::vector<string> names, std::map<string, Variable*> map);
-		void mul(std::vector<string> names, std::map<string, Variable*> map);
-		void div(std::vector<string> names, std::map<string, Variable*> map);
-		// template <typename T> void assign(T b);
-		void assign(std::vector<string> names, std::map<string, Variable*> map);
+		void add(std::vector<string> names, std::map<string, Math*> map);
+		void sub(std::vector<string> names, std::map<string, Math*> map);
+		void mul(std::vector<string> names, std::map<string, Math*> map);
+		void div(std::vector<string> names, std::map<string, Math*> map);
 		virtual void out();
-		double getValue();
+		virtual double getValue();
+		void setValue(std::vector<string> names, std::map<string, Math*> map);
+		void setValue(int value);
+		void setValue(double val, Math &test);
+		//can use template for function params but still needs to return 
 };
 
 #endif

@@ -24,6 +24,8 @@ public:
 	string getStringValue();
 	// template <typename T> void setValue(T val);
 	virtual void out();
+	void setValue(char value);
+	void setValue(string value);
 };
 
 #endif

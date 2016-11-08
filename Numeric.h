@@ -10,6 +10,7 @@ class Numeric : public Math
 		int value;
 	public:
 		Numeric(std::string p_name="", int p_value=0);
+		double getValue();
 		~Numeric();
 		void out();
 };

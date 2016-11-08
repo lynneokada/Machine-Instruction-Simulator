@@ -23,45 +23,74 @@ void Math::out()
 	printf("%f\n", value);
 }
 
-void Math::sub(std::vector<string> names, std::map<string, Variable*> map)
+void Math::sub(std::vector<string> names, std::map<string, Math*> map)
 {
-	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()-dynamic_cast<Math*>(map[names[1]])->getValue());
+	value = decltype(value)((map[names[0]])->getValue() - map[names[1]]->getValue());
 }
 
-void Math::div(std::vector<string> names, std::map<string, Variable*> map)
+void Math::div(std::vector<string> names, std::map<string, Math*> map)
 {
-	value = decltype(value)(dynamic_cast<Math*>(map[names[0]])->getValue()/dynamic_cast<Math*>(map[names[1]])->getValue());
+	value = decltype(value)((map[names[0]])->getValue()/map[names[1]]->getValue());
 }
 
-void Math::assign(std::vector<string> names, std::map<string, Variable*> map)
-{
-	//maybe should make Math::setValue assign rather than other way round
-	value = (dynamic_cast<Math*>(map[names[0]]))->getValue();
-}
 
-void Math::add(std::vector<string> names, std::map<string, Variable*> map)
+
+// template <typename T>
+// void assign(T param)
+// {
+// 	//maybe should make Math::setValue assign rather than other way round
+// 	if(getType() == "Numeric")
+// 		value = (int)param->getValue();
+// 	else
+// 		value = (double)param->getValue();
+// }
+
+void Math::add(std::vector<string> names, std::map<string, Math*> map)
 {
+	cout << "Math::add" << endl;
 	decltype(value) sum = 0;
-	for (int i = 0; i < names.size(); ++i)
+	for (unsigned int i = 0; i < names.size(); ++i)
 	{
-		sum += dynamic_cast<Math*>(map[names[i]])->getValue();
+		cout << "loop i: " << i << endl;
+		sum += map[names[i]]->getValue();
 	}
 	value = sum;
+	cout << "Math::add finish" << endl;
 }
 
-void Math::mul(std::vector<string> names, std::map<string, Variable*> map)
+void Math::mul(std::vector<string> names, std::map<string, Math*> map)
 {
 	decltype(value) product = 0;
-	for (int i = 0; i < names.size(); ++i)
+	for (unsigned int i = 0; i < names.size(); ++i)
 	{
-		product *= dynamic_cast<Math*>(map[names[i]])->getValue();
+		product *= map[names[i]]->getValue();
 	}
 	value = product;
 }
 
 double Math::getValue()
 {
-	return this->value;
+	return value;
+}
+
+void Math::setValue(std::vector<string> names, std::map<string, Math*> map)
+{	
+	// value = map[names[0]]->getValue();
+	value = 6;
+}
+
+void Math::setValue(double val, Math &test)
+{
+	cout << "Math::setValue double: " << val << endl;
+	Math *casted = dynamic_cast<Math*>(&test);
+	casted->value = val;
+	cout << value << endl;
+}
+
+void Math::setValue(int val)
+{
+	cout << "Math::setValue int: " << val <<  endl;
+	value = val;
 }
 
 // int main()

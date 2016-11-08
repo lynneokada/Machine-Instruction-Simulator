@@ -1,4 +1,5 @@
 #include "mis.h"
+#include <typeinfo>
 
 using std::cout;
 using std::endl;
@@ -17,63 +18,48 @@ const char* const DELIMITER_COMMA = ",";
 
 // declare vectors
 vector<string> v_test;
-vector< vector<string> > v_line;
+vector<vector<string>> v_line;
 string LINE;
-std::map<string, Variable*> constructors;
 
-std::map<string, Math*> instruction_math_map;
-std::map<string, String*> instruction_string_map;
-std::map<string, Char*> instruction_char_map;
+// std::map<string, Math*> instruction_math_map;
+// std::map<string, String*> instruction_string_map;
+// std::map<string, Char*> instruction_char_map;
 
-std::map<string, Variable*> variables;
+std::map<string, Math*> mathVariables;
+std::map<string, String*> stringVariables;
+std::map<string, Char*> charVariables;
 
 // declare types and maps
-typedef void(Math::*mathFunction)(vector<string>, map<string, Variable*>);
+typedef void(Math::*mathFunction)(vector<string>, map<string, Math*>);
 
-typedef int(Char::*charFunction)(Variable*);
-typedef int(String::*strFunction)(Variable*, Variable*);
-typedef int(Jump::*jumpFunction)(vector<string>, string, map<string, Variable*>);
-
-std::map<std::string, jumpFunction> jumpInstructions; //may not need
 std::map<std::string, mathFunction> mathInstructions;
 
 Mis::Mis() {
-	//map that stores all of the default constructors
-	// constructors["VARIABLE"] = new Variable();
-	// constructors["MATH"] = new Math();
-	// constructors["NUMERIC"] = new Numeric();
-	// constructors["CHAR"] = new Char();
-	// constructors["STRING"] = new String();
-	// constructors["REAL"] = new Real();
-
 	mathInstructions["ADD"] = &Math::add;
 	mathInstructions["MUL"] = &Math::mul;
 	mathInstructions["DIV"] = &Math::div;
 	mathInstructions["SUB"] = &Math::sub;
-	mathInstructions["ASSIGN"] = &Math::assign;
+	mathInstructions["ASSIGN"] = &Math::setValue;
 }
 
 void Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
 
-	if (i == string::npos || filename.substr(i, 
-		filename.length()-i) != ".mis") {
+	if (i == string::npos || filename.substr(i, filename.length()-i) != ".mis") {
         cerr << "Incorrect input file. Please provide a .mis file" << endl;
         exit(EXIT_FAILURE);
     }
 
 	string basefile(basename(const_cast<char*> (filename.c_str())));
 
-    char* out = strdup((basefile.substr(0, basefile.length()-3) + 
-                        "out").c_str());
+    char* out = strdup((basefile.substr(0, basefile.length()-3) + "out").c_str());
     outfile.open(out);
     if (!outfile.is_open()) {
         cerr << "Error opening outfile";
         exit(EXIT_FAILURE);
     }
 
-    char* err = strdup((basefile.substr(0, basefile.length()-3) + 
-                        "err").c_str());
+    char* err = strdup((basefile.substr(0, basefile.length()-3) + "err").c_str());
     errfile.open(err);
     if (!errfile.is_open()) {
     	cerr << "Error opening errfile";
@@ -112,7 +98,14 @@ void Mis::parse_file(ifstream & input_file) {
   		while (p!=0)
   		{
     		v_args.push_back(p);
+    		cout << "p: " << p << endl;
     		p = std::strtok(NULL,DELIMITER_COMMA);
+ 		}
+
+ 		// cout << "last paaram: " << v_args.back() << endl;
+
+ 		if(v_args.back().back() == '\r') {
+ 			v_args.back().pop_back();
  		}
 
 		v_line.push_back(v_args);	// add arguments to v_line 
@@ -133,33 +126,34 @@ void Mis::find_instruction(string instruction_type, string name, string value) {
 }
 
 void Mis::create_variable(string var_type, string name, string value) {
-	// Variable *obj = constructors[instruction_type](name, value);
-	// obj->out();
 
 	if (var_type == "REAL") {
 		double real_value = stod(value);
-		variables[name] = new Real(name, real_value);
+		mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
+		// mathVariables[name] = new Real(name, real_value);
 	} else if (var_type == "NUMERIC") {
 		int num_value = stoi(value);
-		variables[name] = new Numeric(name, num_value);
+		mathVariables.insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
+		mathVariables[name] = new Numeric(name, num_value);
 	} else if (var_type == "STRING") {
 		string string_value = value;
-		variables[name] = new String(name, string_value);
+		stringVariables[name] = new String(name, string_value);
 	} else if (var_type == "CHAR") {
 		char char_value = value[0];
-		variables[name] = new Char(name, char_value);
+		charVariables[name] = new Char(name, char_value);
 	} else {
 		cout << "wrong" << endl;
-		return;
 	}
 }
 
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;
-	for(int j = 2; j < v_single_line.size(); j++){
+	for(unsigned int j = 2; j < v_single_line.size(); ++j){
 		cout << "push_back " << v_line[index][j] << endl;
 		params.push_back(v_line[index][j]);
 	}
+	cout << "Finished" << endl;
+	return params;
 }
 
 Mis::~Mis() {}
@@ -167,8 +161,26 @@ Mis::~Mis() {}
 int main(int argc, char *argv[]) {
 
 	Mis mis;
+	// mis.jmp.storeLabel("Lab", 12);
 	ifstream input_file (argv[1]);
 	mis.parse_file(input_file);
+
+	// Math *a = new Math("name", 12.1);
+	// Math *b = new Math("test", 150.3);
+	// a->out();
+	// a->setValue(b->getValue());
+	// a->out();
+
+	// Numeric *a = new Numeric("test", 12.12);
+	// Real *b = new Real("testing", 12.12);
+	// cout << a->getValue() << endl;
+	// cout << b->getValue() << endl;
+	// a->out();
+	// std::map<string, Math*> map;
+	// map["test"] = a;
+	// map["testing"] = b;
+	// map["testing"]->out();
+
 
 //------------Working example of jump functionality-----------------
 	// Jump a;
@@ -192,53 +204,88 @@ int main(int argc, char *argv[]) {
 //------------------------------------------------------------------
 
 
-	for (int i=0; i<v_line.size(); i++) {
-		// if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
-		// {
-		// 	//then use Char function map
-		// }
-
-		// if(variables[v_line[i][1]]->getType() == "Real" || variables[v_line[i][1]]->getType() == "Numeric")
-		// {
-		// 	vector<string> params = mis.obtain_args(i, v_line[i]);
-
-		// 	(dynamic_cast<Math*>(variables[v_line[i][1]])->*mathInstructions[v_line[i][0]])(params, variables);
-		// }
-
-		// if(variables[v_line[i][1]]->getType() == "String")
-		// {
-		// 	//then use String function map
-		// }
+	for (unsigned int i=0; i<v_line.size(); i++) {
+		string var = v_line[i][1];
 
 		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
 			mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);
-		} else if (v_line[i][0] == "ADD") {
+		} 
+		else if (v_line[i][0] == "ADD") {
+
 			vector<string> params = mis.obtain_args(i,v_line[i]);
-			// a->add(params, variables);
+			mathVariables[var]->add(params, mathVariables);
+
 		} else if (v_line[i][0] == "SUB") {
+
 			vector<string> params = mis.obtain_args(i,v_line[i]);
-			// a->sub(params, variables);
+			mathVariables[var]->sub(params, mathVariables);
+
 		} else if (v_line[i][0] == "MUL") {
+
 			vector<string> params = mis.obtain_args(i,v_line[i]);
+			mathVariables[var]->mul(params, mathVariables);
+
 			// a->mul(params, variables);
 		} else if (v_line[i][0] == "DIV") {
+
 			vector<string> params = mis.obtain_args(i,v_line[i]);
-			// a->div(params, variables);
+			mathVariables[var]->div(params, mathVariables);
+
 		} else if (v_line[i][0] == "ASSIGN") { //<-----should be same for all types
-			// this->setValue(value);
+			
+			//vector<string> params = mis.obtain_args(i,v_line[i]);
+
+			if(mathVariables.find(var) != mathVariables.end()) {
+				cout << "Math found" << endl;
+				// Math *first = (mathVariables[v_line[i][1]]);
+				// Math *second = (mathVariables[v_line[i][2]]);
+				cout << typeid(mathVariables[v_line[i][2]]).name() << endl;
+				// mathVariables[v_line[i][2]]->setValue(2);
+
+
+				cout << "1st value: " << mathVariables[v_line[i][1]]->getValue() << endl;
+				cout << "Second value: " << mathVariables[v_line[i][2]]->getValue() << endl;
+
+				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
+				map<string, Math*>::iterator itTwo =  mathVariables.find(v_line[i][2]);
+
+				mathVariables[v_line[i][1]]->setValue(mathVariables[v_line[i][2]]->getValue(), *mathVariables[v_line[i][2]]);
+				itOne->second->out();
+				cout << "test" << endl;
+
+				cout << "Set to: " << mathVariables[v_line[i][1]]->getValue() << endl;
+			} else if(charVariables.find(var) != charVariables.end()) {
+				cout << "Char found" << endl;
+				Char *first = (charVariables[v_line[i][1]]);
+				Char *second = (charVariables[v_line[i][2]]);
+				first->setValue(second->getValue());
+			} else if(stringVariables.find(var) != stringVariables.end()) {
+				cout << "Str found" << endl;
+				String *first = (stringVariables[v_line[i][1]]);
+				String *second = (stringVariables[v_line[i][2]]);
+				first->setValue(second->getValue());
+			}
+
+
+
 		} else if (v_line[i][0] == "OUT") { //<--- should work for most all
 
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
-		} else if (v_line[i][0] == "LABEL") {
-			Jump a;
-			// a.storeLabel();
+		} else if (v_line[i][0] == "LABEL") { //need to preprocess this in beginning of scan
+			//mis.jmp.storeLabel(v_line[i][1], v_line[i][2]);
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 
+			// mis.jmp.compare();
+		}
+		else
+		{
+			//something went wrong
+		
 		}
 	}
 	

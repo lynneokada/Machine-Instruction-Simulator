@@ -12,10 +12,14 @@ Numeric::~Numeric(){};
 // int Numeric::getValue() {
 // 	return this->value;
 // }
+double Numeric::getValue()
+{
+	return (double)value;
+}
 
 void Numeric::out()
 {
-	std::cout << getValue() << std::endl;
+	std::cout << value << std::endl;
 }
 // int main()
 // {
