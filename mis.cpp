@@ -53,8 +53,22 @@ Mis::Mis() {
 	mathInstructions["ASSIGN"] = &Math::assign;
 }
 
-void Mis::openFiles(string filename) {
+ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
+
+	ifstream infile(filename);
+	if (infile.fail()) {
+		cerr << "Error opening file " << filename <<endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// try {
+	// 	infile.open(filename);
+	// }
+	// catch (std::ios_base::failure& e) {
+	// 	cerr << e.what() << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	if (i == string::npos || filename.substr(i, 
 		filename.length()-i) != ".mis") {
@@ -79,6 +93,8 @@ void Mis::openFiles(string filename) {
     	cerr << "Error opening errfile";
     	exit(EXIT_FAILURE);
     }
+
+    return infile;
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -167,7 +183,7 @@ Mis::~Mis() {}
 int main(int argc, char *argv[]) {
 
 	Mis mis;
-	ifstream input_file (argv[1]);
+	ifstream input_file = mis.openFiles(argv[1]);
 	mis.parse_file(input_file);
 
 //------------Working example of jump functionality-----------------
@@ -243,4 +259,20 @@ int main(int argc, char *argv[]) {
 	}
 	
 	return 0;
+
+	// Mis mis;
+	// Numeric a("$var1", 12);
+
+	// string filename = argv[argc-1];
+	// ifstream testStream = mis.openFiles(filename);
+
+	// mis.parse_file(testStream);
+
+	// cout << a.getValue() << endl;
+	// cout << "test " << a.getName() << endl;
+	// a.out();
+
+	// outfile << "test" <<endl;
+
+	// return 0;
 }

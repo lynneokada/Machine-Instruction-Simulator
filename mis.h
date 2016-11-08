@@ -19,6 +19,6 @@ public:
 	void find_instruction(string instruction_type, string name, string value);
 	void create_variable(string var_type, string name, string value);
 	vector<string> obtain_args(int index, vector<string> v_single_line);
-	void openFiles(string filename);
+	ifstream openFiles(string filename);
 	~Mis();	// destructor
 };
