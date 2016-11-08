@@ -34,7 +34,7 @@ typedef void(Math::*mathFunction)(vector<string>, map<string, Math*>);
 
 std::map<std::string, mathFunction> mathInstructions;
 
-Mis::Mis() {
+Mis::Mis() {	// constructor
 	mathInstructions["ADD"] = &Math::add;
 	mathInstructions["MUL"] = &Math::mul;
 	mathInstructions["DIV"] = &Math::div;
@@ -42,10 +42,26 @@ Mis::Mis() {
 	mathInstructions["ASSIGN"] = &Math::setValue;
 }
 
-void Mis::openFiles(string filename) {
+ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
 
 	if (i == string::npos || filename.substr(i, filename.length()-i) != ".mis") {
+	ifstream infile(filename);
+	if (infile.fail()) {
+		cerr << "Error opening file " << filename <<endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// try {
+	// 	infile.open(filename);
+	// }
+	// catch (std::ios_base::failure& e) {
+	// 	cerr << e.what() << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
+
+	if (i == string::npos || filename.substr(i, 
+		filename.length()-i) != ".mis") {
         cerr << "Incorrect input file. Please provide a .mis file" << endl;
         exit(EXIT_FAILURE);
     }
@@ -65,6 +81,8 @@ void Mis::openFiles(string filename) {
     	cerr << "Error opening errfile";
     	exit(EXIT_FAILURE);
     }
+
+    return infile;
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -126,7 +144,6 @@ void Mis::find_instruction(string instruction_type, string name, string value) {
 }
 
 void Mis::create_variable(string var_type, string name, string value) {
-
 	if (var_type == "REAL") {
 		double real_value = stod(value);
 		mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
@@ -146,19 +163,54 @@ void Mis::create_variable(string var_type, string name, string value) {
 	}
 }
 
-vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
-	vector<string> params;
-	for(unsigned int j = 2; j < v_single_line.size(); ++j){
-		cout << "push_back " << v_line[index][j] << endl;
-		params.push_back(v_line[index][j]);
+// vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
+// 	vector<string> params;
+// 	for(unsigned int j = 2; j < v_single_line.size(); ++j){
+// 		cout << "push_back " << v_line[index][j] << endl;
+// 		params.push_back(v_line[index][j]);
+// 	}
+// 	cout << "Finished" << endl;
+
+vector<Math*> Mis::obtain_args(int index, vector<string> v_single_line) {
+	vector<Math*> params;	// returning vector
+	// populate params with arguments for operations
+	for(int j = 2; j < v_single_line.size(); j++){
+
+		if (v_single_line[j][0] == '$') {	// find variable names
+			// search name in variables map and obtain value
+			cout << "this is a variable" << endl;
+			params.push_back(mathVariables[v_single_line[j]]);
+		} else  {
+			int ch;
+			for (int k = 0; k < v_single_line[j].size(); k++) {
+				ch = v_single_line[j][k];
+				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' 
+					|| ch == '.') {
+					// validate individual characters
+				} else {
+					cout << v_single_line[j] << " is not a valid argument." << endl;
+					exit(EXIT_FAILURE);
+				}		
+			}
+			// cast double value as Math
+			double d = stod(v_single_line[j]);
+			Math * myD = new Math(v_single_line[j], d);
+			// add Math object to params vector
+			cout << "push_back " << v_line[index][j] << endl;
+			params.push_back(myD);
+		}
 	}
-	cout << "Finished" << endl;
+
+	for (int a=0; a<params.size(); a++) {
+		cout << "push back " << params[a] << endl;
+	}
 	return params;
 }
 
-Mis::~Mis() {}
+Mis::~Mis() {} // destructor
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
 
 	Mis mis;
 	// mis.jmp.storeLabel("Lab", 12);
@@ -204,9 +256,12 @@ int main(int argc, char *argv[]) {
 //------------------------------------------------------------------
 
 
-	for (unsigned int i=0; i<v_line.size(); i++) {
-		string var = v_line[i][1];
+	ifstream input_file = mis.openFiles(argv[1]);
+	mis.parse_file(input_file);
 
+	for (int i=0; i<v_line.size(); i++) {
+
+		string var = v_line[i][1];
 		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
@@ -287,7 +342,24 @@ int main(int argc, char *argv[]) {
 			//something went wrong
 		
 		}
+	
 	}
 	
+	// return 0;
+
+	// Mis mis;
+	// Numeric a("$var1", 12);
+
+	// string filename = argv[argc-1];
+	// ifstream testStream = mis.openFiles(filename);
+
+	// mis.parse_file(testStream);
+
+	// cout << a.getValue() << endl;
+	// cout << "test " << a.getName() << endl;
+	// a.out();
+
+	// outfile << "test" <<endl;
+
 	return 0;
 }
