@@ -23,7 +23,7 @@ class Math : public Variable
 		virtual double getValue();
 		void setValue(std::vector<string> names, std::map<string, Math*> map);
 		void setValue(int value);
-		void setValue(double val, Math &test);
+		void setValue(double val);
 		//can use template for function params but still needs to return 
 };
 

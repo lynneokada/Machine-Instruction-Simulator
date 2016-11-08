@@ -79,11 +79,11 @@ void Math::setValue(std::vector<string> names, std::map<string, Math*> map)
 	value = 6;
 }
 
-void Math::setValue(double val, Math &test)
+void Math::setValue(double val)
 {
 	cout << "Math::setValue double: " << val << endl;
-	Math *casted = dynamic_cast<Math*>(&test);
-	casted->value = val;
+	// Math *casted = dynamic_cast<Math*>(&test);
+	value = val;
 	cout << value << endl;
 }
 

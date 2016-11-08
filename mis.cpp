@@ -84,6 +84,7 @@ ifstream Mis::openFiles(string filename) {
 
     return infile;
 }
+}
 
 void Mis::parse_file(ifstream & input_file) {
 	// check if file input is valid
@@ -171,33 +172,45 @@ void Mis::create_variable(string var_type, string name, string value) {
 // 	}
 // 	cout << "Finished" << endl;
 
-vector<Math*> Mis::obtain_args(int index, vector<string> v_single_line) {
-	vector<Math*> params;	// returning vector
+vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
+	vector<string> params;	// returning vector
 	// populate params with arguments for operations
 	for(int j = 2; j < v_single_line.size(); j++){
 
 		if (v_single_line[j][0] == '$') {	// find variable names
 			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
-			params.push_back(mathVariables[v_single_line[j]]);
-		} else  {
+			params.push_back(v_single_line[j]);
+		} 
+		else if (v_single_line[j].find_first_not_of("0123456789") == string::npos) {
+			//has to be either a char or a string
+			std::regex rgx("(\"[^\"]*\")||('[^\"]*')");
+			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
+			auto end = std::sregex_iterator();
+			string capture = "";
+			for (std::sregex_iterator i = begin; i != end; ++i) {
+		        std::smatch match = *i;                                                 
+		        std::string match_str = match.str(); 
+		        capture.append(match_str);
+		    }
+		} else {
 			int ch;
 			for (int k = 0; k < v_single_line[j].size(); k++) {
 				ch = v_single_line[j][k];
-				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' 
-					|| ch == '.') {
+				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' || ch == '.') {
 					// validate individual characters
 				} else {
 					cout << v_single_line[j] << " is not a valid argument." << endl;
 					exit(EXIT_FAILURE);
-				}		
+				}
 			}
 			// cast double value as Math
 			double d = stod(v_single_line[j]);
 			Math * myD = new Math(v_single_line[j], d);
-			// add Math object to params vector
+			mathVariables[v_single_line[j]] = myD;
+			// add Math object title to params vector
 			cout << "push_back " << v_line[index][j] << endl;
-			params.push_back(myD);
+			params.push_back(v_single_line[j]);
 		}
 	}
 
@@ -256,7 +269,7 @@ int main(int argc, char *argv[])
 //------------------------------------------------------------------
 
 
-	ifstream input_file = mis.openFiles(argv[1]);
+	input_file = mis.openFiles(argv[1]);
 	mis.parse_file(input_file);
 
 	for (int i=0; i<v_line.size(); i++) {
@@ -306,7 +319,7 @@ int main(int argc, char *argv[])
 				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
 				map<string, Math*>::iterator itTwo =  mathVariables.find(v_line[i][2]);
 
-				itOne->second->setValue(itTwo->second->getValue);
+				itOne->second->setValue(itTwo->second->getValue());
 				// itOne->second->out();
 				// cout << "test" << endl;
 
@@ -320,21 +333,33 @@ int main(int argc, char *argv[])
 				map<string, Char*>::iterator itOne =  charVariables.find(v_line[i][1]);
 				map<string, Char*>::iterator itTwo =  charVariables.find(v_line[i][2]);
 
-				itOne->second->setValue(itTwo->second->getValue);
+				itOne->second->setValue(itTwo->second->getValue());
 			} else if(stringVariables.find(var) != stringVariables.end()) {
 
 				map<string, String*>::iterator itOne =  stringVariables.find(v_line[i][1]);
 				map<string, String*>::iterator itTwo =  stringVariables.find(v_line[i][2]);
 
-				itOne->second->setValue(itTwo->second->getValue); //--------------double check if its actually setValue
+				itOne->second->setValue(itTwo->second->getValue()); //--------------double check if its actually setValue
 				// cout << "Str found" << endl;
 				// String *first = (stringVariables[v_line[i][1]]);
 				// String *second = (stringVariables[v_line[i][2]]);
 				// first->setValue(second->getValue());
 			}
 
-		} else if (v_line[i][0] == "OUT") { //<--- needs work
-
+		} else if (v_line[i][0] == "OUT") {
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			for(int i = 0; i < params.size(); ++i)
+			{
+				string current = params[i];
+				if(mathVariables.find(current) != mathVariables.end())
+					mathVariables[current]->out();
+				else if(charVariables.find(current) != charVariables.end())
+					charVariables[current]->out();
+				else if(stringVariables.find(current) != stringVariables.end())
+					stringVariables[current]->out();
+				else
+					cout << "Invalid variable" << endl;
+			}
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
