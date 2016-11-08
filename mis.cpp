@@ -53,8 +53,22 @@ Mis::Mis() {
 	mathInstructions["ASSIGN"] = &Math::assign;
 }
 
-void Mis::openFiles(string filename) {
+ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
+
+	ifstream infile(filename);
+	if (infile.fail()) {
+		cerr << "Error opening file " << filename <<endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// try {
+	// 	infile.open(filename);
+	// }
+	// catch (std::ios_base::failure& e) {
+	// 	cerr << e.what() << endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	if (i == string::npos || filename.substr(i, 
 		filename.length()-i) != ".mis") {
@@ -79,6 +93,8 @@ void Mis::openFiles(string filename) {
     	cerr << "Error opening errfile";
     	exit(EXIT_FAILURE);
     }
+
+    return infile;
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -133,9 +149,7 @@ void Mis::find_instruction(string instruction_type, string name, string value) {
 }
 
 void Mis::create_variable(string var_type, string name, string value) {
-	// Variable *obj = constructors[instruction_type](name, value);
-	// obj->out();
-
+	
 	if (var_type == "REAL") {
 		double real_value = stod(value);
 		variables[name] = new Real(name, real_value);
@@ -155,9 +169,12 @@ void Mis::create_variable(string var_type, string name, string value) {
 }
 
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
-	vector<string> params;
+	vector<string> params;	// returning vector
+	// populate params with arguments for operations
 	for(int j = 2; j < v_single_line.size(); j++){
 		cout << "push_back " << v_line[index][j] << endl;
+
+		// convert  
 		params.push_back(v_line[index][j]);
 	}
 }
@@ -167,7 +184,7 @@ Mis::~Mis() {}
 int main(int argc, char *argv[]) {
 
 	Mis mis;
-	ifstream input_file (argv[1]);
+	ifstream input_file = mis.openFiles(argv[1]);
 	mis.parse_file(input_file);
 
 //------------Working example of jump functionality-----------------
@@ -193,6 +210,8 @@ int main(int argc, char *argv[]) {
 
 
 	for (int i=0; i<v_line.size(); i++) {
+		cout << v_line[i][0] << endl;
+
 		// if(variables[v_line[i][1]]->getType() == "Char") //DOUBLE CHECK IF THIS IS THE CORRECT LINE TO LOOK AT
 		// {
 		// 	//then use Char function map
@@ -209,8 +228,6 @@ int main(int argc, char *argv[]) {
 		// {
 		// 	//then use String function map
 		// }
-
-		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
 			mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);

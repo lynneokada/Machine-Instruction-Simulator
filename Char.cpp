@@ -18,7 +18,6 @@ void Char::setValue(char val) {
 	cout << "Value of " << this->name << " is now " << this->value << endl;
 }
 
-
 // int main() {
 // 	Char *ch = new Char();
 
