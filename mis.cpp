@@ -172,19 +172,43 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;	// returning vector
 	// populate params with arguments for operations
 	for(int j = 2; j < v_single_line.size(); j++){
-		cout << "push_back " << v_line[index][j] << endl;
+		
 
-		//convert to double
+		// //convert to double
+		// if (v_single_line[j][0] == '$') {
+		// 	cout << "this is a variable" << endl;
+		// 	params.push_back(v_line[index][j]);
+		// } else {
+		// 	char *a;
+		// 	double d = stod(v_single_line[j]);
+		// 	cout << d << endl;
+		// 	params.push_back(v_line[index][j]);
+		// }
+
 		if (v_single_line[j][0] == '$') {
 			cout << "this is a variable" << endl;
-			params.push_back(v_line[index][j]);
-		} else {
+		} else  {
+			int ch;
+			for (int k = 0; k < v_single_line[j].size(); k++) {
+				ch = v_single_line[j][k];
+				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' 
+					|| ch == '.') {
+					
+				} else {
+					cout << v_single_line[j] << " is not a valid argument." << endl;
+					break;
+				}		
+			}
 			char *a;
 			double d = stod(v_single_line[j]);
 			cout << d << endl;
+
+			cout << "push_back " << v_line[index][j] << endl;
 			params.push_back(v_line[index][j]);
 		}
 	}
+
+	return params;
 }
 
 Mis::~Mis() {}
