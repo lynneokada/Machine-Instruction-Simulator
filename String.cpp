@@ -1,5 +1,6 @@
 #include "String.h"
 
+// constructor
 String::String(string p_name, string p_value, int max):name(p_name), size(max)
 {
 	if(p_value.length() <= max && max <= 256) {
@@ -17,12 +18,16 @@ String::String(string p_name, string p_value, int max):name(p_name), size(max)
 	std::cout << "String created" << std::endl;
 };
 
+// destructor
 String::~String() {};
 
+// returns the value of this object
 string String::getValue() {
 	return this->value;
 }
 
+// set the character of this object's string value at
+// the given index to the given character
 void String::setStrChar(Math* index, Char *ch) {
 	int i = index->getValue();
 
@@ -34,6 +39,8 @@ void String::setStrChar(Math* index, Char *ch) {
 	}
 }
 
+// set the given character to the character at the given
+// index of this object's string
 void String::getStrChar(Math* index, Char *ch) {
 	int i = index->getValue();
 
@@ -45,10 +52,12 @@ void String::getStrChar(Math* index, Char *ch) {
 	}
 }
 
+// print out this object's value
 void String::out() {
 	cout << value << endl;
 }
 
+// set this object's value to the string specified by val
 void String::setValue(string val) {
 
 	value = val;
