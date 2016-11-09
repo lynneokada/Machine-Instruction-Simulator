@@ -15,8 +15,6 @@ string String::getValue() {
 void String::setStrChar(Math* index, Char &ch) {
 	int i = index->getValue();
 
-
-
 	if (i < this->value.length() && i >= 0) {
 		this->value[i] = ch.getValue();
 	} else {

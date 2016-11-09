@@ -174,16 +174,16 @@ void Mis::create_variable(string var_type, string name, string value) {
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;	// returning vector
 	// populate params with arguments for operations
-	for(int j = 2; j < v_single_line.size(); j++){
-
+	for(int j = 2; j < v_single_line.size(); j++) {
+		string paramName = v_single_line[j];
 		if (v_single_line[j][0] == '$') {	// find variable names
 			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
-			params.push_back(v_single_line[j]);
+			params.push_back(paramName);
 		} 
-		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 1) {
+		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
 			//is a char
-			std::regex rgx("('[^\"]*')");
+			std::regex rgx("('[^\"]')");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			char capture;
@@ -193,8 +193,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		 //        std::string match_str = match.str(); 
 		 //        capture.append(match_str);
 		 //    }
-		} else if(v_single_line[j].find_first_of("\"") != string::npos && v_single_line[j].size() != 1) {
-			//is a string
+		} else if(v_single_line[j].find_first_of("\"") != string::npos) { //check for string
 			std::regex rgx("(\"[^\"]*\")");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -204,14 +203,15 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		        std::string match_str = match.str(); 
 		        capture.append(match_str);
 		    }
-		    //do object wrapping
+		    String* myString = new String(paramName, capture);
+		    stringVariables[paramName] = myString;
+		    params.push_back(paramName);
 		} else {
 			int ch;
 			for (int k = 0; k < v_single_line[j].size(); k++) {
 				ch = v_single_line[j][k];
-				if (('0' <= ch && ch <= '9') || ch == '+' || ch == '-' || ch == '.') {
+				if (!(('0' <= ch && ch <= '9') || ch == '+' || ch == '-' || ch == '.')) {
 					// validate individual characters
-				} else {
 					cout << v_single_line[j] << " is not a valid argument." << endl;
 					exit(EXIT_FAILURE);
 				}
@@ -219,16 +219,16 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			// cast double value as Math
 			double d = stod(v_single_line[j]);
 			Math * myD = new Math(v_single_line[j], d);
-			mathVariables[v_single_line[j]] = myD;
+			mathVariables[paramName] = myD;
 			// add Math object title to params vector
 			cout << "push_back " << v_line[index][j] << endl;
-			params.push_back(v_single_line[j]);
+			params.push_back(paramName);
 		}
 	}
 
-	for (int a=0; a<params.size(); a++) {
-		cout << "push back " << params[a] << endl;
-	}
+	// for (int a=0; a<params.size(); a++) {
+	// 	cout << "push back " << params[a] << endl;
+	// }
 	return params;
 }
 
