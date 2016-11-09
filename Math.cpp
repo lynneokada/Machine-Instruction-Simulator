@@ -77,7 +77,6 @@ double Math::getValue()
 void Math::setValue(std::vector<string> names, std::map<string, Math*> map)
 {	
 	// value = map[names[0]]->getValue();
-	value = 6;
 }
 
 void Math::setValue(double val)

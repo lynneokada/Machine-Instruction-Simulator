@@ -1,9 +1,11 @@
 VAR $myint,NUMERIC,100
 VAR $myfloat,REAL,12.14
 VAR $mychar,CHAR,'c'
+VAR $char,CHAR,'d'
 VAR $mystr,STRING,100,"Hello world MIS!!!"
 ASSIGN $myint,$myint
 ASSIGN $mystr1,$mystr2
 ASSIGN $mystr1,"This is a test string"
-SET_STR_CHAR $mystr,21,'a'
+SET_STR_CHAR $mystr,22,'a'
+GET_STR_CHAR $mystr,2,$char
 SLEEP 1
