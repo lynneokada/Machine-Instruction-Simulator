@@ -21,14 +21,14 @@ main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o MISMain.o
 	Numeric.o Real.o Jump.o MISMain.o -o main
 
 #Compilation commands:
-%.o : %.cpp
+%.o : Sourcefile/%.cpp
 	$(GPP) $(GPPFLAGS) -c $<
 
 clean :
 	- rm *.o main *.out *.err
 
 # Dependencies
-MISMain.o: MISMain.cpp mis.h 
+MISMain.o: Sourcefile/MISMain.cpp Headers/mis.h 
 mis.o: mis.cpp Variable.h Math.h String.h Char.h Numeric.h Real.h
 Variable.o: Variable.cpp Variable.h
 Math.o: Math.cpp Math.h Variable.h
