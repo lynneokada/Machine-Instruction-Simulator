@@ -23,5 +23,6 @@ public:
 	vector<string> obtain_args(int index, vector<string> v_single_line);
 	ifstream openFiles(string filename);
 	void sleep(Math* var);
+	void run();
 	~Mis();	// destructor
 };
