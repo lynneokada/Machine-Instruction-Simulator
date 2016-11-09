@@ -71,14 +71,19 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 	{
 		return labels[names[0]];
 	}
-
+	
 	if(names.size() == 2)
 	{
 		Math * param1 = variables[(names[1])];
+
 		if(variables.find(names[1]) != variables.end()) //check if first variable exists
 		{	if((this->*jumpSingle[type])(param1) == 1)
 			{
 				return labels[names[0]];
+			}
+			else
+			{
+				return -1;
 			}
 		}
 	}
@@ -92,6 +97,10 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 			if((this->*jumpDual[type])(param1, param2) == 1)
 			{
 				return labels[names[0]];
+			}
+			else
+			{
+				return -1;
 			}
 		}
 	}

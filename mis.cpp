@@ -155,6 +155,13 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		{
 			continue;
 		}
+
+		if(j == 1 && v_single_line[0].find("JMP") != string::npos) {
+			params.push_back(v_single_line[1]);
+			cout << v_single_line[1] <<endl;
+			continue;
+		}
+
 		string paramName = v_single_line[j];
 		cout << "Line contains: " << paramName << endl;
 
@@ -162,7 +169,9 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
 			params.push_back(paramName);
-		} else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
+		} 
+		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
+			cout << "Char args" << endl;
 			std::regex rgx("('[^\"]')");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -173,7 +182,6 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			params.push_back(paramName);
 
 		} else if(v_single_line[j].find_first_of("\"") != string::npos) { //check for string
-			cout << v_single_line[j] << "test";
 			std::regex rgx("(\"[^\"]*\")");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -209,7 +217,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			}
 		} else {
 			//need to throw an error or at least print "no matching types"
-			cerr << "Error: no matching types" << endl;
+			errfile << "Error: no matching types" << endl;
 		}
 	}
 	return params;
@@ -311,8 +319,10 @@ int main(int argc, char *argv[])
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = mis.obtain_args(i,v_line[i]);
 			int labelIndex = mis.jmp.compare(params, v_line[i][0], mathVariables);
-			if (labelIndex < 0 || labelIndex > v_line.size()) {
+			if(labelIndex == -2) {
 				exit(EXIT_FAILURE);
+			} else if (labelIndex == -1){
+				continue;
 			} else {
 				// cout << "current index " << i << " : jmp index " << labelIndex << endl;
 				i = labelIndex-1;
