@@ -1,14 +1,17 @@
-ADD $myint,100,20.7,300,$myint1
-MUL $myint,100,20.7,300,$myint1
-SUB $myint,100,$myint2
-DIV $myfloat,100,$myint2
-ASSIGN $myint,$myint1
+VAR $myint,NUMERIC,100
+VAR $myfloat,REAL,12.14
+VAR $mychar,CHAR,’c’
+LABEL LAB1
+VAR $mystr,STRING,100,”Hello world MIS!!!”
+ASSIGN $myint,$myint
 ASSIGN $mystr1,$mystr2
 ASSIGN $mystr1,”This is a test string”
 SET_STR_CHAR $mystr1,21,’\n’
-LABEL LAB1
+ADD $myint,100,20.7,300
+MUL $myint,100,20.7,300
+SUB $myint,100,20
+DIV $myfloat,100,30
+SET_STR_CHAR $mystr1,21,’\n’
 JMP LAB1
 JMPZ LAB1,$myint
-JMPGTE LAB1,$myint1,$myint2
-SLEEP 100
-SLEEP $myint
+JMPGTE LAB1,$myint1,20

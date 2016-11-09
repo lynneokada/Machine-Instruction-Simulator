@@ -21,4 +21,4 @@ class Jump
 		template <typename T, typename W> int less(T varA, W varB);
 		template <typename T, typename W> int greaterEqual(T varA, W varB);
 		template <typename T, typename W> int lessEqual(T varA, W varB);
-}; 
+};

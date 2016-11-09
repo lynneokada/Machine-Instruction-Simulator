@@ -12,11 +12,8 @@ string String::getValue() {
 	return this->value;
 }
 
-template <typename T, typename W>
-void String::setStrChar(T index, W &ch) {
-	int i = index.getValue();
-
-
+void String::setStrChar(Math* index, Char &ch) {
+	int i = index->getValue();
 
 	if (i < this->value.length() && i >= 0) {
 		this->value[i] = ch.getValue();
@@ -26,16 +23,13 @@ void String::setStrChar(T index, W &ch) {
 	}
 }
 
-template <typename T, typename W>
-void String::getStrChar(T index, W &ch) {
-	int i = index.getValue();
-
-	Char *castCh = dynamic_cast<Char*>(&ch);
+void String::getStrChar(Math* index, Char &ch) {
+	int i = index->getValue();
 
 	if (i < this->value.length() && i >= 0) {
 		cout << this->value[i] << endl;
-		castCh->setValue(this->value[i]);
-		cout << castCh->getValue() << " test" << endl;
+		ch.setValue(this->value[i]);
+		cout << ch.getValue() << " test" << endl;
 	} else {
 		cout << "Error: index out of range - index " << i 
 		<< " in string " << this->getValue() << endl;
@@ -43,25 +37,24 @@ void String::getStrChar(T index, W &ch) {
 }
 
 // int main() {
-// 	String *str = new String();
+// 	printf("test\n");
+// 	String *str = new String("$var1", "testing123");
 
-
-// 	String str("$var1", "testing123");
-// 	Numeric index("$var2", 3);
+// 	Math* index = new Math("$var2", 3);
 // 	Char ch("$var3", 'T');
-// 	Numeric index2("$var4", 5);
+// 	Math* index2 = new Math("$var4", 5);
 
-// 	str.setStrChar(index, ch);
-// 	cout << str.getValue() << endl;
+// 	str->setStrChar(index, ch);
+// 	cout << str->getValue() << endl;
 
-// 	str.getStrChar(index2, ch);
-// 	cout << ch.value << endl;
+// 	str->getStrChar(index2, ch);
+// 	cout << ch.getValue() << endl;
 
-// 	cout << str.getValue() << endl;
+// 	cout << str->getValue() << endl;
 
 // 	cout << ch.getValue() << endl;
-// 	cout << str.getValue()[index2.getValue()] << endl;
-// 	str.getStrChar(index2, ch);
+// 	cout << str->getValue()[index2->getValue()] << endl;
+// 	str->getStrChar(index2, ch);
 // 	cout << ch.getValue() << endl;
 
 // 	ch.setValue('S');

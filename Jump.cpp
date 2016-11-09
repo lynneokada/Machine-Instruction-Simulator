@@ -1,4 +1,6 @@
 #include "Jump.h"
+#include <iostream>
+
 using namespace std;
 //Make sure same label doesnt map to different line numbers
 //Refactor if-else blocks to function pointers or something else
@@ -101,6 +103,5 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 void Jump::storeLabel(string name, int lineNum)
 {
 	labels[name] = lineNum;
-
-	cout << labels[name] << endl;
+	cout << labels["LAB1"] << endl;
 }
