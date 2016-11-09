@@ -64,7 +64,7 @@ ifstream Mis::openFiles(string filename) {
 void Mis::parse_file(ifstream & input_file) {
 	// check if file input is valid
 	if (!input_file.good()) {
-		cout << "error: file cannot be found" << endl;
+		errfile << "error: file cannot be found" << endl;
 		return;
 	}
 	int lineNumber = 0;
@@ -97,7 +97,6 @@ void Mis::parse_file(ifstream & input_file) {
   		while (p!=0)
   		{
     		v_args.push_back(p);
-    		cout << "p: " << p << endl;
     		p = std::strtok(NULL,DELIMITER_COMMA);
  		}
 
@@ -119,10 +118,6 @@ void Mis::sleep(Math* var) {
 	this_thread::sleep_for(chrono::seconds(sec));
 }
 
-void Mis::find_instruction(string instruction_type, string name, string value) {
-	
-}
-
 void Mis::create_variable(vector<string> lines) {
 	string name = lines[1];
 	string var_type = lines[2];
@@ -130,19 +125,23 @@ void Mis::create_variable(vector<string> lines) {
 	if (var_type == "REAL") {
 		double real_value = stod(lines[3]);
 		mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
+
 	} else if (var_type == "NUMERIC") {
 		int num_value = stoi(lines[3]);
 		mathVariables.insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
+
 	} else if (var_type == "STRING") {
 		string string_value = lines[4];
-		cout << "string value: " << string_value <<endl;
 		int size = stoi(lines[3]);
 		stringVariables[name] = new String(name, string_value, size);
+
 	} else if (var_type == "CHAR") {
 		char char_value = lines[3][1];
 		charVariables[name] = new Char(name, char_value);
+
 	} else {
-		cout << "wrong" << endl;
+		errfile << "Not a supported type" << endl;
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -158,20 +157,16 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 
 		if(j == 1 && v_single_line[0].find("JMP") != string::npos) {
 			params.push_back(v_single_line[1]);
-			cout << v_single_line[1] <<endl;
 			continue;
 		}
 
 		string paramName = v_single_line[j];
-		cout << "Line contains: " << paramName << endl;
 
 		if (v_single_line[j][0] == '$') {
 			// search name in variables map and obtain value
-			cout << "this is a variable" << endl;
 			params.push_back(paramName);
 		} 
 		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
-			cout << "Char args" << endl;
 			std::regex rgx("('[^\"]')");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -186,7 +181,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
-			cout << "Single Line String: " << v_single_line[j] << endl;
+
 			for (std::sregex_iterator i = begin; i != end; ++i) {
 		        std::smatch match = *i;                                                 
 		        std::string match_str = match.str(); 
@@ -197,14 +192,12 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		    params.push_back(paramName);
 
 		} else if(v_single_line[j].find_first_of("0123456789") != string::npos) {
-			// else if (stod(v_single_line[i]))
 	
 			std::regex rgx("((\\+|-)?[[:digit:]]+)(\\.([[:digit:]]+))?");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
 
-			// cast double value as Math
 			double d = stod(paramName);
 			if(v_single_line[j].find_first_of(".") == string::npos) {
 				Numeric* myNumeric = new Numeric(paramName, (int)d);
@@ -216,8 +209,8 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 				params.push_back(paramName);
 			}
 		} else {
-			//need to throw an error or at least print "no matching types"
 			errfile << "Error: no matching types" << endl;
+			exit(EXIT_FAILURE);
 		}
 	}
 	return params;
@@ -226,10 +219,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 void Mis::run() {
 	for (int i=0; i<v_line.size()-1; i++) {
 
-		cout << "cursor->" << i << endl;
-
 		string var = v_line[i][1];
-		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
 			this->create_variable(v_line[i]);
@@ -254,7 +244,7 @@ void Mis::run() {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			mathVariables[var]->div(params, mathVariables);
 
-		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
+		} else if (v_line[i][0] == "ASSIGN") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			if(mathVariables.find(var) != mathVariables.end()) {
 
@@ -270,11 +260,11 @@ void Mis::run() {
 
 				itOne->second->setValue(itTwo->second->getValue());
 			} else if(stringVariables.find(var) != stringVariables.end()) {
-				cout<< "Setting: "<<params[0] << " to:" << params[1] << endl;
+
 				map<string, String*>::iterator itOne =  stringVariables.find(params[0]);
 				map<string, String*>::iterator itTwo =  stringVariables.find(params[1]);
-				cout << "Second: " << stringVariables[params[1]];
-				itOne->second->setValue(itTwo->second->getValue()); //--------------double check if its actually setValue
+
+				itOne->second->setValue(itTwo->second->getValue());
 			}
 
 		} else if (v_line[i][0] == "OUT") {
@@ -283,160 +273,66 @@ void Mis::run() {
 				string current = params[i];
 				if(mathVariables.find(current) != mathVariables.end())
 					outfile << mathVariables[current]->getValue() << endl;
+
 				else if(charVariables.find(current) != charVariables.end())
 					outfile << charVariables[current]->getValue() << endl;
+
 				else if(stringVariables.find(current) != stringVariables.end())
 					outfile << stringVariables[current]->getValue() << endl;
+
 				else
-					cout << "Invalid variable" << endl;
+					errfile << "Invalid variable" << endl;
+					exit(EXIT_FAILURE);
 			}
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			stringVariables[var]->setStrChar(mathVariables[params[0]], charVariables[params[1]]);
+
+			if(mathVariables.find(params[0]) != mathVariables.end() && charVariables.find(params[1]) != charVariables.end() && stringVariables.find(var) != stringVariables.end()) {
+				stringVariables[var]->setStrChar(mathVariables[params[0]], charVariables[params[1]]);
+
+			} else {
+				errfile << "Error: one or more variables does not exist" << endl;
+				exit(EXIT_FAILURE);
+			}
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			stringVariables[var]->getStrChar(mathVariables[params[0]], charVariables[params[1]]);
+
+			if(mathVariables.find(params[0]) != mathVariables.end() && charVariables.find(params[1]) != charVariables.end() && stringVariables.find(var) != stringVariables.end()) {
+				stringVariables[var]->getStrChar(mathVariables[params[0]], charVariables[params[1]]);
+
+			} else {
+				errfile << "Error: one or more variables does not exist" << endl;
+				exit(EXIT_FAILURE);
+			}
 
 		} else if (v_line[i][0] == "SLEEP") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			if(params.size() != 1)
-				cout << "Error, too many arguments" << endl;
-			else {
+
+			if(params.size() != 1) {
+				errfile << "Error, too many arguments" << endl;
+				exit(EXIT_FAILURE);
+
+			} else {
 				this->sleep(mathVariables[params[0]]);
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVariables);
 			if(labelIndex == -2) {
+				errfile << "Not of supported JMP type" << endl;
 				exit(EXIT_FAILURE);
 			} else if (labelIndex == -1){
 				continue;
 			} else {
-				// cout << "current index " << i << " : jmp index " << labelIndex << endl;
 				i = labelIndex-1;
 			}
-		} else if (v_line[i][0] == "LABEL") {
-			// LABEL already stored
 		}
 		else {
-			cout << "Error: instruction type is not valid" << endl;
-			//something went wrong
+			errfile << "Error: instruction type is not valid" << endl;
+			exit(EXIT_FAILURE);
 		}
 	}
 }
 
 Mis::~Mis() {} // destructor
-
-// int main(int argc, char *argv[]) 
-// {
-
-// 	Mis mis;
-
-// 	ifstream input_file;
-
-// 	input_file = mis.openFiles(argv[1]);
-// 	mis.parse_file(input_file);
-
-// 	for (int i=0; i<v_line.size()-1; i++) {
-
-// 		cout << "cursor->" << i << endl;
-
-// 		string var = v_line[i][1];
-// 		cout << v_line[i][0] << endl;
-
-// 		if (v_line[i][0] == "VAR") {
-// 			mis.create_variable(v_line[i]);
-// 		}
-// 		else if (v_line[i][0] == "ADD") {
-
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			mathVariables[var]->add(params, mathVariables);
-
-// 		} else if (v_line[i][0] == "SUB") {
-
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			mathVariables[var]->sub(params, mathVariables);
-
-// 		} else if (v_line[i][0] == "MUL") {
-
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			mathVariables[var]->mul(params, mathVariables);
-
-// 		} else if (v_line[i][0] == "DIV") {
-
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			mathVariables[var]->div(params, mathVariables);
-
-// 		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			if(mathVariables.find(var) != mathVariables.end()) {
-
-// 				map<string, Math*>::iterator itOne =  mathVariables.find(params[0]);
-// 				map<string, Math*>::iterator itTwo =  mathVariables.find(params[1]);
-
-// 				itOne->second->setValue(itTwo->second->getValue());
-
-// 			} else if(charVariables.find(var) != charVariables.end()) {
-
-// 				map<string, Char*>::iterator itOne =  charVariables.find(params[0]);
-// 				map<string, Char*>::iterator itTwo =  charVariables.find(params[1]);
-
-// 				itOne->second->setValue(itTwo->second->getValue());
-// 			} else if(stringVariables.find(var) != stringVariables.end()) {
-// 				cout<< "Setting: "<<params[0] << " to:" << params[1] << endl;
-// 				map<string, String*>::iterator itOne =  stringVariables.find(params[0]);
-// 				map<string, String*>::iterator itTwo =  stringVariables.find(params[1]);
-// 				cout << "Second: " << stringVariables[params[1]];
-// 				itOne->second->setValue(itTwo->second->getValue()); //--------------double check if its actually setValue
-// 			}
-
-// 		} else if (v_line[i][0] == "OUT") {
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			for(int i = 0; i < params.size(); ++i) {
-// 				string current = params[i];
-// 				if(mathVariables.find(current) != mathVariables.end())
-// 					outfile << mathVariables[current]->getValue() << endl;
-// 				else if(charVariables.find(current) != charVariables.end())
-// 					outfile << charVariables[current]->getValue() << endl;
-// 				else if(stringVariables.find(current) != stringVariables.end())
-// 					outfile << stringVariables[current]->getValue() << endl;
-// 				else
-// 					cout << "Invalid variable" << endl;
-// 			}
-// 		} else if (v_line[i][0] == "SET_STR_CHAR") {
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			stringVariables[var]->setStrChar(mathVariables[params[0]], charVariables[params[1]]);
-
-// 		} else if (v_line[i][0] == "GET_STR_CHAR") {
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			stringVariables[var]->getStrChar(mathVariables[params[0]], charVariables[params[1]]);
-
-// 		} else if (v_line[i][0] == "SLEEP") {
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			if(params.size() != 1)
-// 				cout << "Error, too many arguments" << endl;
-// 			else {
-// 				mis.sleep(mathVariables[params[0]]);
-// 			}
-// 		} else if (v_line[i][0].find("JMP") != string::npos) {
-// 			vector<string> params = mis.obtain_args(i,v_line[i]);
-// 			int labelIndex = mis.jmp.compare(params, v_line[i][0], mathVariables);
-// 			if(labelIndex == -2) {
-// 				exit(EXIT_FAILURE);
-// 			} else if (labelIndex == -1){
-// 				continue;
-// 			} else {
-// 				// cout << "current index " << i << " : jmp index " << labelIndex << endl;
-// 				i = labelIndex-1;
-// 			}
-// 		} else if (v_line[i][0] == "LABEL") {
-// 			// LABEL already stored
-// 		}
-// 		else {
-// 			cout << "Error: instruction type is not valid" << endl;
-// 			//something went wrong
-// 		}
-// 	}
-// 	return 0;
-// }

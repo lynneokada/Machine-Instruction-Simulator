@@ -77,12 +77,9 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 		Math * param1 = variables[(names[1])];
 
 		if(variables.find(names[1]) != variables.end()) //check if first variable exists
-		{	if((this->*jumpSingle[type])(param1) == 1)
-			{
+		{	if((this->*jumpSingle[type])(param1) == 1) {
 				return labels[names[0]];
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
 		}
