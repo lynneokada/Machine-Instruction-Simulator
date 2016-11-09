@@ -165,18 +165,11 @@ void Mis::create_variable(string var_type, string name, string value) {
 	}
 }
 
-// vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
-// 	vector<string> params;
-// 	for(unsigned int j = 2; j < v_single_line.size(); ++j){
-// 		cout << "push_back " << v_line[index][j] << endl;
-// 		params.push_back(v_line[index][j]);
-// 	}
-// 	cout << "Finished" << endl;
-
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;	// returning vector
 	// populate params with arguments for operations
-	for(int j = 2; j < v_single_line.size(); j++) {
+
+	for(j; j < v_single_line.size(); j++) {
 		string paramName = v_single_line[j];
 		if (v_single_line[j][0] == '$') {	// find variable names
 			// search name in variables map and obtain value
