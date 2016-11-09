@@ -325,7 +325,12 @@ int main(int argc, char *argv[])
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = mis.obtain_args(i,v_line[i]);
 			int labelIndex = mis.jmp.compare(params, v_line[i][0], mathVariables);
-			cout << labelIndex << endl;
+			cout << "current index " << i << " : jmp index " << labelIndex << endl;
+			if (labelIndex < 0 || labelIndex > v_line.size()) {
+				exit(EXIT_FAILURE);
+			} else {
+				i = labelIndex-1;
+			}
 		}
 		else
 		{
