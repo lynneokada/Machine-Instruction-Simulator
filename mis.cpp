@@ -152,20 +152,26 @@ void Mis::find_instruction(string instruction_type, string name, string value) {
 	
 }
 
-void Mis::create_variable(string var_type, string name, string value) {
+void Mis::create_variable(vector<string> lines) {
+	string name = lines[1];
+	string var_type = lines[2];
+	// (v_line[i][2], v_line[i][1], v_line[i][3])
+	//  type 			name 			"value"
 	if (var_type == "REAL") {
-		double real_value = stod(value);
+		double real_value = stod(lines[3]);
 		mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
 		// mathVariables[name] = new Real(name, real_value);
 	} else if (var_type == "NUMERIC") {
-		int num_value = stoi(value);
+		int num_value = stoi(lines[3]);
 		mathVariables.insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
 		// mathVariables[name] = new Numeric(name, num_value);
 	} else if (var_type == "STRING") {
-		string string_value = value;
-		stringVariables[name] = new String(name, string_value);
+		string string_value = lines[4];
+		cout << "string value: " << string_value <<endl;
+		int size = stoi(lines[3]);
+		stringVariables[name] = new String(name, string_value, size);
 	} else if (var_type == "CHAR") {
-		char char_value = value[0];
+		char char_value = lines[3][0];
 		charVariables[name] = new Char(name, char_value);
 	} else {
 		cout << "wrong" << endl;
@@ -201,7 +207,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			char capture;
-			capture = ((*begin).str())[0];
+			capture = ((*begin).str())[1];
 			Char* myChar = new Char(paramName, capture);
 			charVariables[paramName] = myChar;
 			params.push_back(paramName);
@@ -211,6 +217,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
+			cout << "Single Line String: " << v_single_line[j] << endl;
 			for (std::sregex_iterator i = begin; i != end; ++i) {
 		        std::smatch match = *i;                                                 
 		        std::string match_str = match.str(); 
@@ -221,14 +228,14 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		    params.push_back(paramName);
 
 		} else if(v_single_line[j].find_first_of("0123456789") != string::npos){
-			cout << "Found number" << endl;
+			// cout << "Found number" << endl;
 			std::regex rgx("(-)?[0-9]+(\.[0-9]+)?");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
-			for (std::sregex_iterator i = begin; i != end; ++i) {
-				cout << "Value of regex iterator: " << (*i).str() << endl;
-		    }
+			// for (std::sregex_iterator i = begin; i != end; ++i) {
+			// 	cout << "Value of regex iterator: " << (*i).str() << endl;
+		 //    }
 
 			// cast double value as Math
 			double d = stod(paramName);
@@ -313,8 +320,9 @@ int main(int argc, char *argv[])
 		cout << v_line[i][0] << endl;
 
 		if (v_line[i][0] == "VAR") {
-			mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);
-		} 
+			// mis.create_variable(v_line[i][2], v_line[i][1], v_line[i][3]);
+			mis.create_variable(v_line[i]);
+		}
 		else if (v_line[i][0] == "ADD") {
 
 			vector<string> params = mis.obtain_args(i,v_line[i]);
@@ -337,7 +345,7 @@ int main(int argc, char *argv[])
 			mathVariables[var]->div(params, mathVariables);
 
 		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
-			cout << "Assigning values" << endl;
+			// cout << "Assigning values" << endl;
 			if(mathVariables.find(var) != mathVariables.end()) {
 
 				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
@@ -374,18 +382,20 @@ int main(int argc, char *argv[])
 					cout << "Invalid variable" << endl;
 			}
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
-
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			cout << "before: " << stringVariables[var]->getValue() << endl;
+			stringVariables[var]->setStrChar(mathVariables[params[0]], charVariables[params[1]]);
+			cout << "after: " << stringVariables[var]->getValue() << endl;
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
-			
-			
+			vector<string> params = mis.obtain_args(i,v_line[i]);
+			// stringVariables[var]->getStrChar(mathVariables[params[0]], charVariables[params[1]]);
+
 		} else if (v_line[i][0] == "SLEEP") {
 
-			cout << "Sleep function called" << endl;
 			vector<string> params = mis.obtain_args(i,v_line[i]);
-			cout << "params[0]: " << params[0] << endl;
 			if(params.size() != 1) //checking if only 1 arg is given/is of type math
-				cout << "Incorrect argument(s) given" << endl;
+				cout << "Error, too many arguments" << endl;
 			else {
 				mis.sleep(mathVariables[params[0]]);
 			}
