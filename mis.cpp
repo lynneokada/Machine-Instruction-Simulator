@@ -106,8 +106,6 @@ void Mis::parse_file(ifstream & input_file) {
  		}
 
 		v_line.push_back(v_args);	// add arguments to v_line
-		cout << v_line.size() <<endl;
-		cout << v_line[lineNumber][0] << endl;
 		lineNumber++;
 	}
 }
@@ -164,8 +162,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
 			params.push_back(paramName);
-		} 
-		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
+		} else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
 			std::regex rgx("('[^\"]')");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -191,8 +188,10 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		    stringVariables[paramName] = myString;
 		    params.push_back(paramName);
 
-		} else if(v_single_line[j].find_first_of("0123456789") != string::npos){
-			std::regex rgx("(-)?[0-9]+(\.[0-9]+)?");
+		} else if(v_single_line[j].find_first_of("0123456789") != string::npos) {
+			// else if (stod(v_single_line[i]))
+	
+			std::regex rgx("((\\+|-)?[[:digit:]]+)(\\.([[:digit:]]+))?");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
@@ -210,7 +209,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			}
 		} else {
 			//need to throw an error or at least print "no matching types"
-			cout << "Error: no matching types" << endl;
+			cerr << "Error: no matching types" << endl;
 		}
 	}
 	return params;
@@ -229,6 +228,9 @@ int main(int argc, char *argv[])
 	mis.parse_file(input_file);
 
 	for (int i=0; i<v_line.size()-1; i++) {
+
+		cout << "cursor->" << i << endl;
+
 		string var = v_line[i][1];
 		cout << v_line[i][0] << endl;
 
@@ -309,12 +311,14 @@ int main(int argc, char *argv[])
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = mis.obtain_args(i,v_line[i]);
 			int labelIndex = mis.jmp.compare(params, v_line[i][0], mathVariables);
-			cout << "current index " << i << " : jmp index " << labelIndex << endl;
 			if (labelIndex < 0 || labelIndex > v_line.size()) {
 				exit(EXIT_FAILURE);
 			} else {
+				// cout << "current index " << i << " : jmp index " << labelIndex << endl;
 				i = labelIndex-1;
 			}
+		} else if (v_line[i][0] == "LABEL") {
+			// LABEL already stored
 		}
 		else {
 			cout << "Error: instruction type is not valid" << endl;

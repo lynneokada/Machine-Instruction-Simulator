@@ -7,8 +7,6 @@ ADD $myint,100,20.7,300
 MUL $myint,100,20.7,300
 SUB $myint,100,20
 DIV $myfloat,100,30
-JMPZ LAB1,$myint
-JMPGTE LAB1,$myint1,20
 SET_STR_CHAR $mystr,22,'a'
 GET_STR_CHAR $mystr,2,$char
 SLEEP 1
