@@ -45,7 +45,6 @@ Mis::Mis() {	// constructor
 ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
 
-	if (i == string::npos || filename.substr(i, filename.length()-i) != ".mis") {
 	ifstream infile(filename);
 	if (infile.fail()) {
 		cerr << "Error opening file " << filename <<endl;
@@ -84,7 +83,7 @@ ifstream Mis::openFiles(string filename) {
 
     return infile;
 }
-}
+
 
 void Mis::parse_file(ifstream & input_file) {
 	// check if file input is valid
@@ -182,9 +181,21 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			cout << "this is a variable" << endl;
 			params.push_back(v_single_line[j]);
 		} 
-		else if (v_single_line[j].find_first_not_of("0123456789") == string::npos) {
-			//has to be either a char or a string
-			std::regex rgx("(\"[^\"]*\")||('[^\"]*')");
+		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 1) {
+			//is a char
+			std::regex rgx("('[^\"]*')");
+			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
+			auto end = std::sregex_iterator();
+			char capture;
+			capture = ((*begin).str())[0];
+			// for (std::sregex_iterator i = begin; i != end; ++i) {
+		 //        std::smatch match = *i;                                                 
+		 //        std::string match_str = match.str(); 
+		 //        capture.append(match_str);
+		 //    }
+		} else if(v_single_line[j].find_first_of("\"") != string::npos && v_single_line[j].size() != 1) {
+			//is a string
+			std::regex rgx("(\"[^\"]*\")");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			string capture = "";
@@ -193,6 +204,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		        std::string match_str = match.str(); 
 		        capture.append(match_str);
 		    }
+		    //do object wrapping
 		} else {
 			int ch;
 			for (int k = 0; k < v_single_line[j].size(); k++) {
@@ -303,32 +315,14 @@ int main(int argc, char *argv[])
 
 		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
 			
-			//vector<string> params = mis.obtain_args(i,v_line[i]);
-
 			if(mathVariables.find(var) != mathVariables.end()) {
-				// cout << "Math found" << endl;
-				// Math *first = (mathVariables[v_line[i][1]]);
-				// Math *second = (mathVariables[v_line[i][2]]);
-				// cout << typeid(mathVariables[v_line[i][2]]).name() << endl;
-				// mathVariables[v_line[i][2]]->setValue(2);
-
-
-				// cout << "1st value: " << mathVariables[v_line[i][1]]->getValue() << endl;
-				// cout << "Second value: " << mathVariables[v_line[i][2]]->getValue() << endl;
 
 				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
 				map<string, Math*>::iterator itTwo =  mathVariables.find(v_line[i][2]);
 
 				itOne->second->setValue(itTwo->second->getValue());
-				// itOne->second->out();
-				// cout << "test" << endl;
 
-				// cout << "Set to: " << mathVariables[v_line[i][1]]->getValue() << endl;
 			} else if(charVariables.find(var) != charVariables.end()) {
-				// cout << "Char found" << endl;
-				// Char *first = (charVariables[v_line[i][1]]);
-				// Char *second = (charVariables[v_line[i][2]]);
-				// first->setValue(second->getValue());
 
 				map<string, Char*>::iterator itOne =  charVariables.find(v_line[i][1]);
 				map<string, Char*>::iterator itTwo =  charVariables.find(v_line[i][2]);
@@ -340,10 +334,6 @@ int main(int argc, char *argv[])
 				map<string, String*>::iterator itTwo =  stringVariables.find(v_line[i][2]);
 
 				itOne->second->setValue(itTwo->second->getValue()); //--------------double check if its actually setValue
-				// cout << "Str found" << endl;
-				// String *first = (stringVariables[v_line[i][1]]);
-				// String *second = (stringVariables[v_line[i][2]]);
-				// first->setValue(second->getValue());
 			}
 
 		} else if (v_line[i][0] == "OUT") {
