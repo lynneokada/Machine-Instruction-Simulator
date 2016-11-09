@@ -2,7 +2,7 @@
 
 String::String(string p_name, string p_value, int max):name(p_name), size(max)
 {
-	if(p_value.length() <= max) {
+	if(p_value.length() <= max && max <= 256) {
 		int diff = max - p_value.length();
 		value = p_value;
 		for (int i = 0; i < diff; ++i)
@@ -50,5 +50,7 @@ void String::out() {
 }
 
 void String::setValue(string val) {
+
 	value = val;
+	cout << "setValue" << endl;
 }

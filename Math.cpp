@@ -64,15 +64,15 @@ double Math::getValue()
 
 void Math::setValue(std::vector<string> names, std::map<string, Math*> map) //questionable
 {	
-	double val = mathVariables[v_line[i][1]]->getValue();
-    if(mathVariables[v_line[i][1]]->getType() == "Real") {
-        mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
-    } else if(mathVariables[v_line[i][1]->getType() == "Numeric"]) {
-    	mathVariables.insert(pair<string,Real*>(name, new Numeric(name, real_value)));
-    }
-    mathVariables->erase(v_line[i][1]);
+	// double val = mathVariables[v_line[i][1]]->getValue();
+ //    if(mathVariables[v_line[i][1]]->getType() == "Real") {
+ //        mathVariables.insert(pair<string,Real*>(name, new Real(name, real_value)));
+ //    } else if(mathVariables[v_line[i][1]->getType() == "Numeric"]) {
+ //    	mathVariables.insert(pair<string,Real*>(name, new Numeric(name, real_value)));
+ //    }
+ //    mathVariables->erase(v_line[i][1]);
 
-	// value = map[names[0]]->getValue();
+	value = map[names[0]]->getValue();
 }
 
 void Math::setValue(double val)

@@ -67,6 +67,7 @@ void Mis::parse_file(ifstream & input_file) {
 		cout << "error: file cannot be found" << endl;
 		return;
 	}
+	int lineNumber = 0;
 
 	//read each line of input file
 	while(!input_file.eof()) {
@@ -175,6 +176,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			params.push_back(paramName);
 
 		} else if(v_single_line[j].find_first_of("\"") != string::npos) { //check for string
+			cout << v_single_line[j] << "test";
 			std::regex rgx("(\"[^\"]*\")");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
@@ -254,24 +256,25 @@ int main(int argc, char *argv[])
 			mathVariables[var]->div(params, mathVariables);
 
 		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
+			vector<string> params = mis.obtain_args(i,v_line[i]);
 			if(mathVariables.find(var) != mathVariables.end()) {
 
-				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
-				map<string, Math*>::iterator itTwo =  mathVariables.find(v_line[i][2]);
+				map<string, Math*>::iterator itOne =  mathVariables.find(params[0]);
+				map<string, Math*>::iterator itTwo =  mathVariables.find(params[1]);
 
 				itOne->second->setValue(itTwo->second->getValue());
 
 			} else if(charVariables.find(var) != charVariables.end()) {
 
-				map<string, Char*>::iterator itOne =  charVariables.find(v_line[i][1]);
-				map<string, Char*>::iterator itTwo =  charVariables.find(v_line[i][2]);
+				map<string, Char*>::iterator itOne =  charVariables.find(params[0]);
+				map<string, Char*>::iterator itTwo =  charVariables.find(params[1]);
 
 				itOne->second->setValue(itTwo->second->getValue());
 			} else if(stringVariables.find(var) != stringVariables.end()) {
-
-				map<string, String*>::iterator itOne =  stringVariables.find(v_line[i][1]);
-				map<string, String*>::iterator itTwo =  stringVariables.find(v_line[i][2]);
-
+				cout<< "Setting: "<<params[0] << " to:" << params[1] << endl;
+				map<string, String*>::iterator itOne =  stringVariables.find(params[0]);
+				map<string, String*>::iterator itTwo =  stringVariables.find(params[1]);
+				cout << "Second: " << stringVariables[params[1]];
 				itOne->second->setValue(itTwo->second->getValue()); //--------------double check if its actually setValue
 			}
 
