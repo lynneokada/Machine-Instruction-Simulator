@@ -5,4 +5,6 @@ VAR $mystr,STRING,100,”Hello world MIS!!!”
 ASSIGN $myint,$myint
 ASSIGN $mystr1,$mystr2
 ASSIGN $mystr1,”This is a test string”
+ADD $myint,1,12
 SET_STR_CHAR $mystr1,21,’\n’
+SLEEP 5

@@ -139,6 +139,15 @@ void Mis::parse_file(ifstream & input_file) {
 	// }
 }
 
+void Mis::sleep(Math* var) {
+
+	if (var->getType() != "Numeric") {
+		return;
+	}
+	int sec = var->getValue();
+	this_thread::sleep_for(chrono::seconds(sec));
+}
+
 void Mis::find_instruction(string instruction_type, string name, string value) {
 	
 }
@@ -151,7 +160,7 @@ void Mis::create_variable(string var_type, string name, string value) {
 	} else if (var_type == "NUMERIC") {
 		int num_value = stoi(value);
 		mathVariables.insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
-		mathVariables[name] = new Numeric(name, num_value);
+		// mathVariables[name] = new Numeric(name, num_value);
 	} else if (var_type == "STRING") {
 		string string_value = value;
 		stringVariables[name] = new String(name, string_value);
@@ -174,25 +183,29 @@ void Mis::create_variable(string var_type, string name, string value) {
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;	// returning vector
 	// populate params with arguments for operations
-	for(int j = 2; j < v_single_line.size(); j++) {
+	for(int j = 1; j < v_single_line.size(); j++) {
+		if(j == 1 && v_single_line[j][0] == '$')
+		{
+			continue;
+		}
 		string paramName = v_single_line[j];
+		cout << "Line contains: " << paramName << endl;
+
 		if (v_single_line[j][0] == '$') {	// find variable names
 			// search name in variables map and obtain value
 			cout << "this is a variable" << endl;
 			params.push_back(paramName);
 		} 
 		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
-			//is a char
 			std::regex rgx("('[^\"]')");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
 			auto end = std::sregex_iterator();
 			char capture;
 			capture = ((*begin).str())[0];
-			// for (std::sregex_iterator i = begin; i != end; ++i) {
-		 //        std::smatch match = *i;                                                 
-		 //        std::string match_str = match.str(); 
-		 //        capture.append(match_str);
-		 //    }
+			Char* myChar = new Char(paramName, capture);
+			charVariables[paramName] = myChar;
+			params.push_back(paramName);
+
 		} else if(v_single_line[j].find_first_of("\"") != string::npos) { //check for string
 			std::regex rgx("(\"[^\"]*\")");
 			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
@@ -206,23 +219,34 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		    String* myString = new String(paramName, capture);
 		    stringVariables[paramName] = myString;
 		    params.push_back(paramName);
-		} else {
-			int ch;
-			for (int k = 0; k < v_single_line[j].size(); k++) {
-				ch = v_single_line[j][k];
-				if (!(('0' <= ch && ch <= '9') || ch == '+' || ch == '-' || ch == '.')) {
-					// validate individual characters
-					cout << v_single_line[j] << " is not a valid argument." << endl;
-					exit(EXIT_FAILURE);
-				}
-			}
+
+		} else if(v_single_line[j].find_first_of("0123456789") != string::npos){
+			cout << "Found number" << endl;
+			std::regex rgx("(-)?[0-9]+(\.[0-9]+)?");
+			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
+			auto end = std::sregex_iterator();
+			string capture = "";
+			for (std::sregex_iterator i = begin; i != end; ++i) {
+				cout << "Value of regex iterator: " << (*i).str() << endl;
+		    }
+
 			// cast double value as Math
-			double d = stod(v_single_line[j]);
-			Math * myD = new Math(v_single_line[j], d);
-			mathVariables[paramName] = myD;
+			double d = stod(paramName);
+			if(v_single_line[j].find_first_of(".") == string::npos) {
+				Numeric* myNumeric = new Numeric(paramName, (int)d);
+				mathVariables[paramName] = myNumeric;
+				params.push_back(paramName);
+			} else {
+				Real* myReal = new Real(paramName, d);
+				mathVariables[paramName] = myReal;
+				params.push_back(paramName);
+			}
+			
 			// add Math object title to params vector
-			cout << "push_back " << v_line[index][j] << endl;
-			params.push_back(paramName);
+			// cout << "push_back " << v_line[index][j] << endl;
+		} else {
+			//need to throw an error or at least print "no matching types"
+			cout << "Error: no matching types" << endl;
 		}
 	}
 
@@ -240,7 +264,7 @@ int main(int argc, char *argv[])
 	Mis mis;
 	// mis.jmp.storeLabel("Lab", 12);
 	ifstream input_file (argv[1]);
-	mis.parse_file(input_file);
+	// mis.parse_file(input_file);
 
 	// Math *a = new Math("name", 12.1);
 	// Math *b = new Math("test", 150.3);
@@ -285,7 +309,6 @@ int main(int argc, char *argv[])
 	mis.parse_file(input_file);
 
 	for (int i=0; i<v_line.size(); i++) {
-
 		string var = v_line[i][1];
 		cout << v_line[i][0] << endl;
 
@@ -314,7 +337,7 @@ int main(int argc, char *argv[])
 			mathVariables[var]->div(params, mathVariables);
 
 		} else if (v_line[i][0] == "ASSIGN") { //<-----needs to be worked on/fixed
-			
+			cout << "Assigning values" << endl;
 			if(mathVariables.find(var) != mathVariables.end()) {
 
 				map<string, Math*>::iterator itOne =  mathVariables.find(v_line[i][1]);
@@ -354,14 +377,19 @@ int main(int argc, char *argv[])
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
-		} else if (v_line[i][0] == "LABEL") { //need to preprocess this in beginning of scan
-			//mis.jmp.storeLabel(v_line[i][1], v_line[i][2]);
-		} else if (v_line[i][0].find("JMP") != string::npos) {
+			
+			
+		} else if (v_line[i][0] == "SLEEP") {
+
+			cout << "Sleep function called" << endl;
 			vector<string> params = mis.obtain_args(i,v_line[i]);
-			mis.jmp.compare(params, v_line[i][0], mathVariables);
-		}
-		else
-		{
+			cout << "params[0]: " << params[0] << endl;
+			if(params.size() != 1) //checking if only 1 arg is given/is of type math
+				cout << "Incorrect argument(s) given" << endl;
+			else {
+				mis.sleep(mathVariables[params[0]]);
+			}
+		} else {
 			//something went wrong
 		}
 	

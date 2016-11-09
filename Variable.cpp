@@ -17,10 +17,6 @@ string Variable::getStringValue() {
 	return val;
 }
 
-void Variable::sleep(int sec) {
-	this_thread::sleep_for(chrono::seconds(sec));
-}
-
 void Variable::out() {
 	cout << getStringValue() << endl;
 	//outfile << this->value << endl;

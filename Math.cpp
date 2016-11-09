@@ -56,6 +56,7 @@ void Math::add(std::vector<string> names, std::map<string, Math*> map)
 	}
 	value = sum;
 	cout << "Math::add finish" << endl;
+	cout << value << endl;
 }
 
 void Math::mul(std::vector<string> names, std::map<string, Math*> map)

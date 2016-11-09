@@ -22,5 +22,6 @@ public:
 	void create_variable(string var_type, string name, string value);
 	vector<string> obtain_args(int index, vector<string> v_single_line);
 	ifstream openFiles(string filename);
+	void sleep(Math* var);
 	~Mis();	// destructor
 };
