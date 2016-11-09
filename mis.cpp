@@ -45,7 +45,6 @@ Mis::Mis() {	// constructor
 ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
 
-	if (i == string::npos || filename.substr(i, filename.length()-i) != ".mis") {
 	ifstream infile(filename);
 	if (infile.fail()) {
 		cerr << "Error opening file " << filename <<endl;
@@ -83,7 +82,6 @@ ifstream Mis::openFiles(string filename) {
     }
 
     return infile;
-}
 }
 
 void Mis::parse_file(ifstream & input_file) {
@@ -138,10 +136,6 @@ void Mis::parse_file(ifstream & input_file) {
 	// 		cout << "args: " << v_line[i][j] << endl;
 	// 	}
 	// }
-}
-
-void Mis::find_instruction(string instruction_type, string name, string value) {
-	
 }
 
 void Mis::create_variable(string var_type, string name, string value) {
@@ -365,7 +359,8 @@ int main(int argc, char *argv[])
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 
 		} else if (v_line[i][0] == "LABEL") { //need to preprocess this in beginning of scan
-			//mis.jmp.storeLabel(v_line[i][1], v_line[i][2]);
+			cout << "label" << v_line[i][1] << endl;
+			mis.jmp.storeLabel(v_line[i][1], i);
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = mis.obtain_args(i,v_line[i]);
 			mis.jmp.compare(params, v_line[i][0], mathVariables);

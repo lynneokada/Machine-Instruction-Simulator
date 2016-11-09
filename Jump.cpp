@@ -101,4 +101,6 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 void Jump::storeLabel(string name, int lineNum)
 {
 	labels[name] = lineNum;
+
+	cout << labels[name] << endl;
 }
