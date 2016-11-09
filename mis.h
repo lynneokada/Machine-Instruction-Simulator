@@ -18,8 +18,10 @@ public:
 	Mis();	// constructor
 	Jump jmp;
 	void parse_file(ifstream & input_file);
-	void create_variable(string var_type, string name, string value);
+	void find_instruction(string instruction_type, string name, string value);
+	void create_variable(vector<string> lines);
 	vector<string> obtain_args(int index, vector<string> v_single_line);
 	ifstream openFiles(string filename);
+	void sleep(Math* var);
 	~Mis();	// destructor
 };

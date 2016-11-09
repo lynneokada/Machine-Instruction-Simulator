@@ -19,7 +19,6 @@ protected:
 	string type;
 public:
 	string getName();
-	void sleep(int sec);
 	virtual string getType();
 	string getStringValue();
 	// template <typename T> void setValue(T val);

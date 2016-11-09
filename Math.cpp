@@ -33,18 +33,6 @@ void Math::div(std::vector<string> names, std::map<string, Math*> map)
 	value = decltype(value)((map[names[0]])->getValue()/map[names[1]]->getValue());
 }
 
-
-
-// template <typename T>
-// void assign(T param)
-// {
-// 	//maybe should make Math::setValue assign rather than other way round
-// 	if(getType() == "Numeric")
-// 		value = (int)param->getValue();
-// 	else
-// 		value = (double)param->getValue();
-// }
-
 void Math::add(std::vector<string> names, std::map<string, Math*> map)
 {
 	cout << "Math::add" << endl;
@@ -56,6 +44,7 @@ void Math::add(std::vector<string> names, std::map<string, Math*> map)
 	}
 	value = sum;
 	cout << "Math::add finish" << endl;
+	cout << value << endl;
 }
 
 void Math::mul(std::vector<string> names, std::map<string, Math*> map)
@@ -73,7 +62,7 @@ double Math::getValue()
 	return value;
 }
 
-void Math::setValue(std::vector<string> names, std::map<string, Math*> map)
+void Math::setValue(std::vector<string> names, std::map<string, Math*> map) //questionable
 {	
 	double val = mathVariables[v_line[i][1]]->getValue();
     if(mathVariables[v_line[i][1]]->getType() == "Real") {
@@ -83,48 +72,19 @@ void Math::setValue(std::vector<string> names, std::map<string, Math*> map)
     }
     mathVariables->erase(v_line[i][1]);
 
-	value = 6;
+	// value = map[names[0]]->getValue();
 }
 
 void Math::setValue(double val)
 {
-	cout << "Math::setValue double: " << val << endl;
+	// cout << "Math::setValue double: " << val << endl;
 	// Math *casted = dynamic_cast<Math*>(&test);
 	value = val;
-	cout << value << endl;
+	// cout << value << endl;
 }
 
 void Math::setValue(int val)
 {
-	cout << "Math::setValue int: " << val <<  endl;
+	// cout << "Math::setValue int: " << val <<  endl;
 	value = val;
 }
-
-// int main()
-// {
-
-	
-// 	Math a;
-// // 	Math b("test", 23);
-// // 	// Math c(1);
-// // 	// int test1 = 12;
-// // 	// int test2 = 1;
-
-// 	Math test;
-// 	test.sub(a, a);
-// test.out();	
-
-// // setting function pointer
-// void (Math::*pSub)(Math, Math);
-// pSub = &Math::sub;
-// (test.*pSub)(test1, test2);
-// test.out();
-
-// void (Math::*pDiv)(Math, Math);
-// pDiv = &Math::div;
-// (test.*pDiv)(test1, test2);
-// test.out();
-
-
-// 	return 0;
-// }
