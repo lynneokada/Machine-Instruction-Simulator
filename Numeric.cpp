@@ -7,34 +7,17 @@ Numeric::Numeric(std::string p_name, int p_value):name(p_name), value(p_value)
 	std::cout << "Numeric created" << std::endl;
 };
 
+// Destructor
 Numeric::~Numeric(){};
 
-// int Numeric::getValue() {
-// 	return this->value;
-// }
+// returns the value of the Numeric object
 double Numeric::getValue()
 {
 	return (double)value;
 }
 
+// prints out the value of this object
 void Numeric::out()
 {
 	std::cout << value << std::endl;
 }
-// int main()
-// {
-// 	Numeric *a = new Numeric("test", 12.0);
-
-// 	Variable *b = dynamic_cast<Variable*>(a);
-// 	Variable c;
-
-// 	a->out();
-
-// 	b->out();
-// 	c.out();
-
-
-// 	delete(a);
-
-// 	return 0;
-// }
