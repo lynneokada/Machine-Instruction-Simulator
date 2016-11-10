@@ -22,6 +22,7 @@ class Math : public Variable
 		virtual void out();
 		virtual double getValue();
 		virtual void setValue(double val);
+		virtual void setValue(int val);
 		//can use template for function params but still needs to return 
 };
 

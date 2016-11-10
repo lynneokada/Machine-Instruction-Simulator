@@ -71,11 +71,17 @@ void Mis::parse_file(ifstream & input_file) {
 
 	//read each line of input file
 	while(!input_file.eof()) {
-		cout << "Test line: " << lineNumber <<endl; 
 		vector<string> v_args;	// create vector to hold instruction arguments
 		
 		getline(input_file, LINE);	// read line into memory
 		v_test.push_back(LINE);
+
+
+		if (LINE.size() == 0) {
+			v_args.push_back("");
+			lineNumber++;
+			continue;
+		}
 
 		char* instruction_line = strdup(LINE.c_str());
 
@@ -149,9 +155,7 @@ void Mis::create_variable(vector<string> lines) {
 
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;
-	for (int i = 0; i < v_single_line.size(); i++) {
-		cout << v_single_line[i] << endl;
-	}
+
 	// populate params with arguments for operations
 	for(int j = 1; j < v_single_line.size(); j++) {
 
@@ -227,7 +231,10 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 }
 
 void Mis::run() {
-	for (int i=0; i<v_line.size()-1; i++) {
+	for (int i=0; i<v_line.size(); i++) {
+		if (v_line[i].size() < 2) {
+			continue;
+		};
 
 		string var = v_line[i][1];
 
@@ -278,7 +285,6 @@ void Mis::run() {
 			}
 
 		} else if (v_line[i][0] == "OUT") {
-			cout << "test" <<endl;
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			for(int i = 0; i < params.size(); ++i) {
 				string current = params[i];

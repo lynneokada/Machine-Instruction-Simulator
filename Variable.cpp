@@ -26,13 +26,11 @@ void Variable::out() {
 // sets teh value of this object to the char value
 void Variable::setValue(char value)
 {
-	cout << "Variable::setValue char" << endl;
 	this->val = value;
 }
 
 // sets the value of this object to the string value
 void Variable::setValue(string value)
 {
-	cout << "Variable::setValue string" << endl;
 	this->val = value;
 }

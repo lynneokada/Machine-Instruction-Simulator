@@ -50,16 +50,12 @@ void Math::div(std::vector<string> names, std::map<string, Math*> map)
 // this function
 void Math::add(std::vector<string> names, std::map<string, Math*> map)
 {
-	cout << "Math::add" << endl;
 	decltype(value) sum = 0;
 	for (unsigned int i = 0; i < names.size(); ++i)
 	{
-		cout << "loop i: " << i << endl;
 		sum += map[names[i]]->getValue();
 	}
 	value = sum;
-	cout << "Math::add finish" << endl;
-	cout << value << endl;
 }
 
 // multiplication function that takes in a vector of the names of the parameters,
@@ -86,9 +82,11 @@ double Math::getValue()
 // sets the value of a Real object to val
 void Math::setValue(double val)
 {
-	// cout << "Math::setValue double: " << val << endl;
-	// Math *casted = dynamic_cast<Math*>(&test);
 	value = val;
-	// cout << value << endl;
+}
+
+void Math::setValue(int val)
+{
+	value = val;
 }
 

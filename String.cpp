@@ -11,11 +11,10 @@ String::String(string p_name, string p_value, int max):name(p_name), size(max)
 			value.append(" ");
 		}
 	} else {
-		std::cout << "Error: size does not match actual length" << endl;
-		//throw some sort of error here
+		cerr << "size does not match actual length" << endl;
+		exit(EXIT_FAILURE);
 	}
 	type = "String";
-	std::cout << "String created" << std::endl;
 };
 
 // destructor

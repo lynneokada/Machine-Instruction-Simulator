@@ -4,7 +4,6 @@
 Char::Char(string p_name, char p_value):name(p_name), value(p_value)
 {
 	type = "Char";
-	std::cout << "Char created" << std::endl;
 };
 
 // destructor
