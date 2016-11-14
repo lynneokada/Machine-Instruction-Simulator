@@ -5,8 +5,8 @@ int main(int argc, char *argv[])
 	// create Mis and read file
 	Mis mis;
 
-	if (argc == 1) {
-		cerr << "Please provide an input file" << endl;
+	if (argc != 2) {
+		cerr << "Usage:  ./main testFile.mis" << endl;
 		exit(EXIT_FAILURE);
 	}
 
