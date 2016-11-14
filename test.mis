@@ -1,16 +1,4 @@
-VAR $myint,NUMERIC,100
-VAR $myfloat,REAL,12.14
-VAR $mychar,CHAR,'c'
-LABEL LAB1
-VAR $mystr,STRING,100,"Hello world MIS!!!"
-ADD $myint,100,20.7,300
-MUL $myint,100,20.7,300
-SUB $myint,100,20
-DIV $myfloat,100,30
-JMPZ LAB1,$myint
-JMPGTE LAB1,$myint,1000
-SET_STR_CHAR $mystr,22,'a'
-GET_STR_CHAR $mystr,2,$mychar
-SLEEP 1
-SET_STR_CHAR $mystr1,21,'c'
-SET_STR_CHAR $mystr1,21,'d'
+VAR $int,STRING,10,"Testing"
+OUT $int
+ASSIGN $int,"Testdsfdsf"
+OUT $int
