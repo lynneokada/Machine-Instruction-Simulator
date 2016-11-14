@@ -57,8 +57,9 @@ void String::out() {
 }
 
 // set this object's value to the string specified by val
-void String::setValue(string val) {
-
+int String::setValue(string val) {
+	if(val.length() > size)
+		return -1;
 	value = val;
-	cout << "setValue" << endl;
+	return 0;
 }

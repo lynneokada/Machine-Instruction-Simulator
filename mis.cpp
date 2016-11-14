@@ -201,7 +201,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 		        std::string match_str = match.str(); 
 		        capture.append(match_str);
 		    }
-		    String* myString = new String(paramName, capture);
+		    String* myString = new String(paramName,capture,capture.length());
 		    stringVars[paramName] = myString;
 		    params.push_back(paramName);
 
@@ -262,26 +262,33 @@ void Mis::run() {
 			mathVars[var]->div(params, mathVars);
 
 		} else if (v_line[i][0] == "ASSIGN") {
+
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			if(mathVars.find(params[0]) != mathVars.end() && mathVars.find(params[0]) != mathVars.end()) {
+			if(mathVars.find(params[0]) != mathVars.end()) {
+				if(mathVars[params[0]]->getType() == "Numeric")
+				{
+					int x = mathVars[params[0]]->getValue();
+					mathVars[var]->setValue(x);
+				}
 
-				map<string, Math*>::iterator itOne =  mathVars.find(params[0]);
-				map<string, Math*>::iterator itTwo =  mathVars.find(params[1]);
+				else
+				{
+					double x = mathVars[params[0]]->getValue();
+					mathVars[var]->setValue(x);
+				}
 
-				itOne->second->setValue(itTwo->second->getValue());
+			} else if(charVars.find(var) != charVars.end()) {
+				cout << "Updated value:" << charVars[var]->getValue();
+				charVars[var]->setValue(charVars[params[0]]->getValue());
 
-			} else if(charVars.find(var) != charVars.end() && charVars.find(params[0]) != charVars.end()) {
-
-				map<string, Char*>::iterator itOne =  charVars.find(params[0]);
-				map<string, Char*>::iterator itTwo =  charVars.find(params[1]);
-
-				itOne->second->setValue(itTwo->second->getValue());
-			} else if(stringVars.find(var) != stringVars.end() && stringVars.find(params[0]) != stringVars.end()) {
-
-				map<string, String*>::iterator itOne =  stringVars.find(params[0]);
-				map<string, String*>::iterator itTwo =  stringVars.find(params[1]);
-
-				itOne->second->setValue(itTwo->second->getValue());
+			} else if(stringVars.find(var) != stringVars.end()) {
+				int state = stringVars[var]->setValue(stringVars[params[0]]->getValue());
+				//throw an error if the length of the new string exceeds the max of the current one
+				if(state != 0)
+				{
+					errfile << "New String is longer than max size" << endl;
+					exit(EXIT_FAILURE);
+				}
 			}
 
 		} else if (v_line[i][0] == "OUT") {

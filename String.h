@@ -16,5 +16,5 @@ public:
 	void setStrChar(Math* index, Char *ch);
 	void getStrChar(Math* index, Char *ch);
 	void out();
-	void setValue(string val);
+	int setValue(string val);
 };
