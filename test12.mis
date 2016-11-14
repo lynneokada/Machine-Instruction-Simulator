@@ -1,0 +1,5 @@
+VAR $char,NUMERIC,122
+JMP LAB1
+OUT $char
+LABEL LAB1
+OUT $char
