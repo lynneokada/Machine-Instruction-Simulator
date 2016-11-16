@@ -6,6 +6,7 @@ using std::ifstream;
 using std::vector;
 using std::array;
 using std::string;
+using std::regex;
 
 ofstream outfile;
 ofstream errfile;
@@ -155,6 +156,13 @@ void Mis::create_variable(vector<string> lines) {
 
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	vector<string> params;
+	string paramName;
+
+	// regexs to match literals against
+	regex charRgx("'([^\"]|(\\\\[nrt]))'");
+	regex strRgx("\"[^\"]*\"");
+	regex realRgx("((\\+|-)?[[:digit:]]+)(\\.([[:digit:]]+))");
+	regex numRgx("((\\+|-)?[[:digit:]]+)");
 
 	// populate params with arguments for operations
 	for(int j = 1; j < v_single_line.size(); j++) {
@@ -174,56 +182,49 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			continue;
 		}
 
-		string paramName = v_single_line[j];
+		paramName = v_single_line[j];
 
-		if (v_single_line[j][0] == '$') {
+		if (paramName[0] == '$') { // this is a variable
 			// search name in variables map and obtain value
 			params.push_back(paramName);
-		} 
-		else if (v_single_line[j].find_first_of("'") != string::npos && v_single_line[j].size() == 3) { //check for char
-			std::regex rgx("('[^\"]')");
-			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
-			auto end = std::sregex_iterator();
-			char capture;
-			capture = ((*begin).str())[1];
-			Char* myChar = new Char(paramName, capture);
+		} // otherwise, we check to see if it matches any literals
+
+		else if (regex_match(paramName, charRgx)) { // check for char
+			char charVal = paramName[paramName.size() - 2];
+			cout << paramName << " is a char" << endl;
+			if (paramName.size() == 4) {
+				cout << "four" << endl;
+				cout << charVal << endl;
+				if (charVal == 'n') {
+					cout << "newline" << endl;
+					charVal = '\n';
+				} else if (charVal == 'r') {
+					charVal = '\r';
+				} else if (charVal == 't') {
+					charVal = '\t';
+				}
+			}
+			Char* myChar = new Char(paramName, charVal);
 			charVars[paramName] = myChar;
 			params.push_back(paramName);
 
-		} else if(v_single_line[j].find_first_of("\"") != string::npos) { //check for string
-			std::regex rgx("(\"[^\"]*\")");
-			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
-			auto end = std::sregex_iterator();
-			string capture = "";
-
-			for (std::sregex_iterator i = begin; i != end; ++i) {
-		        std::smatch match = *i;                                                 
-		        std::string match_str = match.str(); 
-		        capture.append(match_str);
-		    }
-		    String* myString = new String(paramName,capture,capture.length());
+		} else if (regex_match(paramName, strRgx)) { // check for string
+		    String* myString = new String(paramName,paramName,paramName.length());
 		    stringVars[paramName] = myString;
 		    params.push_back(paramName);
 
-		} else if(v_single_line[j].find_first_of("0123456789") != string::npos) {
-	
-			std::regex rgx("((\\+|-)?[[:digit:]]+)(\\.([[:digit:]]+))?");
-			auto begin = std::sregex_iterator(v_single_line[j].begin(), v_single_line[j].end(), rgx);
-			auto end = std::sregex_iterator();
-			string capture = "";
+		} else if (regex_match(paramName, realRgx)) { // check for real
+			Real* myReal = new Real(paramName, stod(paramName));
+			mathVars[paramName] = myReal;
+			params.push_back(paramName);
 
-			double d = stod(paramName);
-			if(v_single_line[j].find_first_of(".") == string::npos) {
-				Numeric* myNumeric = new Numeric(paramName, (int)d);
-				mathVars[paramName] = myNumeric;
-				params.push_back(paramName);
-			} else {
-				Real* myReal = new Real(paramName, d);
-				mathVars[paramName] = myReal;
-				params.push_back(paramName);
-			}
+		} else if (regex_match(paramName, numRgx)) { // check for numeric
+			Numeric* myNumeric = new Numeric(paramName, stoi(paramName));
+			mathVars[paramName] = myNumeric;
+			params.push_back(paramName);
+
 		} else {
-			errfile << "Error: no matching types" << endl;
+			errfile << "Error: no matching types for " << paramName << " on line " << index + 1 << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
