@@ -167,23 +167,22 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	// populate params with arguments for operations
 	for(int j = 1; j < v_single_line.size(); j++) {
 
-		if(j == 1 && (strcmp(v_single_line[0].c_str(), "OUT") == 0)) {
-			params.push_back(v_single_line[1]);
-			continue;
-		}
-
-		if(j == 1 && (v_single_line[j][0] == '$'))
-		{
-			continue;
-		}
-
-		if(j == 1 && (v_single_line[0].find("JMP") != string::npos)) {
-			params.push_back(v_single_line[1]);
-			continue;
+		// special cases for the first 
+		if (j == 1) {
+			if (strcmp(v_single_line[0].c_str(), "OUT") == 0) {
+				// do nothing
+			} else if (v_single_line[0].find("JMP") != string::npos) {
+				params.push_back(v_single_line[1]);
+				continue;
+			} else if (v_single_line[j][0] == '$') {
+				continue; 	// ignore the first parameter (it is the var that the
+							// function is being called on)
+			}
 		}
 
 		paramName = v_single_line[j];
 
+		// cout << "obtain_args " << paramName << endl;
 		if (paramName[0] == '$') { // this is a variable
 			// search name in variables map and obtain value
 			params.push_back(paramName);
@@ -191,12 +190,8 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 
 		else if (regex_match(paramName, charRgx)) { // check for char
 			char charVal = paramName[paramName.size() - 2];
-			cout << paramName << " is a char" << endl;
 			if (paramName.size() == 4) {
-				cout << "four" << endl;
-				cout << charVal << endl;
 				if (charVal == 'n') {
-					cout << "newline" << endl;
 					charVal = '\n';
 				} else if (charVal == 'r') {
 					charVal = '\r';
@@ -250,7 +245,16 @@ void Mis::run() {
 		} else if (v_line[i][0] == "SUB") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->sub(params, mathVars);
+			// mathVars[var]->sub(params, mathVars);
+			// cout << mathVars[var]->getValue() << endl;
+			if (mathVars[params[0]]->getType() == "Numeric") {
+				int x = mathVars[var]->sub(params, mathVars);
+				mathVars[var]->setValue(x);
+			} else {
+				double x = mathVars[var]->sub(params, mathVars);
+				mathVars[var]->setValue(x);
+			}
+			// cout << mathVars[var]->getValue() << endl;e
 
 		} else if (v_line[i][0] == "MUL") {
 
@@ -294,8 +298,8 @@ void Mis::run() {
 
 		} else if (v_line[i][0] == "OUT") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			for(int i = 0; i < params.size(); ++i) {
-				string current = params[i];
+			for(int j = 0; j < params.size(); ++j) {
+				string current = params[j];
 
 				if(mathVars.find(current) != mathVars.end()) {
 					outfile << mathVars[current]->getValue() << endl;
@@ -307,7 +311,7 @@ void Mis::run() {
 					outfile << stringVars[current]->getValue() << endl;
 				}
 				else {
-					errfile << "Invalid variable" << endl;
+					errfile << "Invalid variable " << current << " on line " << i + 1 << endl;
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -347,7 +351,12 @@ void Mis::run() {
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = this->obtain_args(i,v_line[i]);
+			for (int j = 0; j < v_line[i].size(); j++) {
+				cout << v_line[i][j] << " ";
+			}
+			cout << endl;
 			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVars);
+			cout << labelIndex;
 			if(labelIndex == -2) {
 				errfile << "Not of supported JMP type" << endl;
 				exit(EXIT_FAILURE);
@@ -356,9 +365,11 @@ void Mis::run() {
 			} else {
 				i = labelIndex-1;
 			}
+		} else if (v_line[i][0] == "LABEL") {
+			continue;
 		}
 		else {
-			errfile << "Error: instruction type is not valid" << endl;
+			errfile << "Error: instruction " << v_line[i][0] << " on line " << i << " is not a valid type" << endl;
 			exit(EXIT_FAILURE);
 		}
 	}
