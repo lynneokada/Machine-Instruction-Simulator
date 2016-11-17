@@ -28,9 +28,14 @@ void Math::out()
 // to their object. Then it performs subtraction on the two objects specified
 // by names. The result is stored in the value parameter of the object calling
 // this function
-void Math::sub(std::vector<string> names, std::map<string, Math*> map)
+double Math::sub(std::vector<string> names, std::map<string, Math*> map)
 {
-	value = decltype(value)((map[names[0]])->getValue() - map[names[1]]->getValue());
+	// cout << (map[names[0]])->getValue() << " - " << map[names[1]]->getValue() << endl;
+	// decltype(value) x;
+	// x = ((map[names[0]])->getValue() - map[names[1]]->getValue());
+	// value = x;
+	// cout << value << endl;
+	return (((map[names[0]])->getValue() - map[names[1]]->getValue()));
 }
 
 // division function that takes in a vector of the names of the parameters,
