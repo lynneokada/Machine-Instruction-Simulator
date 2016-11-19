@@ -99,7 +99,7 @@ void Mis::parse_file(ifstream & input_file) {
 		char * p = std::strtok(strdup(a.c_str()),DELIMITER_COMMA);
 
 		if (strcmp(token[0],"LABEL")==0) {
-		this->jmp.storeLabel(token[1],lineNumber);
+			this->jmp.storeLabel(token[1],lineNumber);
 		}
 
   		while (p!=0)
@@ -247,13 +247,18 @@ void Mis::run() {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			// mathVars[var]->sub(params, mathVars);
 			// cout << mathVars[var]->getValue() << endl;
-			if (mathVars[params[0]]->getType() == "Numeric") {
-				int x = mathVars[var]->sub(params, mathVars);
-				mathVars[var]->setValue(x);
-			} else {
-				double x = mathVars[var]->sub(params, mathVars);
-				mathVars[var]->setValue(x);
-			}
+
+			// if (mathVars[params[0]]->getType() == "Numeric") {
+			// 	int x = mathVars[var]->sub(params, mathVars);
+			// 	mathVars[var]->setValue(x);
+			// } else {
+			// 	double x = mathVars[var]->sub(params, mathVars);
+			// 	mathVars[var]->setValue(x);
+			// }
+
+			double x = mathVars[var]->sub(params, mathVars);
+			mathVars[var]->setValue(x);
+
 			// cout << mathVars[var]->getValue() << endl;e
 
 		} else if (v_line[i][0] == "MUL") {
@@ -283,7 +288,6 @@ void Mis::run() {
 				}
 
 			} else if(charVars.find(var) != charVars.end()) {
-				cout << "Updated value:" << charVars[var]->getValue();
 				charVars[var]->setValue(charVars[params[0]]->getValue());
 
 			} else if(stringVars.find(var) != stringVars.end()) {
@@ -351,12 +355,13 @@ void Mis::run() {
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			for (int j = 0; j < v_line[i].size(); j++) {
-				cout << v_line[i][j] << " ";
-			}
-			cout << endl;
+			
 			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVars);
-			cout << labelIndex;
+			if (labelIndex == -2) {
+				errfile << "Label " << v_line[i][1] << " called on line " << i + 1 << " does not exist" << endl;
+				exit(EXIT_FAILURE);
+			}
+			
 			if(labelIndex == -2) {
 				errfile << "Not of supported JMP type" << endl;
 				exit(EXIT_FAILURE);

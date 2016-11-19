@@ -64,9 +64,22 @@ int Jump::lessEqual(T varA, W varB)
 }
 
 
+
+
 //CHECK FOR MAP.END() BEFORE GOING THROUGH CHECK
 int Jump::compare(vector<string> names, string type, map<string, Math*> variables)
 {
+	if (labels.find(names[0]) == labels.end()) {
+		return -2;
+	}
+
+	for (map<string,int>::iterator it = labels.begin(); it != labels.end(); ++it) {
+	  	cout << it->first;
+	}
+
+	// As of now, calling JMP on a label that does not exist CREATES that label in the
+	// label map with an index value of 0, rather than throwing an error
+
 	if(names.size() == 1)
 	{
 		return labels[names[0]];
@@ -75,6 +88,7 @@ int Jump::compare(vector<string> names, string type, map<string, Math*> variable
 	if(names.size() == 2)
 	{
 		Math * param1 = variables[(names[1])];
+
 
 		if(variables.find(names[1]) != variables.end()) //check if first variable exists
 		{	if((this->*jumpSingle[type])(param1) == 1) {
