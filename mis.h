@@ -14,9 +14,20 @@
 #include <regex>
 
 class Mis {
+private:
+	ofstream outfile;
+	ofstream errfile;
+	vector<string> v_test;
+	vector<vector<string>> v_line;
+	string LINE;
+
+	std::map<string, Math*> mathVars;
+	std::map<string, String*> stringVars;
+	std::map<string, Char*> charVars;
 public:
 	Mis();	// constructor
 	Jump jmp;
+	string name; //ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 	void parse_file(ifstream & input_file);
 	void create_variable(vector<string> lines);
 	vector<string> obtain_args(int index, vector<string> v_single_line);

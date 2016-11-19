@@ -1,4 +1,1 @@
-VAR $int,STRING,10,"Testing"
-OUT $int
-ASSIGN $int,"Testdsfdsf"
-OUT $int
+OUT "test.mis"

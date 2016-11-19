@@ -8,22 +8,12 @@ using std::array;
 using std::string;
 using std::regex;
 
-ofstream outfile;
-ofstream errfile;
 
 //maybe make hash defined instead? not sure if that'll work/whats more beneficial
 const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
-// declare vectors
-vector<string> v_test;
-vector<vector<string>> v_line;
-string LINE;
-
-std::map<string, Math*> mathVars;
-std::map<string, String*> stringVars;
-std::map<string, Char*> charVars;
 
 Mis::Mis() {} // constructor
 
@@ -227,7 +217,9 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 }
 
 void Mis::run() {
-	for (int i=0; i<v_line.size(); i++) {
+	outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
+
+	for (int i=0; i<v_line.size(); i++) {	
 		if (v_line[i].size() < 2) {
 			continue;
 		};
