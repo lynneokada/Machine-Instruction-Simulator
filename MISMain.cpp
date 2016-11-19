@@ -2,6 +2,12 @@
 #include <thread>
 #include <atomic> //may not need - need to confirm
 
+//Notes:
+//-BARRIER needs to check if there are any threads still running (Atmoic counter?)
+//	-if there are threads running then ensure to join them
+//	-Maybe store all threads in a vector and 
+//-Splitting file i/o to client-side as well as making buffer for server-side writing back to client
+
 int main(int argc, char *argv[]) 
 {
 	// create Mis and read file
