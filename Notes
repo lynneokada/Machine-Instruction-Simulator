@@ -1,0 +1,11 @@
+Client sends to server (via struct or strings or whatever)
+	-need to check how many bytes are being read/sent
+
+Server reads data in line by line and stored as vector<vector<string>>
+Spawns client thread and begins execution based on the vector it receives
+	-Client threads can spawn worker threads to perform a subset of instructions based on thread begin/end
+	-Stores output in an output buffer that contains a mutex so that it can only be written to by a single worker
+		-Make function to write to output buffer that uses class mutex to lock writing
+Once data is all done, return output buffer line by line to the client again and signal that it is done with execution
+
+Client receives data from output buffer and will now write it to the file to be outputted
