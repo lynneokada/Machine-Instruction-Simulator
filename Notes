@@ -13,3 +13,8 @@ Client receives data from output buffer and will now write it to the file to be 
 
 
 Make sure to parse individual words on server side
+
+
+Behavior still unknown:
+	-How does reading from buffer work with queued amount of strings incoming
+	-Length of time from sending data to being able to read output data
