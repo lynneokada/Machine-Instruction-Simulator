@@ -20,13 +20,13 @@ public:
 	//requires implementing mutexes on all variables
 	//	-is recursive locking allowed?
 	//	-do threads HAVE to be unlocked ever or is it valid for it to just lock?
-	lock();
+	void lock();
 
 
 	//need to be careful about unlocking a previously unlocked variable
 	//	-possibly use an atomic boolean to represent locked/unlocked state
 	//		-needs to utilize double check locking
-	unlock();
+	void unlock();
 	
 
 };

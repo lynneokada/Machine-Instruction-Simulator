@@ -26,6 +26,7 @@ private:
 	std::map<string, Char*> charVars;
 public:
 	Mis();	// constructor
+	~Mis();	// destructor
 	Jump jmp;
 	string name; //ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 	void parse_file(ifstream & input_file);
@@ -34,5 +35,4 @@ public:
 	ifstream openFiles(string filename);
 	void sleep(Math* var);
 	void run();
-	~Mis();	// destructor
 };

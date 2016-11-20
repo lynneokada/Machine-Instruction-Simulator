@@ -44,5 +44,5 @@ class TCPSocket // TCP Socket Class
             ~TCPSocket ( ); // Destructor: shutdown the target socket and deallocate all its resources
 };
 
-#endif // TCPSOCKET_H
+#endif TCPSOCKET_H
 

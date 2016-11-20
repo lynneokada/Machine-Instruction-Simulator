@@ -9,3 +9,7 @@ Spawns client thread and begins execution based on the vector it receives
 Once data is all done, return output buffer line by line to the client again and signal that it is done with execution
 
 Client receives data from output buffer and will now write it to the file to be outputted
+	-need to make sure not to mix up error and output buffers (needs 2 stop flags)
+
+
+Make sure to parse individual words on server side
