@@ -4,6 +4,13 @@
 
 // Client::~Client();
 
+std::vector<string> inBuffer;
+std::vector<string> outBuffer;
+std::vector<string> errorBuffer;
+ofstream outfile;
+ofstream errfile;
+
+
 const int MAX_CHARS_PER_INSTRUCTION = 2; //make these hash defined?
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
@@ -42,14 +49,14 @@ ifstream openFiles(string filename) {
     return infile;
 }
 
-void parse_file(ifstream & input_file) {
+vector<string> parse_file(ifstream & input_file) {
 	// check if file input is valid
 	if (!input_file.good()) {
 		errfile << "error: file cannot be found" << endl;
-		return;
+		exit(1);
 	}
 
-	String LINE;
+	string LINE;
 	vector<string> lines;
 
 	//read each line of input file
@@ -66,10 +73,10 @@ void parse_file(ifstream & input_file) {
 	return lines;
 }
 
-void transmit(vector<string> in, TCPSocket sock) { //need to check number of bytes written out adn compare to length of string trying to be sent
+void transmit(vector<string> in, TCPSocket* sock) { //need to check number of bytes written compared to length of string trying to send
 	int status;
 
-	for (int i = 0; i < in.length; ++i)
+	for (int i = 0; i < in.size(); ++i)
 	{
 		string testing = in[i];
 		int size = testing.length();
@@ -81,7 +88,7 @@ void transmit(vector<string> in, TCPSocket sock) { //need to check number of byt
 		{
 			packet[3+i] = testing[i];
 		}
-		status = writeToSocket (packet, strlen(packet));
+		status = sock->writeToSocket (packet, strlen(packet));
 
 		if (status == -1)
 			exit(1);
@@ -90,11 +97,12 @@ void transmit(vector<string> in, TCPSocket sock) { //need to check number of byt
 
 void receive(std::vector<string> buffer, TCPSocket* sock) {
 	char length[sizeof(int)];
-	int bytesRead
+	int bytesRead;
+	string info;
 
 	do {
-		string info;
-		bytesRead = sock.readFromSocket(length, sizeof(int));
+		info = "";
+		bytesRead = sock->readFromSocket(length, sizeof(int));
 		if(bytesRead == -1)
 		{
 			perror("Error reading from socket");
@@ -104,14 +112,14 @@ void receive(std::vector<string> buffer, TCPSocket* sock) {
 		{
 			while(bytesRead < 4) //make sure we read the whole int - need to figure out how to not overwrite length every time
 			{
-				bytesRead = bytesRead - sock.readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
+				bytesRead = bytesRead - sock->readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
 			}
 		}
 
 		//getting length of message
 		int intLength = *((int*) length);
 		char buff[intLength];
-		bytesRead = sock.readFromSocket(buff, intLength)
+		bytesRead = sock->readFromSocket(buff, intLength);
 
 		if(bytesRead == -1)
 		{
@@ -121,7 +129,7 @@ void receive(std::vector<string> buffer, TCPSocket* sock) {
 
 		while (bytesRead != intLength)
 		{
-			bytesRead = sock.readFromSocket(buff, intLength-bytesRead);
+			bytesRead = sock->readFromSocket(buff, intLength-bytesRead);
 		}
 
 		//grabbing from sizeof(int) offset to end of message
@@ -138,12 +146,12 @@ void receive(std::vector<string> buffer, TCPSocket* sock) {
 }
 
 void write() {
-	for (int i = 0; i < outBuffer.length; ++i)
+	for (int i = 0; i < outBuffer.size(); ++i)
 	{
 		outfile << outBuffer[i] << endl;
 	}
 
-	for (int i = 0; i < errorBuffer.length; ++i)
+	for (int i = 0; i < errorBuffer.size(); ++i)
 	{
 		errfile << errorBuffer[i] << endl;
 	}
@@ -158,15 +166,16 @@ int main(int argc, char const *argv[])
 		printf ("Usage: ./client <.mis file> <server-address>\n");
 		exit(1);
 	}
+	char* address = strdup(argv[2]);
 
-	TCPSocket socket(argv[2], 9999); //port # will always be 9999
+	TCPSocket socket(address, 9999); //port # will always be 9999
 
-	input = parse_file(input_file);
+	inBuffer = parse_file(input_file);
 
-	transmit(input, socket);
+	// transmit(inBuffer, &socket);
 
-	receive(outBuffer, socket); //receives until gets to stop message
-	receive(errorBuffer, socket); //need to figure out how messages come in (ie if all at once or if its separated)
+	// receive(outBuffer, &socket); //receives until gets to stop message
+	// receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
 
 	write();
 
