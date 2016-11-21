@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-// #include "TCPSocket.h"
+#include "TCPSocket.h"
 #include "includes.h"
 #include "common.h"
 
@@ -13,6 +13,7 @@ class Client
 		std::vector<string> errorBuffer;
 		ofstream outfile;
 		ofstream errfile;
+		struct packet;
 
 	public:
 		Client();

@@ -68,9 +68,20 @@ void parse_file(ifstream & input_file) {
 
 void transmit(vector<string> in, TCPSocket sock) { //need to check number of bytes written out adn compare to length of string trying to be sent
 	int status;
+
 	for (int i = 0; i < in.length; ++i)
 	{
-		status = writeToSocket (in[i], sizeof(in[i]));
+		string testing = in[i];
+		int size = testing.length();
+		char packet[size+sizeof(int)];
+
+		memcpy(packet, &size, sizeof(size));
+
+		for (int i = 0; i < size; ++i)
+		{
+			packet[3+i] = testing[i];
+		}
+		status = writeToSocket (packet, strlen(packet));
 
 		if (status == -1)
 			exit(1);
@@ -78,15 +89,52 @@ void transmit(vector<string> in, TCPSocket sock) { //need to check number of byt
 }
 
 void receive(std::vector<string> buffer, TCPSocket* sock) {
-	string buff;
-	int status;
+	char length[sizeof(int)];
+	int bytesRead
+
 	do {
-		status = sock.readFromSocket(buff, 10000); //need to change max size from 10000 to an actual number
-		if(status != 0)	//received nothing
-			buffer.push_back(buff);
+		string info;
+		bytesRead = sock.readFromSocket(length, sizeof(int));
+		if(bytesRead == -1)
+		{
+			perror("Error reading from socket");
+			exit(1);
+		}
+		else
+		{
+			while(bytesRead < 4) //make sure we read the whole int - need to figure out how to not overwrite length every time
+			{
+				bytesRead = bytesRead - sock.readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
+			}
+		}
+
+		//getting length of message
+		int intLength = *((int*) length);
+		char buff[intLength];
+		bytesRead = sock.readFromSocket(buff, intLength)
+
+		if(bytesRead == -1)
+		{
+			perror("Error reading from socket");
+			exit(1);
+		}
+
+		while (bytesRead != intLength)
+		{
+			bytesRead = sock.readFromSocket(buff, intLength-bytesRead);
+		}
+
+		//grabbing from sizeof(int) offset to end of message
+		for (int i = 3; i < intLength+3; ++i)
+		{
+			info += buff[i];
+		}
+
+		buffer.push_back(info);
+		//wipe buffers at end?
 	}
 
-	while(status != -1 || buff != "STOP");
+	while(bytesRead != -1 || info != "STOP");
 }
 
 void write() {
