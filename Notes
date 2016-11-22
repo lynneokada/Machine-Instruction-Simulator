@@ -6,6 +6,7 @@ Spawns client thread and begins execution based on the vector it receives
 	-Client threads can spawn worker threads to perform a subset of instructions based on thread begin/end
 	-Stores output in an output buffer that contains a mutex so that it can only be written to by a single worker
 		-Make function to write to output buffer that uses class mutex to lock writing
+
 Once data is all done, return output buffer line by line to the client again and signal that it is done with execution
 
 Client receives data from output buffer and will now write it to the file to be outputted
@@ -18,3 +19,6 @@ Make sure to parse individual words on server side
 Behavior still unknown:
 	-what is backlog on TCPSocketServer?
 	-Not sure whether or not to make spawnWorker and spawnClient or just spawnWorker for both
+	-Client OOP?
+	-Time between sending/receiving on the client (should we have a sleep function?)
+	-How would handling multiple threads on the same functions (spawnClientWorker) work

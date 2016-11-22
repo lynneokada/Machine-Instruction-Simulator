@@ -17,6 +17,6 @@ class Server
 		~Server();
 		void transmit(vector<string> in, TCPSocket sock);
 		void receive(std::vector<string> buffer, TCPSocket sock);		
-		void parse(vector<string> buffer); //spawn thread from socket and use threads to parse? - so far yes
+		vector<vector<string>> parse(vector<string> buffer);
 		void spawnClientThread(TCPSocket* socket);
 };
