@@ -16,6 +16,7 @@ const char* const DELIMITER_COMMA = ",";
 
 
 Mis::Mis() {} // constructor
+Mis::~Mis() {} // destructor
 
 ifstream Mis::openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
@@ -49,6 +50,54 @@ ifstream Mis::openFiles(string filename) {
     }
 
     return infile;
+}
+
+void Mis::parseLines(vector<string> lines)
+{
+	int lineNumber = 0;
+	vector<string> v_args;
+
+	for (int i = 0; i < lines.size(); ++i)
+	{
+		LINE = lines[i];
+
+		if (LINE.size() == 0) {
+			v_args.push_back("");
+			lineNumber++;
+			continue;
+		}
+
+		char* instruction_line = strdup(LINE.c_str());
+
+		// grab instruction
+		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
+		token[0] = std::strtok(instruction_line, DELIMITER_SPACE);
+		v_args.push_back(token[0]);
+
+		// find first instance of ' ' and create substring of arguments
+		std::size_t pos = LINE.find(DELIMITER_SPACE);
+		string a = LINE.substr(pos+1);
+		token[1] = std::strtok(strdup(a.c_str()), DELIMITER_COMMA);
+		
+		char * p = std::strtok(strdup(a.c_str()),DELIMITER_COMMA);
+
+		if (strcmp(token[0],"LABEL")==0) {
+			this->jmp.storeLabel(token[1],lineNumber);
+		}
+
+		while (p!=0)
+		{
+		v_args.push_back(p);
+		p = std::strtok(NULL,DELIMITER_COMMA);
+		}
+
+		if(v_args.back().back() == '\r') {
+			v_args.back().pop_back();
+		}
+
+		v_line.push_back(v_args);	// add arguments to v_line
+		lineNumber++;
+	}
 }
 
 
@@ -138,7 +187,7 @@ void Mis::create_variable(vector<string> lines) {
 		charVars[name] = new Char(name, char_value);
 
 	} else {
-		errfile << "Not a supported type" << endl;
+		errBuffer.push_back("Not a supported type");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -209,18 +258,19 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			params.push_back(paramName);
 
 		} else {
-			errfile << "Error: no matching types for " << paramName << " on line " << index + 1 << endl;
-			exit(EXIT_FAILURE);
+			errBuffer.push_back("Error: no matching types for "+ paramName + " on line " + to_string(index + 1));
+			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 		}
 	}
 	return params;
 }
 
 
-void Mis::run() {
-	outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
+void Mis::run() 
+{
+	// outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 
-	for (int i=0; i<v_line.size(); i++) {	
+	for (int i=0; i<v_line.size(); 	i++) {	
 		if (v_line[i].size() < 2) {
 			continue;
 		};
@@ -288,8 +338,8 @@ void Mis::run() {
 				//throw an error if the length of the new string exceeds the max of the current one
 				if(state != 0)
 				{
-					errfile << "New String is longer than max size" << endl;
-					exit(EXIT_FAILURE);
+					errBuffer.push_back("New String is longer than max size");
+					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 				}
 			}
 
@@ -299,17 +349,17 @@ void Mis::run() {
 				string current = params[j];
 
 				if(mathVars.find(current) != mathVars.end()) {
-					outfile << mathVars[current]->getValue() << endl;
+					outBuffer.push_back(to_string(mathVars[current]->getValue()));
 				}
 				else if(charVars.find(current) != charVars.end()) {
-					outfile << charVars[current]->getValue() << endl;
+					outBuffer.push_back(to_string(charVars[current]->getValue()));
 				}
 				else if(stringVars.find(current) != stringVars.end()) {
-					outfile << stringVars[current]->getValue() << endl;
+					outBuffer.push_back(stringVars[current]->getValue());
 				}
 				else {
-					errfile << "Invalid variable " << current << " on line " << i + 1 << endl;
-					exit(EXIT_FAILURE);
+					errBuffer.push_back("Invalid variable " + current + " on line " + to_string(i + 1));
+					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 				}
 			}
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
@@ -320,8 +370,8 @@ void Mis::run() {
 				stringVars[var]->setStrChar(mathVars[params[0]], charVars[params[1]]);
 
 			} else {
-				errfile << "Error: one or more variables does not exist" << endl;
-				exit(EXIT_FAILURE);
+				errBuffer.push_back("Error: one or more variables does not exist");
+				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
@@ -332,16 +382,16 @@ void Mis::run() {
 				stringVars[var]->getStrChar(mathVars[params[0]], charVars[params[1]]);
 
 			} else {
-				errfile << "Error: one or more variables does not exist" << endl;
-				exit(EXIT_FAILURE);
+				errBuffer.push_back("Error: one or more variables does not exist");
+				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 
 		} else if (v_line[i][0] == "SLEEP") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 
 			if(params.size() != 1) {
-				errfile << "Error, too many arguments" << endl;
-				exit(EXIT_FAILURE);
+				errBuffer.push_back("Error, too many arguments");
+				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 
 			} else {
 				this->sleep(mathVars[params[0]]);
@@ -351,12 +401,12 @@ void Mis::run() {
 			
 			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVars);
 			if (labelIndex == -2) {
-				errfile << "Label " << v_line[i][1] << " called on line " << i + 1 << " does not exist" << endl;
-				exit(EXIT_FAILURE);
+				errBuffer.push_back("Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
+				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 			
 			if(labelIndex == -2) {
-				errfile << "Not of supported JMP type" << endl;
+				errBuffer.push_back("Not of supported JMP type");
 				exit(EXIT_FAILURE);
 			} else if (labelIndex == -1){
 				continue;
@@ -367,10 +417,23 @@ void Mis::run() {
 			continue;
 		}
 		else {
-			errfile << "Error: instruction " << v_line[i][0] << " on line " << i << " is not a valid type" << endl;
-			exit(EXIT_FAILURE);
+			errBuffer.push_back("Error: instruction " + v_line[i][0] +" on line " + to_string(i) +" is not a valid type");
+			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 		}
 	}
 }
 
-Mis::~Mis() {} // destructor
+void spawnWorker(vector<string> lines)
+{
+	//pass in lines or let thread figure out what lines?
+}
+
+vector<string> Mis::output()
+{
+	return outBuffer;
+}
+
+vector<string> Mis::errors()
+{
+	return errBuffer;
+}

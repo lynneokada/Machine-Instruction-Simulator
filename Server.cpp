@@ -11,12 +11,76 @@ Server::~Server();
 
 Server::void transmit(vector<string> in, TCPSocket* sock)
 {
-	//same transmit code as from Client.cpp
+	int status;
+
+	for (int i = 0; i < in.size(); ++i)
+	{
+		string testing = in[i];
+		int size = testing.length();
+		char packet[size+sizeof(int)];
+
+		memcpy(packet, &size, sizeof(size));
+
+		for (int i = 0; i < size; ++i)
+		{
+			packet[3+i] = testing[i];
+		}
+		status = sock->writeToSocket (packet, strlen(packet));
+
+		if (status == -1)
+			exit(1);
+	}
 }
 
 void receive(std::vector<string> buffer, TCPSocket* sock)
 {
-	//"receive" code from Client.cpp
+	char length[sizeof(int)];
+	int bytesRead;
+	string info;
+
+	do {
+		info = "";
+		bytesRead = sock->readFromSocket(length, sizeof(int));
+		if(bytesRead == -1)
+		{
+			perror("Error reading from socket");
+			exit(1);
+		}
+		else
+		{
+			while(bytesRead < 4) //make sure we read the whole int - need to figure out how to not overwrite length every time
+			{
+				bytesRead = bytesRead - sock->readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
+			}
+		}
+
+		//getting length of message
+		int intLength = *((int*) length);
+		char buff[intLength];
+		bytesRead = sock->readFromSocket(buff, intLength);
+
+		if(bytesRead == -1)
+		{
+			perror("Error reading from socket");
+			exit(1);
+		}
+
+		while (bytesRead != intLength)
+		{
+			bytesRead = sock->readFromSocket(buff, intLength-bytesRead);
+		}
+
+		//grabbing from sizeof(int) offset to end of message
+		for (int i = 3; i < intLength+3; ++i)
+		{
+			info += buff[i];
+		}
+
+		buffer.push_back(info);
+		//wipe buffers at end?
+	}
+
+	while(bytesRead != -1 || info != "STOP");
 }
 
 void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
@@ -27,7 +91,6 @@ void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
 	receive(lines, &socket);
 
 	//parse all messages when received and store (in thread/client object?)
-	//do we have to wait to parse all messages or is it essentially instantaneous?
 	mis.parseLines(lines);
 
 	//start execution using mis object

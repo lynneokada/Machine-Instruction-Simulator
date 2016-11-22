@@ -14,7 +14,8 @@ Client receives data from output buffer and will now write it to the file to be 
 
 
 Make sure to parse individual words on server side
-
+Should convert to error checking on client side
+Need to make sure all exit(1) on server side is converted to send data back to client
 
 Behavior still unknown:
 	-what is backlog on TCPSocketServer?
