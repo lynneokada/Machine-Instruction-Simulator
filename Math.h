@@ -15,10 +15,10 @@ class Math : public Variable
 	public:
 		Math(std::string p_name = "", double p_value= 0.0);
 		virtual ~Math();
-		void add(std::vector<string> names, std::map<string, Math*> map);
+		double add(std::vector<string> names, std::map<string, Math*> map);
 		double sub(std::vector<string> names, std::map<string, Math*> map);
-		void mul(std::vector<string> names, std::map<string, Math*> map);
-		void div(std::vector<string> names, std::map<string, Math*> map);
+		double mul(std::vector<string> names, std::map<string, Math*> map);
+		double div(std::vector<string> names, std::map<string, Math*> map);
 		virtual void out();
 		virtual double getValue();
 		virtual void setValue(double val);

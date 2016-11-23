@@ -217,7 +217,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 }
 
 void Mis::run() {
-	outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
+	cout << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 
 	for (int i=0; i<v_line.size(); i++) {	
 		if (v_line[i].size() < 2) {
@@ -232,36 +232,106 @@ void Mis::run() {
 		else if (v_line[i][0] == "ADD") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->add(params, mathVars);
+
+			if (!(params.size() >= 2 && params.size() <= 13)) {
+				errfile << "Incorrect number of arguments to function ADD on line " << i + 1 << endl;
+				exit(EXIT_FAILURE);
+			}
+
+			for (int j = 0; j < params.size(); j++) {
+				if (mathVars.find(params[j]) == mathVars.end()) {
+					errfile << "The parameter " << params[j] << " of function ADD on line " 
+					<< i + 1 << " is not a Math type\n";
+				exit(EXIT_FAILURE);
+				}
+			}
+
+			if (mathVars[var]->getType() == "Numeric") {
+				int x = mathVars[var]->add(params, mathVars);
+				mathVars[var]->setValue(x);
+			} else {
+				double x = mathVars[var]->add(params, mathVars);
+				mathVars[var]->setValue(x);
+			}
+
+			cout << mathVars[var]->getValue() <<endl;
 
 		} else if (v_line[i][0] == "SUB") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			// mathVars[var]->sub(params, mathVars);
-			// cout << mathVars[var]->getValue() << endl;
 
-			// if (mathVars[params[0]]->getType() == "Numeric") {
-			// 	int x = mathVars[var]->sub(params, mathVars);
-			// 	mathVars[var]->setValue(x);
-			// } else {
-			// 	double x = mathVars[var]->sub(params, mathVars);
-			// 	mathVars[var]->setValue(x);
-			// }
+			if (params.size() != 2) {
+				errfile << "Incorrect number of arguments to function SUB on line " << i + 1 << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			for (int j = 0; j < params.size(); j++) {
+				if (mathVars.find(params[j]) == mathVars.end()) {
+					errfile << "The parameter " << params[j] << " of function SUB on line " 
+					<< i + 1 << " is not a Math type\n";
+				exit(EXIT_FAILURE);
+				}
+			}
 
-			double x = mathVars[var]->sub(params, mathVars);
-			mathVars[var]->setValue(x);
-
-			// cout << mathVars[var]->getValue() << endl;e
+			if (mathVars[var]->getType() == "Numeric") {
+				int x = mathVars[var]->sub(params, mathVars);
+				mathVars[var]->setValue(x);
+			} else {
+				double x = mathVars[var]->sub(params, mathVars);
+				mathVars[var]->setValue(x);
+			}
 
 		} else if (v_line[i][0] == "MUL") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->mul(params, mathVars);
+
+			if (!(params.size() >= 2 && params.size() <= 13)) {
+				errfile << "Incorrect number of arguments to function MUL on line " << i + 1 << endl;
+				exit(EXIT_FAILURE);
+			}
+
+			for (int j = 0; j < params.size(); j++) {
+				if (mathVars.find(params[j]) == mathVars.end()) {
+					errfile << "The parameter " << params[j] << " of function MUL on line " 
+					<< i + 1 << " is not a Math type\n";
+				exit(EXIT_FAILURE);
+				}
+			}
+
+			if (mathVars[var]->getType() == "Numeric") {
+				int x = mathVars[var]->mul(params, mathVars);
+				mathVars[var]->setValue(x);
+			} else {
+				double x = mathVars[var]->mul(params, mathVars);
+				mathVars[var]->setValue(x);
+			}
 
 		} else if (v_line[i][0] == "DIV") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->div(params, mathVars);
+
+			if (params.size() != 2) {
+				errfile << "Incorrect number of arguments to function DIV on line " << i + 1 << endl;
+				exit(EXIT_FAILURE);
+			}
+
+			for (int j = 0; j < params.size(); j++) {
+				if (mathVars.find(params[j]) == mathVars.end()) {
+					errfile << "The parameter " << params[j] << " of function DIV on line " 
+					<< i + 1 << " is not a Math type\n";
+				exit(EXIT_FAILURE);
+				}
+			}
+
+			if (mathVars[var]->getType() == "Numeric") {
+				int x = mathVars[var]->div(params, mathVars);
+				mathVars[var]->setValue(x);
+			} else {
+				double x = mathVars[var]->div(params, mathVars);
+				mathVars[var]->setValue(x);
+			}
+
+			cout << mathVars[var]->getValue() <<endl;
 
 		} else if (v_line[i][0] == "ASSIGN") {
 
