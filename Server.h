@@ -1,7 +1,10 @@
+#ifndef __SOCKET_H_
+#define __SOCKET_H_
+
 #include <fstream>
 #include <thread>
 #include "TCPSocket.h"
-#include "TCPSocketServer.h"
+#include "TCPServerSocket.h"
 #include "mis.h"
 
 class Server
@@ -10,13 +13,16 @@ class Server
 		std::vector<string> inBuffer;
 		std::vector<string> outBuffer;
 		std::vector<string> errorBuffer;
-		std::vector<thread> clients; //going to be MIS object threads i think
-
 	public:
-		Server();
+		std::vector<thread> clients; //going to be MIS object threads i think
+		TCPServerSocket serve;
+		Server(int port, int maxQueue);
 		~Server();
-		void transmit(vector<string> in, TCPSocket sock);
-		void receive(std::vector<string> buffer, TCPSocket sock);		
-		vector<vector<string>> parse(vector<string> buffer);
-		void spawnClientThread(TCPSocket* socket);
+		void transmit(vector<string> in, TCPSocket* sock);
+		void receive(std::vector<string> buffer, TCPSocket* sock);		
+		vector< vector<string> > parse(vector<string> buffer);
+		void spawnClientWorker(TCPSocket *socket);
+		std::thread spawnClientWorkerThread(TCPSocket *socket);
 };
+
+#endif

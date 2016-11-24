@@ -13,12 +13,16 @@
 GPP = g++ -std=c++14
 GPPFLAGS = -O3 -Wall
 
-all : main
+all : server client
 
 #Link command:
-main : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o MISMain.o
+server : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o MISMain.o Server.o TCPSocket.o TCPServerSocket.o
 	$(GPP) $(GPPFLAGS) mis.o Variable.o Math.o String.o Char.o \
-	Numeric.o Real.o Jump.o MISMain.o -o main
+	Numeric.o Real.o Jump.o MISMain.o Server.o TCPSocket.o TCPServerSocket.o -o server
+
+client : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o MISMain.o Client.o TCPSocket.o TCPServerSocket.o
+	$(GPP) $(GPPFLAGS) mis.o Variable.o Math.o String.o Char.o \
+	Numeric.o Real.o Jump.o MISMain.o Client.o TCPSocket.o TCPServerSocket.o -o client
 
 #Compilation commands:
 %.o : %.cpp
@@ -37,3 +41,7 @@ Char.o: Char.cpp Char.h Variable.h
 Numeric.o: Numeric.cpp Numeric.h Math.h
 Real.o: Real.cpp Real.h Math.h
 Jump.o: Jump.cpp Jump.h Math.h
+Server.o: Server.cpp Server.h TCPServerSocket.h TCPSocket.h mis.h
+Client.o: Client.cpp Client.h TCPSocket.h
+TCPSocket.o: TCPSocket.cpp TCPSocket.h includes.h
+TCPServerSocket.o: TCPServerSocket.cpp TCPServerSocket.h TCPSocket.h includes.h

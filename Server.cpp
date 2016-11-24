@@ -1,15 +1,16 @@
 #include "Server.h"
 #define MAX_QUEUE 15
 
+Server::Server(int port, int maxQueue):serve(NULL, port, maxQueue) {
 
-Server::Server(int port, int maxQueue) //I think backlog represents max # of waiting clients?
-{
-	TCPServerSocket serve(NULL, int _port, int _backlog); //NULL represents listening from all addresses
-};
+} //I think backlog represents max # of waiting clients?
+// {
+// 	serve = TCPServerSocket(NULL, port, maxQueue); //NULL represents listening from all addresses
+// };
 
-Server::~Server();
+Server::~Server() {}
 
-Server::void transmit(vector<string> in, TCPSocket* sock)
+void Server::transmit(vector<string> in, TCPSocket* sock)
 {
 	int status;
 
@@ -28,37 +29,50 @@ Server::void transmit(vector<string> in, TCPSocket* sock)
 		status = sock->writeToSocket (packet, strlen(packet));
 
 		if (status == -1)
+		{
 			exit(1);
+		}
 	}
 }
 
-void receive(std::vector<string> buffer, TCPSocket* sock)
+void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 {
 	char length[sizeof(int)];
 	int bytesRead;
 	string info;
 
+
 	do {
 		info = "";
 		bytesRead = sock->readFromSocket(length, sizeof(int));
+		cout << bytesRead << endl;
 		if(bytesRead == -1)
 		{
 			perror("Error reading from socket");
 			exit(1);
 		}
 		else
-		{
+		{	
 			while(bytesRead < 4) //make sure we read the whole int - need to figure out how to not overwrite length every time
 			{
+				cout << "Shouldnt be here" << endl;
 				bytesRead = bytesRead - sock->readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
 			}
 		}
 
 		//getting length of message
-		int intLength = *((int*) length);
-		char buff[intLength];
-		bytesRead = sock->readFromSocket(buff, intLength);
+  		
+		int intLength = sizeof(length);
+		printf("My number is: %d", atoi(length));
+		cout << "length: " << intLength << endl;
 
+		char buff[12];
+		bytesRead = sock->readFromSocket(buff, 12);
+		cout << "Reading" << endl;
+		for (int i = 0; i < 12; ++i)
+		{
+			printf("%c\n", buff[i]);
+		}
 		if(bytesRead == -1)
 		{
 			perror("Error reading from socket");
@@ -83,12 +97,16 @@ void receive(std::vector<string> buffer, TCPSocket* sock)
 	while(bytesRead != -1 || info != "STOP");
 }
 
-void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
+void Server::spawnClientWorker(TCPSocket *socket) //DOES THIS WORK CONCURRENTLY?
 {
+	cout << "After" << endl;
 	Mis mis;
 	vector<string> lines;
 	//receive all incoming transmissions
-	receive(lines, &socket);
+
+	cout << "Segfault: " << socket << endl;
+
+	receive(lines, socket);
 
 	//parse all messages when received and store (in thread/client object?)
 	mis.parseLines(lines);
@@ -101,7 +119,15 @@ void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
 	vector<string> output = mis.output();
 
 	//send it back to client using socket
-	transmit(output, &socket);
+		cout << "Bad file desvnjfdjkod" << endl;
+
+	transmit(output, socket);
+}
+
+std::thread Server::spawnClientWorkerThread(TCPSocket *socket)
+{
+	cout << "Before" << endl;
+ 	return std::thread([=] {spawnClientWorker(socket); });
 }
 
 int main(int argc, char const *argv[])
@@ -111,11 +137,15 @@ int main(int argc, char const *argv[])
 		exit(1);
 	}
 
-	int port = (int)argv[1];
+	const char* value = argv[1]; // convert const char* argvalue to int port address
+	stringstream strValue;
+	strValue << value;
+	unsigned int port;
+	strValue >> port;
 
 	Server server(port, MAX_QUEUE);
-	bool status = server.initializeSocket();
-	if(status < 0) {
+	bool status = server.serve.initializeSocket();
+	if(status == false) {
 		perror("Error initializing socket");
 		exit(1);
 	}
@@ -124,7 +154,7 @@ int main(int argc, char const *argv[])
 
 	while(1)
 	{
-		sock = server.getConnection(100,0); //timeout is 100 seconds and 0 milliseconds
+		sock = server.serve.getConnection(100,0, 65536, 65536); //timeout is 100 seconds and 0 milliseconds
 		if(sock == NULL)
 		{
 			perror("Error creating new socket");
@@ -132,7 +162,15 @@ int main(int argc, char const *argv[])
 		}
 
 		//start client worker and let it handle parsing
-		clients.push_back(thread t(&Server::spawnClientWorker, &sock));
+		// std::thread m1(mis1.run(), &mis1);
+		std::thread t = server.spawnClientWorkerThread(sock);
+		t.join();
+		// server.clients.push_back(t);
+	}
+
+	while (1)
+	{
+
 	}
 
 	return 0;

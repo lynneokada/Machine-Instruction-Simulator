@@ -18,7 +18,7 @@ private:
 	ofstream outfile;
 	ofstream errfile;
 	vector<string> v_test;
-	vector<vector<string>> v_line;
+	vector< vector<string> > v_line;
 	string LINE;
 	vector<string> outBuffer;
 	vector<string> errBuffer;
