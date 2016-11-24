@@ -37,15 +37,13 @@ void Server::transmit(vector<string> in, TCPSocket* sock)
 
 void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 {
-	char length[sizeof(int)];
+	char length[1];
 	int bytesRead;
 	string info;
 
-
 	do {
 		info = "";
-		bytesRead = sock->readFromSocket(length, sizeof(int));
-		cout << bytesRead << endl;
+		bytesRead = sock->readFromSocket(length, 1);
 		if(bytesRead == -1)
 		{
 			perror("Error reading from socket");
@@ -53,23 +51,23 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 		}
 		else
 		{	
-			while(bytesRead < 4) //make sure we read the whole int - need to figure out how to not overwrite length every time
+			while(bytesRead < 1) //make sure we read the whole int - need to figure out how to not overwrite length every time
 			{
 				cout << "Shouldnt be here" << endl;
 				bytesRead = bytesRead - sock->readFromSocket(length, bytesRead); //need to change this so length isnt overwritten every time
 			}
 		}
 
+		cout << "buffer size: " << buffer.size() << endl;
 		//getting length of message
-  		
-		int intLength = sizeof(length);
-		printf("My number is: %d", atoi(length));
+		unsigned int intLength = length[0];
+		// printf("My number is: %d", atoi(length));
 		cout << "length: " << intLength << endl;
 
-		char buff[12];
-		bytesRead = sock->readFromSocket(buff, 12);
+		char buff[intLength];
+		bytesRead = sock->readFromSocket(buff, intLength);
 		cout << "Reading" << endl;
-		for (int i = 0; i < 12; ++i)
+		for (int i = 0; i < intLength; ++i)
 		{
 			printf("%c\n", buff[i]);
 		}
@@ -91,6 +89,7 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 		}
 
 		buffer.push_back(info);
+		cout << "info " << info << endl;
 		//wipe buffers at end?
 	}
 
@@ -167,12 +166,6 @@ int main(int argc, char const *argv[])
 		t.join();
 		// server.clients.push_back(t);
 	}
-
-	while (1)
-	{
-
-	}
-
 	return 0;
 }
 

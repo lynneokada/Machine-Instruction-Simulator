@@ -79,21 +79,35 @@ void transmit(vector<string> in, TCPSocket* sock) { //need to check number of by
 	{
 		string testing = in[i];
 		int size = testing.length();
-		cout << testing.length() << endl;
-		char packet[size+sizeof(int)];
+		// cout << testing.length() << e=ndl;
+		char packet[size+1];
 
-		memcpy(packet, &size, sizeof(size));
+		packet[0]=testing.length();
+		// memcpy(packet, &size, sizeof(size));
 
-		for (int i = 0; i < size+sizeof(int); ++i)
+		// reverse first four digits of packet
+		// int j=0; // keep track of second index
+		// char a;
+		for (int i = 0; i < size+1; ++i)
 		{
-			packet[4+i] = testing[i];
-			cout << "Value of packet" << packet[i] << endl;
+			// if (i<4) {
+			// 	if (j>=2){
+			// 	} else {
+			// 		a = packet[j];
+			// 		packet[j] = packet[3-i];
+			// 		packet[3-i] = a;
+			// 	}
+			// 	j++;
+			// }
+			packet[i+1] = testing[i];
+			// cout << "Value of packet" << packet[i] << endl;
 		}
+
 		cout << "Testing packet: " << testing << endl;
 		cout << "Size of packet: " << sizeof(packet) << endl;
 		status = sock->writeToSocket (packet, sizeof(packet));
-		cout << " - Packet sent: " << status << endl;
-		if (status == -1) 
+		// cout << " - Packet sent: " << status << endl;
+		if (status == -1)
 		{
 			exit(1);
 		}
