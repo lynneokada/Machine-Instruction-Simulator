@@ -79,14 +79,14 @@ void transmit(vector<string> in, TCPSocket* sock) { //need to check number of by
 	{
 		string testing = in[i];
 		int size = testing.length();
-		cout << testing.length();
+		cout << testing.length() << endl;
 		char packet[size+sizeof(int)];
 
 		memcpy(packet, &size, sizeof(size));
 
-		for (int i = 0; i < size; ++i)
+		for (int i = 0; i < size+sizeof(int); ++i)
 		{
-			packet[3+i] = testing[i];
+			packet[4+i] = testing[i];
 			cout << "Value of packet" << packet[i] << endl;
 		}
 		cout << "Testing packet: " << testing << endl;
