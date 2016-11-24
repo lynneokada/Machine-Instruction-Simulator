@@ -6,6 +6,7 @@
 #include <array>
 #include <map>
 #include <libgen.h>
+#include <thread>
 #include "Numeric.h"
 #include "Char.h"
 #include "String.h"
@@ -26,6 +27,9 @@ private:
 	std::map<string, Math*> mathVars;
 	std::map<string, String*> stringVars;
 	std::map<string, Char*> charVars;
+
+	bool isWorker = false;
+	vector<std::thread> workers;
 public:
 	Mis();	// constructor
 	~Mis();	// destructor
@@ -39,7 +43,9 @@ public:
 	void sleep(Math* var);
 	void run();
 	void barrier(); //need to implement
-	void spawnWorker(vector<string> lines); //need to implement
+	void spawnWorker(vector<vector<string>> subset); //need to implement
 	vector<string> output();
 	vector<string> errors();
+	void setFlag(bool flag);
+	std::thread spawnWorkerThread(vector<vector<string>> subset);
 };

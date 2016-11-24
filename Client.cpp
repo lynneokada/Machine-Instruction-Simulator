@@ -162,8 +162,8 @@ int main(int argc, char const *argv[])
 	ifstream input_file;
 	input_file = openFiles(argv[1]);
 
-	if ( argc != 3) { // Check on the number of arguments and exit if incorrect
-		printf ("Usage: ./client <.mis file> <server-address>\n");
+	if ( argc != 4) { // Check on the number of arguments and exit if incorrect
+		printf ("Usage: ./client <.mis file> <server-address> <output file name>\n");
 		exit(1);
 	}
 	char* address = strdup(argv[2]);
@@ -174,7 +174,7 @@ int main(int argc, char const *argv[])
 
 	transmit(inBuffer, &socket);
 
-	//need to include a timeout on receiving
+	//need to include a timeout on receiving in case socket is disconnected
 	receive(outBuffer, &socket); //receives until gets to stop message
 	receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
 

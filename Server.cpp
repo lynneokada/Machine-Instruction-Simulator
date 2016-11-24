@@ -114,7 +114,7 @@ int main(int argc, char const *argv[])
 	int port = (int)argv[1];
 
 	Server server(port, MAX_QUEUE);
-	bool status = server.initializeSocket();
+	bool status = server.serve.initializeSocket();
 	if(status < 0) {
 		perror("Error initializing socket");
 		exit(1);
@@ -124,7 +124,7 @@ int main(int argc, char const *argv[])
 
 	while(1)
 	{
-		sock = server.getConnection(100,0); //timeout is 100 seconds and 0 milliseconds
+		sock = server.serve.getConnection(100,0); //timeout is 100 seconds and 0 milliseconds
 		if(sock == NULL)
 		{
 			perror("Error creating new socket");

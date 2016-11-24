@@ -413,6 +413,37 @@ void Mis::run()
 			} else {
 				i = labelIndex-1;
 			}
+		} else if(v_line[i][0] == "THREAD_BEGIN") {
+			int end = 0;
+			vector<vector<string>> subset;
+			for (int j = i; j < v_line.size(); ++j)
+			{
+				if(v_line[j][0] == "THREAD_END")
+				{
+					end = j;
+					break;
+				}
+			}
+
+			if(end != 0)
+			{
+				for (int index = i; index <= end; ++index)
+				{
+					for (int j = 0; j < v_line[index].size(); ++j)
+					{
+						subset[index].push_back(v_line[index][j]);
+					}
+				}
+				std::thread t = spawnWorkerThread(subset);
+				workers.push_back(t);
+			}
+
+			else
+			{
+				errBuffer.push_back("THREAD_BEGIN does not have matching THREAD_END");
+				break;
+			}
+
 		} else if (v_line[i][0] == "LABEL") {
 			continue;
 		}
@@ -423,9 +454,14 @@ void Mis::run()
 	}
 }
 
-void spawnWorker(vector<string> lines)
+std::thread Mis::spawnWorkerThread(vector<vector<string>> subset)
 {
-	//pass in lines or let thread figure out what lines?
+	return std::thread([=] { spawnWorker(subset); } );
+}
+
+void Mis::spawnWorker(vector<vector<string>> subset)
+{
+
 }
 
 vector<string> Mis::output()
@@ -436,4 +472,9 @@ vector<string> Mis::output()
 vector<string> Mis::errors()
 {
 	return errBuffer;
+}
+
+void Mis::setFlag(bool flag)
+{
+	isWorker = flag;
 }
