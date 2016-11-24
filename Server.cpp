@@ -83,7 +83,7 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 		}
 
 		//grabbing from sizeof(int) offset to end of message
-		for (int i = 3; i < intLength+3; ++i)
+		for (int i = 0; i < intLength; ++i)
 		{
 			info += buff[i];
 		}

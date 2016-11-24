@@ -75,6 +75,7 @@ vector<string> parse_file(ifstream & input_file) {
 
 void transmit(vector<string> in, TCPSocket* sock) { //need to check number of bytes written compared to length of string trying to send
 	int status;
+	cout << "SIZE " << in.size() << endl;
 	for (int i = 0; i < in.size(); ++i)
 	{
 		string testing = in[i];
@@ -85,20 +86,8 @@ void transmit(vector<string> in, TCPSocket* sock) { //need to check number of by
 		packet[0]=testing.length();
 		// memcpy(packet, &size, sizeof(size));
 
-		// reverse first four digits of packet
-		// int j=0; // keep track of second index
-		// char a;
 		for (int i = 0; i < size+1; ++i)
 		{
-			// if (i<4) {
-			// 	if (j>=2){
-			// 	} else {
-			// 		a = packet[j];
-			// 		packet[j] = packet[3-i];
-			// 		packet[3-i] = a;
-			// 	}
-			// 	j++;
-			// }
 			packet[i+1] = testing[i];
 			// cout << "Value of packet" << packet[i] << endl;
 		}
