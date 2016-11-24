@@ -75,7 +75,6 @@ vector<string> parse_file(ifstream & input_file) {
 
 void transmit(vector<string> in, TCPSocket* sock) { //need to check number of bytes written compared to length of string trying to send
 	int status;
-	cout << "SIZE " << in.size() << endl;
 	for (int i = 0; i < in.size(); ++i)
 	{
 		string testing = in[i];

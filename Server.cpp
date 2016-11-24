@@ -13,21 +13,26 @@ Server::~Server() {}
 void Server::transmit(vector<string> in, TCPSocket* sock)
 {
 	int status;
-
 	for (int i = 0; i < in.size(); ++i)
 	{
 		string testing = in[i];
 		int size = testing.length();
-		char packet[size+sizeof(int)];
+		// cout << testing.length() << e=ndl;
+		char packet[size+1];
 
-		memcpy(packet, &size, sizeof(size));
+		packet[0]=testing.length();
+		// memcpy(packet, &size, sizeof(size));
 
-		for (int i = 0; i < size; ++i)
+		for (int i = 0; i < size+1; ++i)
 		{
-			packet[3+i] = testing[i];
+			packet[i+1] = testing[i];
+			// cout << "Value of packet" << packet[i] << endl;
 		}
-		status = sock->writeToSocket (packet, strlen(packet));
 
+		cout << "Testing packet: " << testing << endl;
+		cout << "Size of packet: " << sizeof(packet) << endl;
+		status = sock->writeToSocket (packet, sizeof(packet));
+		// cout << " - Packet sent: " << status << endl;
 		if (status == -1)
 		{
 			exit(1);
