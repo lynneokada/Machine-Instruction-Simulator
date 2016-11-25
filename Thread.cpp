@@ -1,15 +1,21 @@
 #include "Thread.h"
 
-Thread::Thread() {};
+Thread::Thread(std::vector<vector<string>> instructions, Mis* parent)
+{
+	Mis mis;
+	mis.parseLines(instructions);
+	mis.loadVariables(&parent); //mis.mathVars = &parent.mathVars
+};
+
+void Thread::loadVariables(Mis *parent)
+{
+	
+}
 
 Thread::~Thread() {};
 
-void makeThread(std::vector<string> instructions, Mis mis)
-{
-
-}
-
-
+void makeThread();
+{}
 
 int main()
 {

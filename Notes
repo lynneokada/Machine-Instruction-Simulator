@@ -23,3 +23,8 @@ Behavior still unknown:
 	-Client OOP?
 	-Time between sending/receiving on the client (should we have a sleep function?)
 	-How would handling multiple threads on the same functions (spawnClientWorker) work
+
+Ask Tyler:
+	-Using pointer for variable vectors (eg mathVars)
+	-Making new MIS object for THREAD_BEGIN
+	-Why the fuck does cout make our receive work

@@ -86,6 +86,8 @@ void receive(std::vector<string> buffer, TCPSocket* sock)
 void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
 {
 	Mis mis;
+	std::vector<string> out;
+	std::vector<string> error;
 	vector<string> lines;
 	//receive all incoming transmissions
 	receive(lines, &socket);
@@ -94,7 +96,7 @@ void Server::spawnClientWorker(TCPSocket* socket) //DOES THIS WORK CONCURRENTLY?
 	mis.parseLines(lines);
 
 	//start execution using mis object
-	mis.run();
+	mis.run(out, error);
 
 	//parse output from mis object
 	//going to be a "setter" essentially

@@ -187,7 +187,7 @@ void Mis::create_variable(vector<string> lines) {
 		charVars[name] = new Char(name, char_value);
 
 	} else {
-		errBuffer.push_back("Not a supported type");
+		errBuffer->push_back("Not a supported type");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -258,7 +258,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			params.push_back(paramName);
 
 		} else {
-			errBuffer.push_back("Error: no matching types for "+ paramName + " on line " + to_string(index + 1));
+			errBuffer->push_back("Error: no matching types for "+ paramName + " on line " + to_string(index + 1));
 			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 		}
 	}
@@ -266,10 +266,11 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 }
 
 
-void Mis::run() 
+void Mis::run(vector<string>* out, vector<string>* err) 
 {
 	// outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
-
+	outBuffer = out;
+	errBuffer = err;
 	for (int i=0; i<v_line.size(); 	i++) {	
 		if (v_line[i].size() < 2) {
 			continue;
@@ -338,7 +339,7 @@ void Mis::run()
 				//throw an error if the length of the new string exceeds the max of the current one
 				if(state != 0)
 				{
-					errBuffer.push_back("New String is longer than max size");
+					errBuffer->push_back("New String is longer than max size");
 					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 				}
 			}
@@ -349,16 +350,16 @@ void Mis::run()
 				string current = params[j];
 
 				if(mathVars.find(current) != mathVars.end()) {
-					outBuffer.push_back(to_string(mathVars[current]->getValue()));
+					outBuffer->push_back(to_string(mathVars[current]->getValue()));
 				}
 				else if(charVars.find(current) != charVars.end()) {
-					outBuffer.push_back(to_string(charVars[current]->getValue()));
+					outBuffer->push_back(to_string(charVars[current]->getValue()));
 				}
 				else if(stringVars.find(current) != stringVars.end()) {
-					outBuffer.push_back(stringVars[current]->getValue());
+					outBuffer->push_back(stringVars[current]->getValue());
 				}
 				else {
-					errBuffer.push_back("Invalid variable " + current + " on line " + to_string(i + 1));
+					errBuffer->push_back("Invalid variable " + current + " on line " + to_string(i + 1));
 					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 				}
 			}
@@ -370,7 +371,7 @@ void Mis::run()
 				stringVars[var]->setStrChar(mathVars[params[0]], charVars[params[1]]);
 
 			} else {
-				errBuffer.push_back("Error: one or more variables does not exist");
+				errBuffer->push_back("Error: one or more variables does not exist");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 
@@ -382,7 +383,7 @@ void Mis::run()
 				stringVars[var]->getStrChar(mathVars[params[0]], charVars[params[1]]);
 
 			} else {
-				errBuffer.push_back("Error: one or more variables does not exist");
+				errBuffer->push_back("Error: one or more variables does not exist");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 
@@ -390,7 +391,7 @@ void Mis::run()
 			vector<string> params = this->obtain_args(i,v_line[i]);
 
 			if(params.size() != 1) {
-				errBuffer.push_back("Error, too many arguments");
+				errBuffer->push_back("Error, too many arguments");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 
 			} else {
@@ -401,12 +402,12 @@ void Mis::run()
 			
 			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVars);
 			if (labelIndex == -2) {
-				errBuffer.push_back("Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
+				errBuffer->push_back("Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 			}
 			
 			if(labelIndex == -2) {
-				errBuffer.push_back("Not of supported JMP type");
+				errBuffer->push_back("Not of supported JMP type");
 				exit(EXIT_FAILURE);
 			} else if (labelIndex == -1){
 				continue;
@@ -434,13 +435,12 @@ void Mis::run()
 						subset[index].push_back(v_line[index][j]);
 					}
 				}
-				std::thread t = spawnWorkerThread(subset);
-				workers.push_back(t);
+				workers.push_back(spawnWorkerThread(subset));
 			}
 
 			else
 			{
-				errBuffer.push_back("THREAD_BEGIN does not have matching THREAD_END");
+				errBuffer->push_back("THREAD_BEGIN does not have matching THREAD_END");
 				break;
 			}
 
@@ -448,7 +448,7 @@ void Mis::run()
 			continue;
 		}
 		else {
-			errBuffer.push_back("Error: instruction " + v_line[i][0] +" on line " + to_string(i) +" is not a valid type");
+			errBuffer->push_back("Error: instruction " + v_line[i][0] +" on line " + to_string(i) +" is not a valid type");
 			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 		}
 	}
@@ -461,17 +461,9 @@ std::thread Mis::spawnWorkerThread(vector<vector<string>> subset)
 
 void Mis::spawnWorker(vector<vector<string>> subset)
 {
-
-}
-
-vector<string> Mis::output()
-{
-	return outBuffer;
-}
-
-vector<string> Mis::errors()
-{
-	return errBuffer;
+	// Thread t(subset, this);
+	// t.mis.parseLines(subset);
+	// t.mis.run(&outBuffer, &errBuffer);
 }
 
 void Mis::setFlag(bool flag)

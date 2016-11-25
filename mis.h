@@ -1,3 +1,7 @@
+#ifndef __MIS_H
+#define __MIS_H
+
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,6 +16,7 @@
 #include "String.h"
 #include "Real.h"
 #include "Jump.h"
+#include "Thread.h"
 #include <regex>
 
 class Mis {
@@ -21,8 +26,8 @@ private:
 	vector<string> v_test;
 	vector<vector<string>> v_line;
 	string LINE;
-	vector<string> outBuffer;
-	vector<string> errBuffer;
+	vector<string>* outBuffer;
+	vector<string>* errBuffer;
 
 	std::map<string, Math*> mathVars;
 	std::map<string, String*> stringVars;
@@ -30,6 +35,7 @@ private:
 
 	bool isWorker = false;
 	vector<std::thread> workers;
+
 public:
 	Mis();	// constructor
 	~Mis();	// destructor
@@ -41,11 +47,12 @@ public:
 	vector<string> obtain_args(int index, vector<string> v_single_line);
 	ifstream openFiles(string filename);
 	void sleep(Math* var);
-	void run();
+	void run(vector<string>* out, vector<string>* err);
 	void barrier(); //need to implement
 	void spawnWorker(vector<vector<string>> subset); //need to implement
-	vector<string> output();
-	vector<string> errors();
 	void setFlag(bool flag);
 	std::thread spawnWorkerThread(vector<vector<string>> subset);
+	void loadVariables(Mis *parent);
 };
+
+#endif
