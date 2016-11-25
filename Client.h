@@ -1,6 +1,10 @@
+#ifndef __CLIENT_H_
+#define __CLIENT_H_
+
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <libgen.h>
 #include "TCPSocket.h"
 
 class Client
@@ -15,3 +19,5 @@ class Client
 		void transmit(vector<string> in, TCPSocket sock);
 		void receive(std::vector<string> buffer, TCPSocket sock);
 };
+
+#endif

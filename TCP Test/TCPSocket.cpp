@@ -60,7 +60,7 @@ TCPSocket::TCPSocket (char * _address, int port ,int readBufferSize,int writeBuf
                     TCP_NODELAY,
                     (char *) &flag,
                     sizeof(int));
-        // Setting receive and send socket buffers if the parameters readBufferSize and writeBufferSize are nit set to -1 respectively
+        // Setting receive and send socket buffers if the parameters readBufferSize and writeBufferSize are not set to -1 respectively
         if ( readBufferSize != -1 && setsockopt(sock, SOL_SOCKET, SO_RCVBUF,(void*) &readBufferSize,sizeof(int)) == -1)
             printf ("Error setting receive buffer\n");
         if ( writeBufferSize != -1 &&  setsockopt(sock, SOL_SOCKET, SO_SNDBUF,(void*) &writeBufferSize,sizeof(int)) == -1)
@@ -121,6 +121,7 @@ int TCPSocket::readFromSocketWithTimeout (char * buffer, int maxBytes, long time
 }
 int TCPSocket::writeToSocket (const char * buffer, long maxBytes ) //Write data to socket
 {
+    cout << "Bytes supposed to send" << maxBytes << endl;
     if ( buffer != NULL ) { // If buffer is not NULL
         int wrote = send (sock,buffer,maxBytes,0); // user send system call to write data to socket
         stream_out_size += wrote; // add  to stream_out_size the amount of data written

@@ -75,23 +75,31 @@ vector<string> parse_file(ifstream & input_file) {
 
 void transmit(vector<string> in, TCPSocket* sock) { //need to check number of bytes written compared to length of string trying to send
 	int status;
-
+	cout << " " << endl;
 	for (int i = 0; i < in.size(); ++i)
 	{
 		string testing = in[i];
 		int size = testing.length();
-		char packet[size+sizeof(int)];
+		// cout << testing.length() << e=ndl;
+		char packet[size+1];
 
-		memcpy(packet, &size, sizeof(size));
+		packet[0]=testing.length();
+		// memcpy(packet, &size, sizeof(size));
 
-		for (int i = 0; i < size; ++i)
+		for (int i = 0; i < size+1; ++i)
 		{
-			packet[3+i] = testing[i];
+			packet[i+1] = testing[i];
+			// cout << "Value of packet" << packet[i] << endl;
 		}
-		status = sock->writeToSocket (packet, strlen(packet));
 
+		cout << "Testing packet: " << testing << endl;
+		cout << "Size of packet: " << sizeof(packet) << endl;
+		status = sock->writeToSocket (packet, sizeof(packet));
+		// cout << " - Packet sent: " << status << endl;
 		if (status == -1)
+		{
 			exit(1);
+		}
 	}
 }
 
@@ -174,9 +182,13 @@ int main(int argc, char const *argv[])
 
 	transmit(inBuffer, &socket);
 
-	//need to include a timeout on receiving in case socket is disconnected
-	receive(outBuffer, &socket); //receives until gets to stop message
-	receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
+	while(1)
+	{
+
+	}
+
+	// receive(outBuffer, &socket); //receives until gets to stop message
+	// receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
 
 	write();
 
