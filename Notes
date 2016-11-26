@@ -17,6 +17,7 @@ Make sure to parse individual words on server side
 Should convert to error checking on client side
 Need to make sure all exit(1) on server side is converted to send data back to client
 
+
 Behavior still unknown:
 	-what is backlog on TCPSocketServer?
 	-Not sure whether or not to make spawnWorker and spawnClient or just spawnWorker for both
@@ -26,5 +27,13 @@ Behavior still unknown:
 
 Ask Tyler:
 	-Using pointer for variable vectors (eg mathVars)
-	-Making new MIS object for THREAD_BEGIN
-	-Why the fuck does cout make our receive work
+	-Making new MIS object for THREAD_BEGIN - seems ok but there could be better implementations
+	-Why the fuck does cout make our receive work - receive is reading faster than transmit is sending data
+
+11/26 Notes:
+-Maybe do a try catch of the mis.run() to prevent exit(failure)?
+-Need to join all client threads running on the server
+-In the case of unlock need to make sure we are storing names of threads somewhere - store as ints
+-Are we checking if a variable is already created?
+-Maybe make serverClientThread or something to encapsulate MIS vs Client threads?
+-Thread object may be useless since have to build workaround functions anyways

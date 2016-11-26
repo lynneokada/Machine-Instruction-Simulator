@@ -157,7 +157,6 @@ void Mis::parse_file(ifstream & input_file) {
 }
 
 void Mis::sleep(Math* var) {
-
 	if (var->getType() != "Numeric") {
 		return;
 	}
@@ -267,7 +266,7 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 
 
 void Mis::run(vector<string>* out, vector<string>* err) 
-{
+{ 
 	// outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 	outBuffer = out;
 	errBuffer = err;
@@ -444,6 +443,16 @@ void Mis::run(vector<string>* out, vector<string>* err)
 				break;
 			}
 
+		} else if(v_line[i][0] == "BARRIER") {
+			if(isWorker == false)
+			{
+				this->joinThreads();
+			}
+			else 
+			{
+				errBuffer->push_back("Error: this is not a client thread and cannot call BARRIER");
+				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+			}
 		} else if (v_line[i][0] == "LABEL") {
 			continue;
 		}
@@ -456,17 +465,79 @@ void Mis::run(vector<string>* out, vector<string>* err)
 
 std::thread Mis::spawnWorkerThread(vector<vector<string>> subset)
 {
-	return std::thread([=] { spawnWorker(subset); } );
+	threadCount++;
+	return std::thread([=] {spawnWorker(subset);});
 }
 
 void Mis::spawnWorker(vector<vector<string>> subset)
 {
-	// Thread t(subset, this);
-	// t.mis.parseLines(subset);
-	// t.mis.run(&outBuffer, &errBuffer);
+	Thread t(subset, this);
+	t.setLines(subset);
+	t.setFlag(true);
+	t.setId(id);
+	t.run(outBuffer, errBuffer);
 }
 
 void Mis::setFlag(bool flag)
 {
 	isWorker = flag;
+}
+
+void Mis::setLines(vector<vector<string>> subset)
+{
+	v_line = subset;
+}
+
+void Mis::bufferWrite(vector<string> *buffer, string message) //use for all the writing to buffers
+{
+	mtx.lock();
+	buffer->push_back(message);
+	mtx.unlock();
+}
+
+void Mis::joinThreads()
+{
+	for (int i = 0; i < workers.size(); ++i)
+	{
+		workers[i].join();
+	}
+}
+
+void Mis::lock(string variable)
+{
+	if(isWorker == true)
+	{
+		if(mathVars.find(variable) != mathVars.end())
+			mathVars[variable]->lock(id);
+		else if(charVars.find(variable) != charVars.end())
+			charVars[variable]->lock(id);
+		else if(stringVars.find(variable) != stringVars.end())
+			stringVars[variable]->lock(id);
+		else
+			bufferWrite(errBuffer, "Variable doesn't exist");
+	}
+	else
+		bufferWrite(errBuffer, "Cannot call lock from outside an MIS thread");
+}
+
+void Mis::unlock(string variable)
+{
+	if(isWorker == true)
+	{
+		if(mathVars.find(variable) != mathVars.end())
+			mathVars[variable]->unlock(id);
+		else if(charVars.find(variable) != charVars.end())
+			charVars[variable]->unlock(id);
+		else if(stringVars.find(variable) != stringVars.end())
+			stringVars[variable]->unlock(id);
+		else
+			bufferWrite(errBuffer, "Variable doesn't exist");
+	}
+	else
+		bufferWrite(errBuffer, "Cannot call unlock from outside an MIS thread");
+}
+
+void Mis::setId(int num)
+{
+	id = num;
 }

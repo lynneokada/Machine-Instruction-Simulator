@@ -34,3 +34,21 @@ void Variable::setValue(string value)
 {
 	this->val = value;
 }
+
+void Variable::lock(int id)
+{
+	mtx.lock();
+	owner = id;
+}
+
+void Variable::unlock(int id)
+{
+	if(locked != false)
+	{
+		if(owner == id)
+		{
+			mtx.unlock();
+			owner = 0; //0 will represent null, counter for threads starts at 1
+		}
+	}
+}
