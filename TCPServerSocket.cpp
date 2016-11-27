@@ -104,7 +104,6 @@ TCPSocket * TCPServerSocket::getConnection (int timeoutSec, int timeoutMilli,int
         }
         else{ // Else instantiate a TCPSocket object and return a pointer to it 
                 TCPSocket * tcpSocket = new TCPSocket(newsock,(char *)inet_ntoa(clientAddr.sin_addr),clientAddr.sin_port,readBufferSize,writeBufferSize);
-                cout << "New socket successfully made" << endl;
                 return tcpSocket;
         }
         // If we are here then we return NULL

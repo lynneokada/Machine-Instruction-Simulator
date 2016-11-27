@@ -187,8 +187,8 @@ int main(int argc, char const *argv[])
 
 	}
 
-	// receive(outBuffer, &socket); //receives until gets to stop message
-	// receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
+	receive(outBuffer, &socket); //receives until gets to stop message
+	receive(errorBuffer, &socket); //need to figure out how messages come in (ie if all at once or if its separated)
 
 	write();
 

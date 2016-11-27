@@ -3,14 +3,20 @@
 #include <string>
 #include "mis.h"
 
+#ifndef __THREAD_H
+#define __THREAD_H
+
+
 class Mis;
 
 class Thread
 {
 	private:
 		vector<vector<string>> lines;
-		// Mis mis;
+		string name;
+		
 	public:
+		Mis *mis;
 		Thread(std::vector<vector<string>> instructions, Mis* parent);
 		~Thread();
 
@@ -33,6 +39,11 @@ class Thread
 		void unlock();
 
 		void loadVariables(Mis *parent);
-		
-
+		void setLines(vector<vector<string>> subset);
+		void run(vector<string>* out, vector<string>* err);
+		void setFlag(bool flag);
+		void getName();
+		void setId(int id);
 };
+
+#endif

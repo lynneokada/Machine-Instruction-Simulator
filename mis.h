@@ -18,13 +18,14 @@
 #include "Jump.h"
 #include "Thread.h"
 #include <regex>
+#include <mutex>
 
 class Mis {
 private:
 	ofstream outfile;
 	ofstream errfile;
 	vector<string> v_test;
-	vector< vector<string> > v_line;
+	vector<vector<string>> v_line;
 	string LINE;
 	vector<string>* outBuffer;
 	vector<string>* errBuffer;
@@ -35,6 +36,9 @@ private:
 
 	bool isWorker = false;
 	vector<std::thread> workers;
+	std::mutex mtx;
+	int threadCount = 1;
+	int id;
 
 public:
 	Mis();	// constructor
@@ -53,6 +57,12 @@ public:
 	void setFlag(bool flag);
 	std::thread spawnWorkerThread(vector<vector<string>> subset);
 	void loadVariables(Mis *parent);
+	void setLines(vector<vector<string>> subset);
+	void bufferWrite(vector<string> *buffer, string message);
+	void joinThreads();
+	void lock(string variable);
+	void unlock(string variable);
+	void setId(int num);
 };
 
 #endif

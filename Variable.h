@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <thread> //for the sleep function
 #include <chrono> //for the sleep function
+#include <mutex>
+#include <atomic>
 
 using namespace std;
 
@@ -17,14 +19,19 @@ protected:
 	string name;
 	string val;
 	string type;
+	std::mutex mtx;
+	std::atomic<bool> locked{false};
+	std::atomic<int> owner;
+
 public:
 	string getName();
 	virtual string getType();
 	string getStringValue();
-	// template <typename T> void setValue(T val);
 	virtual void out();
 	void setValue(char value);
 	void setValue(string value);
+	void lock(int id);
+	void unlock(int id);
 };
 
 #endif
