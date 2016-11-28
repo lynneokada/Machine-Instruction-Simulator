@@ -41,13 +41,15 @@ void Server::transmit(vector<string> in, TCPSocket* sock)
 	}
 }
 
-void Server::receive(std::vector<string> buffer, TCPSocket* sock)
+void Server::receive(std::vector<string>* buffer, TCPSocket* sock)
 {
 	char length[1];
 	int bytesRead;
 	string info;
 
-	do {
+	cout << "test\n";
+
+	while((bytesRead != -1) && (strcmp(info.c_str(), "STOP") != 0)) {
 		info = "";
 		bytesRead = sock->readFromSocket(length, 1);
 		if(bytesRead == -1)
@@ -56,7 +58,7 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 			exit(1);
 		}
 		else
-		{	
+		{
 			while(bytesRead < 1) //make sure we read the whole int - need to figure out how to not overwrite length every time
 			{
 				cout << "Shouldnt be here" << endl;
@@ -64,15 +66,15 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 			}
 		}
 
-		cout << "buffer size: " << buffer.size() << endl;
+		// cout << "buffer size: " << buffer.size() << endl;
 		//getting length of message
 		unsigned int intLength = length[0];
 		// printf("My number is: %d", atoi(length));
-		cout << "length: " << intLength << endl;
+		// cout << "length: " << intLength << endl;
 
 		char buff[intLength];
 		bytesRead = sock->readFromSocket(buff, intLength);
-		cout << "Reading" << endl;
+		// cout << "Reading" << endl;
 		for (int i = 0; i < intLength; ++i)
 		{
 			printf("%c\n", buff[i]);
@@ -94,12 +96,11 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 			info += buff[i];
 		}
 
-		buffer.push_back(info);
-		cout << "info " << info << endl;
+		buffer->push_back(info);
+		cout << "info " << info << " " << bytesRead << endl;
 		//wipe buffers at end?
 	}
 
-	while(bytesRead != -1 || info != "STOP");
 	cout << "Finished run" << endl;
 }
 
@@ -109,28 +110,37 @@ void Server::spawnClientWorker(TCPSocket *socket) //DOES THIS WORK CONCURRENTLY?
 	// Mis mis;
 	// std::vector<string> out;
 	// std::vector<string> error;
-	vector<string> lines;
+	vector<string>* lines = new std::vector<string> ();
 
 	//receive all incoming transmissions
 	receive(lines, socket);
+	// cout << "test2\n";
+	// cout << "Lines is being passed by VALUE" << lines->size() << endl;
 
-
+	// for (int i = 0; i < lines->size(); ++i)
+	// {
+	// 	cout << "Work prease" << (*lines)[i] << endl;
+	// }
 
 	//initialize a clientThread after socket found
 	ClientThread clientThread(lines);
 
-	//parse all messages when received and store (in thread/client object?)
-	clientThread.parseLines(lines);
-
+	cout << "running" << endl;
 	//start execution using mis object
 	clientThread.run();
 
+	cout << "getting output" << endl;
 	//parse output from mis object
 	//going to be a "setter" essentially
 	vector<string> output = clientThread.getOutput();
+	for (int i = 0; i < output.size(); ++i)
+	{
+		cout << output[i] << endl;
+	}
 
+	cout << "transmitting" << endl;
 	//send it back to client using socket
-	transmit(output, socket);
+	// transmit(output, socket);
 }
 
 std::thread Server::spawnClientWorkerThread(TCPSocket *socket)

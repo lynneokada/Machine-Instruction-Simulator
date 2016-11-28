@@ -1,9 +1,9 @@
+VAR $mystr,STRING,100,"Hello world MIS!!!"
 VAR $myint1,NUMERIC,10
 VAR $myint2,NUMERIC,200
 VAR $myint,NUMERIC,100
 VAR $myfloat,REAL,12.14
 VAR $mychar,CHAR,'c'
-VAR $mystr,STRING,100,"Hello world MIS!!!"
 VAR $mystr1,STRING,100,"Honey!!!"
 VAR $mystr2,STRING,100,"cutie pie!!!"
 ADD $myint,100,20.7,300,$myint1
@@ -11,13 +11,9 @@ MUL $myint,100,20.7,300,$myint1
 SUB $myint,100,$myint2
 DIV $myfloat,100,$myint2
 ASSIGN $myint,$myint1
+SET_STR_CHAR $mystr,21,'\n'
 ASSIGN $mystr1,$mystr2
 ASSIGN $mystr1,"This is a test string"
-SET_STR_CHAR $mystr,21,'\n'
-LABEL LAB1
-JMP LAB1
-JMPZ LAB1,$myint
-JMPGTE LAB1,$myint1,$myint2
-SLEEP 100
+SLEEP 2
 SLEEP $myint
 OUT "test.mis"

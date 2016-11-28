@@ -15,7 +15,12 @@ const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
 
 
-Mis::Mis() {} // constructor
+Mis::Mis() // constructor
+{
+	outBuffer = new vector<string>(3000);
+	errBuffer = new vector<string>(3000);
+}
+
 Mis::~Mis() {} // destructor
 
 ifstream Mis::openFiles(string filename) {
@@ -52,14 +57,15 @@ ifstream Mis::openFiles(string filename) {
     return infile;
 }
 
-void Mis::parseLines(vector<string> lines)
+void Mis::parseLines(vector<string>* lines)
 {
 	int lineNumber = 0;
-	vector<string> v_args;
 
-	for (int i = 0; i < lines.size(); ++i)
+	for (int i = 0; i < lines->size()-1; ++i)
 	{
-		LINE = lines[i];
+		vector<string> v_args;
+		cout << "Line is: " << (*lines)[i] << endl;
+		LINE = (*lines)[i];
 
 		if (LINE.size() == 0) {
 			v_args.push_back("");
@@ -68,10 +74,11 @@ void Mis::parseLines(vector<string> lines)
 		}
 
 		char* instruction_line = strdup(LINE.c_str());
-
+		cout << "LINE " << LINE << endl;
 		// grab instruction
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
 		token[0] = std::strtok(instruction_line, DELIMITER_SPACE);
+		cout << "token[0] " << token[0] << endl;
 		v_args.push_back(token[0]);
 
 		// find first instance of ' ' and create substring of arguments
@@ -95,9 +102,17 @@ void Mis::parseLines(vector<string> lines)
 			v_args.back().pop_back();
 		}
 
+		cout << "v_args: ";
+		for (int i = 0; i < v_args.size(); ++i) {
+			cout << v_args[i] << " ";
+		}
+		cout << endl;
 		v_line.push_back(v_args);	// add arguments to v_line
+		cout << "Vargs " << v_args[0] << endl;
+		cout << "V_line: " << v_line[lineNumber][0] << " at: " << lineNumber << endl;
 		lineNumber++;
 	}
+	cout << "Size" <<  v_line.size() << endl;
 }
 
 
@@ -154,17 +169,23 @@ void Mis::parse_file(ifstream & input_file) {
 		v_line.push_back(v_args);	// add arguments to v_line
 		lineNumber++;
 	}
+
 }
 
-void Mis::sleep(Math* var) {
+void Mis::sleep(Math* var) { 
+	cout << var->getType() << endl;
 	if (var->getType() != "Numeric") {
 		return;
 	}
+	// cout << 
 	int sec = var->getValue();
+	cout << "Sleeping for " << sec << " seconds\n";
 	this_thread::sleep_for(chrono::seconds(sec));
+	cout << "Done sleeping" << endl;
 }
 
 void Mis::create_variable(vector<string> lines) {
+	cout << "creating variable\n";
 	string name = lines[1];
 	string var_type = lines[2];
 
@@ -173,14 +194,21 @@ void Mis::create_variable(vector<string> lines) {
 		mathVars->insert(pair<string,Real*>(name, new Real(name, real_value)));
 
 	} else if (var_type == "NUMERIC") {
+		cout << "numeric" << endl;
 		int num_value = stoi(lines[3]);
+
+		cout << "test1" << endl;
 		mathVars->insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
+		// (*mathVars)[name] = new Numeric(name, num_value);
+
+		cout << "test2" << endl;
 
 	} else if (var_type == "STRING") {
+		cout << "string" << endl;
 		string string_value = lines[4];
 		int size = stoi(lines[3]);
 		(*stringVars)[name] = new String(name, string_value, size);
-
+		cout << "stest" << endl;
 	} else if (var_type == "CHAR") {
 		char char_value = lines[3][1];
 		(*charVars)[name] = new Char(name, char_value);
@@ -192,7 +220,8 @@ void Mis::create_variable(vector<string> lines) {
 }
 
 
-vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
+vector<string> Mis::obtain_args(int index, vector<string> v_single_line) 
+{
 	vector<string> params;
 	string paramName;
 
@@ -212,6 +241,8 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 			} else if (v_single_line[0].find("JMP") != string::npos) {
 				params.push_back(v_single_line[1]);
 				continue;
+			} else if (v_single_line[0].find("SLEEP") != string::npos) {
+				
 			} else if (v_single_line[j][0] == '$') {
 				continue; 	// ignore the first parameter (it is the var that the
 							// function is being called on)
@@ -264,21 +295,32 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 	return params;
 }
 
-
 void Mis::run(vector<string>* out, vector<string>* err) 
 { 
+	
 	// outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
-	outBuffer = out;
-	errBuffer = err;
+	// out->push_back("Testing");
+	cout << "starting:\n";
+	// outBuffer = out;
+	// errBuffer = err;
+	cout << "v_line " << v_line.size() << endl;
+	cout << "Buffers set" << endl;
+
 	for (int i=0; i<v_line.size(); 	i++) {	
+		cout << "index " << i << v_line[i][0] << endl;
 		if (v_line[i].size() < 2) {
 			continue;
 		};
 
 		string var = v_line[i][1];
 
+		cout << "test1" << endl;
 		if (v_line[i][0] == "VAR") {
+
+		cout << "test2" << endl;
 			this->create_variable(v_line[i]);
+
+		cout << "test3" << endl;
 		}
 		else if (v_line[i][0] == "ADD") {
 
@@ -387,13 +429,15 @@ void Mis::run(vector<string>* out, vector<string>* err)
 			}
 
 		} else if (v_line[i][0] == "SLEEP") {
+			cout << v_line[i][0] << v_line[i][1] << endl;
 			vector<string> params = this->obtain_args(i,v_line[i]);
-
+			cout << "params size " << params.size() << endl;
 			if(params.size() != 1) {
 				errBuffer->push_back("Error, too many arguments");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 
 			} else {
+				cout << "sleeping" << endl;
 				this->sleep((*mathVars)[params[0]]);
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
@@ -545,9 +589,13 @@ void Mis::loadVariables(Mis* mis) {
 
 void Mis::initializeVariables(map<string, Math*>* threadMathVars, 
 	map<string, String*>* threadStringVars, map<string, Char*>* threadCharVars) {
+	cout << "test\n";
 	mathVars = threadMathVars;
+	cout << "test1\n";
 	stringVars = threadStringVars;
+	cout << "test2\n";
 	charVars = threadCharVars;
+	cout << "test3\n";
 }
 
 void Mis::setId(int num)

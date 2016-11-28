@@ -20,7 +20,7 @@ class Server
 		Server(int port, int maxQueue);
 		~Server();
 		void transmit(vector<string> in, TCPSocket* sock);
-		void receive(std::vector<string> buffer, TCPSocket* sock);		
+		void receive(std::vector<string>* buffer, TCPSocket* sock);		
 		vector< vector<string> > parse(vector<string> buffer);
 		void spawnClientWorker(TCPSocket *socket);
 		std::thread spawnClientWorkerThread(TCPSocket *socket);

@@ -37,3 +37,4 @@ Ask Tyler:
 -Are we checking if a variable is already created?
 -Maybe make serverClientThread or something to encapsulate MIS vs Client threads?
 -Thread object may be useless since have to build workaround functions anyways
+-Error handling for when client disconnected from server

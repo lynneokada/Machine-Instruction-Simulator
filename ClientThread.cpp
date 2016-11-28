@@ -1,8 +1,8 @@
 #include "ClientThread.h"
 
-ClientThread::ClientThread(vector<string> instructions) //ClientThread Constructor
+ClientThread::ClientThread(vector<string>* instructions) //ClientThread Constructor
 {
-	Mis mis;
+	// Mis mis;
 	mis.parseLines(instructions);
 };
 
@@ -11,19 +11,20 @@ ClientThread::~ClientThread() {};
 
 void ClientThread::run()
 {
-	mis->initializeVariables(threadMathVars,threadStringVars,threadCharVars);
-	mis->run(outBuffer, errorBuffer);
-
+	// mis->initializeVariables(threadMathVars,threadStringVars,threadCharVars);
+	cout << "variables initialized\n";
+	mis.run(outBuffer, errorBuffer);
 }
 
-void ClientThread::parseLines(std::vector<string> lines)
+
+void ClientThread::parseLines(std::vector<string>* lines)
 {
-	mis->parseLines(lines);
+	mis.parseLines(lines);
 }
 
 void ClientThread::setFlag(bool flag)
 {
-	mis->setFlag(flag);
+	mis.setFlag(flag);
 }
 
 string ClientThread::getName() {

@@ -16,7 +16,7 @@
 #include "String.h"
 #include "Real.h"
 #include "Jump.h"
-#include "ClientThread.h"
+// #include "ClientThread.h"
 #include "WorkerThread.h"
 #include <regex>
 #include <mutex>
@@ -28,12 +28,10 @@ private:
 	vector<string> v_test;
 	vector<vector<string>> v_line;
 	string LINE;
-	vector<string>* outBuffer;
-	vector<string>* errBuffer;
 
-	std::map<string, Math*> *mathVars;
-	std::map<string, String*> *stringVars;
-	std::map<string, Char*> *charVars;
+	std::map<string, Math*> *mathVars = new map<string, Math*>;
+	std::map<string, String*> *stringVars = new map<string, String*>;
+	std::map<string, Char*> *charVars = new map<string, Char*>;
 
 	bool isWorker = false;
 	vector<std::thread> workers;
@@ -44,15 +42,17 @@ private:
 public:
 	Mis();	// constructor
 	~Mis();	// destructor
+	vector<string>* outBuffer;
+	vector<string>* errBuffer;
 	Jump jmp;
 	string name; //ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 	void parse_file(ifstream & input_file);
-	void parseLines(vector<string> lines);
+	void parseLines(vector<string>* lines);
 	void create_variable(vector<string> lines);
 	vector<string> obtain_args(int index, vector<string> v_single_line);
 	ifstream openFiles(string filename);
 	void sleep(Math* var);
-	void run(vector<string>* out, vector<string>* err);
+	void run(vector<string>* out, vector<string>* errfile);
 	void barrier(); //need to implement
 	void spawnWorker(vector<vector<string>> subset); //need to implement
 	void setFlag(bool flag);
