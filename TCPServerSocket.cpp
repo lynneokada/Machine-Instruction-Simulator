@@ -72,11 +72,11 @@ bool TCPServerSocket::initializeSocket() // Initialize server socket
 }
 
  // Wait for a client connection. if timeoutSec and timeoutMilli are zeros the method will behave in a blocking mode
-TCPSocket * TCPServerSocket::getConnection (int timeoutSec, int timeoutMilli,int readBufferSize,int writeBufferSize )
+TCPSocket * TCPServerSocket::getConnection (int timeoutSec,int timeoutMilli,int readBufferSize,int writeBufferSize)
 {
 	socklen_t sin_size ;//= sizeof(struct sockaddr_in);
         int newsock = 0;
-	if (timeoutSec==0 && timeoutMilli == 0 )// Blocking mode
+	if (timeoutSec==0 && timeoutMilli==0)// Blocking mode
 	{
                 // Wait for connection indefinitely
 		newsock = accept(sock, (struct sockaddr *)&clientAddr,&sin_size);

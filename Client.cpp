@@ -10,11 +10,6 @@ std::vector<string> errorBuffer;
 ofstream outfile;
 ofstream errfile;
 
-
-const int MAX_CHARS_PER_INSTRUCTION = 2; //make these hash defined?
-const char* const DELIMITER_SPACE = " ";
-const char* const DELIMITER_COMMA = ",";
-
 ifstream openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
 

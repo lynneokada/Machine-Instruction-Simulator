@@ -16,7 +16,8 @@
 #include "String.h"
 #include "Real.h"
 #include "Jump.h"
-#include "Thread.h"
+#include "ClientThread.h"
+#include "WorkerThread.h"
 #include <regex>
 #include <mutex>
 
@@ -30,9 +31,9 @@ private:
 	vector<string>* outBuffer;
 	vector<string>* errBuffer;
 
-	std::map<string, Math*> mathVars;
-	std::map<string, String*> stringVars;
-	std::map<string, Char*> charVars;
+	std::map<string, Math*> *mathVars;
+	std::map<string, String*> *stringVars;
+	std::map<string, Char*> *charVars;
 
 	bool isWorker = false;
 	vector<std::thread> workers;
@@ -56,12 +57,15 @@ public:
 	void spawnWorker(vector<vector<string>> subset); //need to implement
 	void setFlag(bool flag);
 	std::thread spawnWorkerThread(vector<vector<string>> subset);
-	void loadVariables(Mis *parent);
 	void setLines(vector<vector<string>> subset);
 	void bufferWrite(vector<string> *buffer, string message);
 	void joinThreads();
 	void lock(string variable);
 	void unlock(string variable);
+	void loadVariables(Mis* mis);
+	void initializeVariables(map<string, Math*>* threadMathVars,
+		map<string, String*>* threadStringVars,
+		map<string, Char*>* threadCharVars);
 	void setId(int num);
 };
 

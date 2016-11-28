@@ -6,6 +6,7 @@
 #include "TCPSocket.h"
 #include "TCPServerSocket.h"
 #include "mis.h"
+#include "ClientThread.h"
 
 class Server
 {

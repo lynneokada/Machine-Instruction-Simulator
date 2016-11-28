@@ -1,4 +1,5 @@
 #include "Server.h"
+
 #define MAX_QUEUE 15
 
 Server::Server(int port, int maxQueue):serve(NULL, port, maxQueue) {
@@ -99,34 +100,36 @@ void Server::receive(std::vector<string> buffer, TCPSocket* sock)
 	}
 
 	while(bytesRead != -1 || info != "STOP");
+	cout << "Finished run" << endl;
 }
 
 void Server::spawnClientWorker(TCPSocket *socket) //DOES THIS WORK CONCURRENTLY?
 {
 	cout << "After" << endl;
-	Mis mis;
-	std::vector<string> out;
-	std::vector<string> error;
+	// Mis mis;
+	// std::vector<string> out;
+	// std::vector<string> error;
 	vector<string> lines;
+
 	//receive all incoming transmissions
-
-	cout << "Segfault: " << socket << endl;
-
 	receive(lines, socket);
 
+
+
+	//initialize a clientThread after socket found
+	ClientThread clientThread(lines);
+
 	//parse all messages when received and store (in thread/client object?)
-	mis.parseLines(lines);
+	clientThread.parseLines(lines);
 
 	//start execution using mis object
-	mis.run(out, error);
+	clientThread.run();
 
 	//parse output from mis object
 	//going to be a "setter" essentially
-	vector<string> output = mis.output();
+	vector<string> output = clientThread.getOutput();
 
 	//send it back to client using socket
-		cout << "Bad file desvnjfdjkod" << endl;
-
 	transmit(output, socket);
 }
 
@@ -168,7 +171,7 @@ int main(int argc, char const *argv[])
 			exit(1);
 		}
 
-		//start client worker and let it handle parsing
+		//start client worker and let it handle parsing, spawn a new clientWorkerThread
 		// std::thread m1(mis1.run(), &mis1);
 		std::thread t = server.spawnClientWorkerThread(sock);
 		t.join();

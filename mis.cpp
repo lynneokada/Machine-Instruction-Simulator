@@ -170,20 +170,20 @@ void Mis::create_variable(vector<string> lines) {
 
 	if (var_type == "REAL") {
 		double real_value = stod(lines[3]);
-		mathVars.insert(pair<string,Real*>(name, new Real(name, real_value)));
+		mathVars->insert(pair<string,Real*>(name, new Real(name, real_value)));
 
 	} else if (var_type == "NUMERIC") {
 		int num_value = stoi(lines[3]);
-		mathVars.insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
+		mathVars->insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
 
 	} else if (var_type == "STRING") {
 		string string_value = lines[4];
 		int size = stoi(lines[3]);
-		stringVars[name] = new String(name, string_value, size);
+		(*stringVars)[name] = new String(name, string_value, size);
 
 	} else if (var_type == "CHAR") {
 		char char_value = lines[3][1];
-		charVars[name] = new Char(name, char_value);
+		(*charVars)[name] = new Char(name, char_value);
 
 	} else {
 		errBuffer->push_back("Not a supported type");
@@ -238,22 +238,22 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line) {
 				}
 			}
 			Char* myChar = new Char(paramName, charVal);
-			charVars[paramName] = myChar;
+			(*charVars)[paramName] = myChar;
 			params.push_back(paramName);
 
 		} else if (regex_match(paramName, strRgx)) { // check for string
 		    String* myString = new String(paramName,paramName,paramName.length());
-		    stringVars[paramName] = myString;
+		    (*stringVars)[paramName] = myString;
 		    params.push_back(paramName);
 
 		} else if (regex_match(paramName, realRgx)) { // check for real
 			Real* myReal = new Real(paramName, stod(paramName));
-			mathVars[paramName] = myReal;
+			(*mathVars)[paramName] = myReal;
 			params.push_back(paramName);
 
 		} else if (regex_match(paramName, numRgx)) { // check for numeric
 			Numeric* myNumeric = new Numeric(paramName, stoi(paramName));
-			mathVars[paramName] = myNumeric;
+			(*mathVars)[paramName] = myNumeric;
 			params.push_back(paramName);
 
 		} else {
@@ -283,58 +283,58 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		else if (v_line[i][0] == "ADD") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->add(params, mathVars);
+			(*mathVars)[var]->add(params, *mathVars);
 
 		} else if (v_line[i][0] == "SUB") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			// mathVars[var]->sub(params, mathVars);
-			// cout << mathVars[var]->getValue() << endl;
+			// (*mathVars)[var]->sub(params, mathVars);
+			// cout << (*mathVars)[var]->getValue() << endl;
 
-			// if (mathVars[params[0]]->getType() == "Numeric") {
-			// 	int x = mathVars[var]->sub(params, mathVars);
-			// 	mathVars[var]->setValue(x);
+			// if ((*mathVars)[params[0]]->getType() == "Numeric") {
+			// 	int x = (*mathVars)[var]->sub(params, mathVars);
+			// 	(*mathVars)[var]->setValue(x);
 			// } else {
-			// 	double x = mathVars[var]->sub(params, mathVars);
-			// 	mathVars[var]->setValue(x);
+			// 	double x = (*mathVars)[var]->sub(params, mathVars);
+			// 	(*mathVars)[var]->setValue(x);
 			// }
 
-			double x = mathVars[var]->sub(params, mathVars);
-			mathVars[var]->setValue(x);
+			double x = (*mathVars)[var]->sub(params, *mathVars);
+			(*mathVars)[var]->setValue(x);
 
-			// cout << mathVars[var]->getValue() << endl;e
+			// cout << (*mathVars)[var]->getValue() << endl;e
 
 		} else if (v_line[i][0] == "MUL") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->mul(params, mathVars);
+			(*mathVars)[var]->mul(params, *mathVars);
 
 		} else if (v_line[i][0] == "DIV") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			mathVars[var]->div(params, mathVars);
+			(*mathVars)[var]->div(params, *mathVars);
 
 		} else if (v_line[i][0] == "ASSIGN") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			if(mathVars.find(params[0]) != mathVars.end()) {
-				if(mathVars[params[0]]->getType() == "Numeric")
+			if(*mathVars->find(params[0]) != *mathVars->end()) {
+				if((*mathVars)[params[0]]->getType() == "Numeric")
 				{
-					int x = mathVars[params[0]]->getValue();
-					mathVars[var]->setValue(x);
+					int x = (*mathVars)[params[0]]->getValue();
+					(*mathVars)[var]->setValue(x);
 				}
 
 				else
 				{
-					double x = mathVars[params[0]]->getValue();
-					mathVars[var]->setValue(x);
+					double x = (*mathVars)[params[0]]->getValue();
+					(*mathVars)[var]->setValue(x);
 				}
 
-			} else if(charVars.find(var) != charVars.end()) {
-				charVars[var]->setValue(charVars[params[0]]->getValue());
+			} else if(charVars->find(var) != charVars->end()) {
+				(*charVars)[var]->setValue((*charVars)[params[0]]->getValue());
 
-			} else if(stringVars.find(var) != stringVars.end()) {
-				int state = stringVars[var]->setValue(stringVars[params[0]]->getValue());
+			} else if(stringVars->find(var) != stringVars->end()) {
+				int state = (*stringVars)[var]->setValue((*stringVars)[params[0]]->getValue());
 				//throw an error if the length of the new string exceeds the max of the current one
 				if(state != 0)
 				{
@@ -348,14 +348,14 @@ void Mis::run(vector<string>* out, vector<string>* err)
 			for(int j = 0; j < params.size(); ++j) {
 				string current = params[j];
 
-				if(mathVars.find(current) != mathVars.end()) {
-					outBuffer->push_back(to_string(mathVars[current]->getValue()));
+				if(mathVars->find(current) != mathVars->end()) {
+					outBuffer->push_back(to_string((*mathVars)[current]->getValue()));
 				}
-				else if(charVars.find(current) != charVars.end()) {
-					outBuffer->push_back(to_string(charVars[current]->getValue()));
+				else if(charVars->find(current) != charVars->end()) {
+					outBuffer->push_back(to_string((*charVars)[current]->getValue()));
 				}
-				else if(stringVars.find(current) != stringVars.end()) {
-					outBuffer->push_back(stringVars[current]->getValue());
+				else if(stringVars->find(current) != stringVars->end()) {
+					outBuffer->push_back((*stringVars)[current]->getValue());
 				}
 				else {
 					errBuffer->push_back("Invalid variable " + current + " on line " + to_string(i + 1));
@@ -365,9 +365,9 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 
-			if(mathVars.find(params[0]) != mathVars.end() && charVars.find(params[1]) != charVars.end() && 
-				stringVars.find(var) != stringVars.end()) {
-				stringVars[var]->setStrChar(mathVars[params[0]], charVars[params[1]]);
+			if(mathVars->find(params[0]) != mathVars->end() && charVars->find(params[1]) != charVars->end() && 
+				stringVars->find(var) != stringVars->end()) {
+				(*stringVars)[var]->setStrChar((*mathVars)[params[0]], (*charVars)[params[1]]);
 
 			} else {
 				errBuffer->push_back("Error: one or more variables does not exist");
@@ -377,9 +377,9 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 
-			if(mathVars.find(params[0]) != mathVars.end() && 
-				charVars.find(params[1]) != charVars.end() && stringVars.find(var) != stringVars.end()) {
-				stringVars[var]->getStrChar(mathVars[params[0]], charVars[params[1]]);
+			if(mathVars->find(params[0]) != mathVars->end() && 
+				charVars->find(params[1]) != charVars->end() && stringVars->find(var) != stringVars->end()) {
+				(*stringVars)[var]->getStrChar((*mathVars)[params[0]], (*charVars)[params[1]]);
 
 			} else {
 				errBuffer->push_back("Error: one or more variables does not exist");
@@ -394,12 +394,12 @@ void Mis::run(vector<string>* out, vector<string>* err)
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
 
 			} else {
-				this->sleep(mathVars[params[0]]);
+				this->sleep((*mathVars)[params[0]]);
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			
-			int labelIndex = this->jmp.compare(params, v_line[i][0], mathVars);
+			int labelIndex = this->jmp.compare(params, v_line[i][0], *mathVars);
 			if (labelIndex == -2) {
 				errBuffer->push_back("Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
@@ -471,14 +471,14 @@ std::thread Mis::spawnWorkerThread(vector<vector<string>> subset)
 
 void Mis::spawnWorker(vector<vector<string>> subset)
 {
-	Thread t(subset, this);
+	WorkerThread t(subset, this);
 	t.setLines(subset);
 	t.setFlag(true);
 	t.setId(id);
 	t.run(outBuffer, errBuffer);
 }
 
-void Mis::setFlag(bool flag)
+void Mis::setFlag(bool flag) //differentiates between Client thread and Subset thread
 {
 	isWorker = flag;
 }
@@ -507,12 +507,12 @@ void Mis::lock(string variable)
 {
 	if(isWorker == true)
 	{
-		if(mathVars.find(variable) != mathVars.end())
-			mathVars[variable]->lock(id);
-		else if(charVars.find(variable) != charVars.end())
-			charVars[variable]->lock(id);
-		else if(stringVars.find(variable) != stringVars.end())
-			stringVars[variable]->lock(id);
+		if(mathVars->find(variable) != mathVars->end())
+			(*mathVars)[variable]->lock(id);
+		else if(charVars->find(variable) != charVars->end())
+			(*charVars)[variable]->lock(id);
+		else if(stringVars->find(variable) != stringVars->end())
+			(*stringVars)[variable]->lock(id);
 		else
 			bufferWrite(errBuffer, "Variable doesn't exist");
 	}
@@ -524,17 +524,30 @@ void Mis::unlock(string variable)
 {
 	if(isWorker == true)
 	{
-		if(mathVars.find(variable) != mathVars.end())
-			mathVars[variable]->unlock(id);
-		else if(charVars.find(variable) != charVars.end())
-			charVars[variable]->unlock(id);
-		else if(stringVars.find(variable) != stringVars.end())
-			stringVars[variable]->unlock(id);
+		if(mathVars->find(variable) != mathVars->end())
+			(*mathVars)[variable]->unlock(id);
+		else if(charVars->find(variable) != charVars->end())
+			(*charVars)[variable]->unlock(id);
+		else if(stringVars->find(variable) != stringVars->end())
+			(*stringVars)[variable]->unlock(id);
 		else
 			bufferWrite(errBuffer, "Variable doesn't exist");
 	}
 	else
 		bufferWrite(errBuffer, "Cannot call unlock from outside an MIS thread");
+}
+
+void Mis::loadVariables(Mis* mis) {
+	this->mathVars = mis->mathVars;
+	this->stringVars = mis->stringVars;
+	this->charVars = mis->charVars;
+}
+
+void Mis::initializeVariables(map<string, Math*>* threadMathVars, 
+	map<string, String*>* threadStringVars, map<string, Char*>* threadCharVars) {
+	mathVars = threadMathVars;
+	stringVars = threadStringVars;
+	charVars = threadCharVars;
 }
 
 void Mis::setId(int num)

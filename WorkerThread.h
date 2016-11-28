@@ -1,24 +1,25 @@
+#ifndef __WORKERTHREAD_H
+#define __WORKERTHREAD_H
+
 #include <atomic>
 #include <thread>
 #include <string>
 #include "mis.h"
 
-#ifndef __THREAD_H
-#define __THREAD_H
-
-
 class Mis;
 
-class Thread
+class WorkerThread
 {
 	private:
+		Mis *mis;
 		vector<vector<string>> lines;
 		string name;
+		std::vector<string>* out;
+		std::vector<string>* err;
 		
 	public:
-		Mis *mis;
-		Thread(std::vector<vector<string>> instructions, Mis* parent);
-		~Thread();
+		WorkerThread(vector<vector<string>> instructions, Mis* parent);
+		~WorkerThread();
 
 		//pass subset of v_line into function and do ::run as is own thread
 		//need to figure out how to call threads using run and still writing to same output file
