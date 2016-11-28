@@ -177,7 +177,6 @@ void Mis::sleep(Math* var) {
 	if (var->getType() != "Numeric") {
 		return;
 	}
-	// cout << 
 	int sec = var->getValue();
 	cout << "Sleeping for " << sec << " seconds\n";
 	this_thread::sleep_for(chrono::seconds(sec));
