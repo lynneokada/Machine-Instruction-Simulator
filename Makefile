@@ -29,7 +29,7 @@ client : mis.o Variable.o Math.o String.o Char.o Numeric.o Real.o Jump.o MISMain
 	$(GPP) $(GPPFLAGS) -c $<
 
 clean :
-	- rm *.o main *.out *.err
+	- rm *.o main *.out *.err client server
 
 # Dependencies
 MISMain.o: MISMain.cpp mis.h 

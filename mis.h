@@ -11,15 +11,17 @@
 #include <map>
 #include <libgen.h>
 #include <thread>
+#include <regex>
+#include <mutex>
+#include <stdexcept>
+
 #include "Numeric.h"
 #include "Char.h"
 #include "String.h"
 #include "Real.h"
 #include "Jump.h"
-// #include "ClientThread.h"
 #include "WorkerThread.h"
-#include <regex>
-#include <mutex>
+
 
 class Mis {
 private:
@@ -45,7 +47,6 @@ public:
 	vector<string>* outBuffer;
 	vector<string>* errBuffer;
 	Jump jmp;
-	string name; //ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
 	void parse_file(ifstream & input_file);
 	void parseLines(vector<string>* lines);
 	void create_variable(vector<string> lines);
@@ -53,8 +54,8 @@ public:
 	ifstream openFiles(string filename);
 	void sleep(Math* var);
 	void run(vector<string>* out, vector<string>* errfile);
-	void barrier(); //need to implement
-	void spawnWorker(vector<vector<string>> subset); //need to implement
+	void barrier();
+	void spawnWorker(vector<vector<string>> subset);
 	void setFlag(bool flag);
 	std::thread spawnWorkerThread(vector<vector<string>> subset);
 	void setLines(vector<vector<string>> subset);
@@ -66,6 +67,7 @@ public:
 	void initializeVariables(std::map<string, Math*>* threadMathVars,
 		std::map<string, String*>* threadStringVars,
 		std::map<string, Char*>* threadCharVars);
+	
 	void setId(int num);
 };
 

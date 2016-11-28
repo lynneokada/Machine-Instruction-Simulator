@@ -33,8 +33,3 @@ void WorkerThread::setFlag(bool flag)
 void WorkerThread::setId(int id) {
 	mis->setId(id);
 }
-
-// int main()
-// {
-// 	return 0;
-// }

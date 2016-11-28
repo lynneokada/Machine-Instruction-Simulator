@@ -38,3 +38,7 @@ Ask Tyler:
 -Maybe make serverClientThread or something to encapsulate MIS vs Client threads?
 -Thread object may be useless since have to build workaround functions anyways
 -Error handling for when client disconnected from server
+
+11/28 Notes:
+-Convert all bufferr->push_backs to bufferWrite(buffer, message)
+-Server shouldn't take in any args (can't synchronize port numbers on both executables of client and server)

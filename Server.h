@@ -15,9 +15,9 @@ class Server
 		std::vector<string> outBuffer;
 		std::vector<string> errorBuffer;
 	public:
-		std::vector<thread> clients; //going to be MIS object threads i think
+		std::vector<thread> clients;
 		TCPServerSocket serve;
-		Server(int port, int maxQueue);
+		Server(int maxQueue);
 		~Server();
 		void transmit(vector<string> in, TCPSocket* sock);
 		void receive(std::vector<string>* buffer, TCPSocket* sock);		

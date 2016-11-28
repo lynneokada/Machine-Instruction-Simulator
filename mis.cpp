@@ -8,8 +8,6 @@ using std::array;
 using std::string;
 using std::regex;
 
-
-//maybe make hash defined instead? not sure if that'll work/whats more beneficial
 const int MAX_CHARS_PER_INSTRUCTION = 2;
 const char* const DELIMITER_SPACE = " ";
 const char* const DELIMITER_COMMA = ",";
@@ -33,13 +31,13 @@ ifstream Mis::openFiles(string filename) {
 	ifstream infile(filename);
 	if (infile.fail()) {
 		cerr << "Error opening file " << filename <<endl;
-		exit(EXIT_FAILURE);
+		throw std::invalid_argument("Error during execution of program");
 	}
 
 	if (i == string::npos || filename.substr(i, 
 		filename.length()-i) != ".mis") {
         cerr << "Incorrect input file. Please provide a .mis file" << endl;
-        exit(EXIT_FAILURE);
+        throw std::invalid_argument("Error during execution of program");
     }
 
 	string basefile(basename(const_cast<char*> (filename.c_str())));
@@ -48,19 +46,20 @@ ifstream Mis::openFiles(string filename) {
     outfile.open(out);
     if (!outfile.is_open()) {
         cerr << "Error opening outfile";
-        exit(EXIT_FAILURE);
+        throw std::invalid_argument("Error during execution of program");
     }
 
     char* err = strdup((basefile.substr(0, basefile.length()-3) + "err").c_str());
     errfile.open(err);
     if (!errfile.is_open()) {
     	cerr << "Error opening errfile";
-    	exit(EXIT_FAILURE);
+    	throw std::invalid_argument("Error during execution of program");
     }
 
     return infile;
 }
 
+//parse the lines coming in from the ClientThread's socket
 void Mis::parseLines(vector<string>* lines)
 {
 	int lineNumber = 0;
@@ -68,7 +67,6 @@ void Mis::parseLines(vector<string>* lines)
 	for (int i = 0; i < lines->size()-1; ++i)
 	{
 		vector<string> v_args;
-		cout << "Line is: " << (*lines)[i] << endl;
 		LINE = (*lines)[i];
 
 		if (LINE.size() == 0) {
@@ -78,11 +76,10 @@ void Mis::parseLines(vector<string>* lines)
 		}
 
 		char* instruction_line = strdup(LINE.c_str());
-		cout << "LINE " << LINE << endl;
+
 		// grab instruction
 		char* token[MAX_CHARS_PER_INSTRUCTION] = {};
 		token[0] = std::strtok(instruction_line, DELIMITER_SPACE);
-		cout << "token[0] " << token[0] << endl;
 		v_args.push_back(token[0]);
 
 		// find first instance of ' ' and create substring of arguments
@@ -98,25 +95,17 @@ void Mis::parseLines(vector<string>* lines)
 
 		while (p!=0)
 		{
-		v_args.push_back(p);
-		p = std::strtok(NULL,DELIMITER_COMMA);
+			v_args.push_back(p);
+			p = std::strtok(NULL,DELIMITER_COMMA);
 		}
 
 		if(v_args.back().back() == '\r') {
 			v_args.back().pop_back();
 		}
 
-		cout << "v_args: ";
-		for (int i = 0; i < v_args.size(); ++i) {
-			cout << v_args[i] << " ";
-		}
-		cout << endl;
 		v_line.push_back(v_args);	// add arguments to v_line
-		cout << "Vargs " << v_args[0] << endl;
-		cout << "V_line: " << v_line[lineNumber][0] << " at: " << lineNumber << endl;
 		lineNumber++;
 	}
-	cout << "Size" <<  v_line.size() << endl;
 }
 
 
@@ -177,45 +166,42 @@ void Mis::parse_file(ifstream & input_file) {
 }
 
 void Mis::sleep(Math* var) { 
-	cout << var->getType() << endl;
-	if (var->getType() != "Numeric") {
+	if (var->getType() != "Numeric")
 		return;
-	}
+	
 	int sec = var->getValue();
-	cout << "Sleeping for " << sec << " seconds\n";
 	this_thread::sleep_for(chrono::seconds(sec));
-	cout << "Done sleeping" << endl;
 }
 
+//wrap primitive in an object so it can interface with the other functions
 void Mis::create_variable(vector<string> lines) {
-	cout << "creating variable\n";
 	string name = lines[1];
 	string var_type = lines[2];
 
 	if (var_type == "REAL") {
-		cout << "real" << endl;
 		double real_value = stod(lines[3]);
 		mathVars->insert(pair<string,Real*>(name, new Real(name, real_value)));
+
 	} else if (var_type == "NUMERIC") {
-		cout << "numeric" << endl;
 		int num_value = stoi(lines[3]);
 		mathVars->insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
+
 	} else if (var_type == "STRING") {
-		cout << "string" << endl;
 		string string_value = lines[4];
 		int size = stoi(lines[3]);
 		(*stringVars)[name] = new String(name, string_value, size);
+
 	} else if (var_type == "CHAR") {
-		cout << "char" << endl;
 		char char_value = lines[3][1];
 		(*charVars)[name] = new Char(name, char_value);
+
 	} else {
-		errBuffer->push_back("Not a supported type");
-		exit(EXIT_FAILURE);
+		bufferWrite(errBuffer,"Not a supported type");
+		throw std::invalid_argument("Error during execution of program");
 	}
 }
 
-
+//determine which arguments are going to be used as parameters for a given function
 vector<string> Mis::obtain_args(int index, vector<string> v_single_line) 
 {
 	vector<string> params;
@@ -247,7 +233,6 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line)
 
 		paramName = v_single_line[j];
 
-		// cout << "obtain_args " << paramName << endl;
 		if (paramName[0] == '$') { // this is a variable
 			// search name in variables map and obtain value
 			params.push_back(paramName);
@@ -284,26 +269,17 @@ vector<string> Mis::obtain_args(int index, vector<string> v_single_line)
 			params.push_back(paramName);
 
 		} else {
-			errBuffer->push_back("Error: no matching types for "+ paramName + " on line " + to_string(index + 1));
-			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+			bufferWrite(errBuffer,"Error: no matching types for "+ paramName + " on line " + to_string(index + 1));
+			throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 		}
 	}
 	return params;
 }
 
+//main execution of each thread's instructions
 void Mis::run(vector<string>* out, vector<string>* err) 
 { 
-	
-	// outfile << "Starting: " << name << endl;	//ONLY FOR DEBUGGING PURPOSES SHOULD BE REMOVED FOR ACTUAL SUBMISSION
-	// out->push_back("Testing");
-	cout << "starting:\n";
-	// outBuffer = out;
-	// errBuffer = err;
-	cout << "v_line " << v_line.size() << endl;
-	cout << "Buffers set" << endl;
-
 	for (int i=0; i<v_line.size(); 	i++) {	
-		cout << "index " << i << v_line[i][0] << endl;
 		if (v_line[i].size() < 2) {
 			continue;
 		};
@@ -322,21 +298,9 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		} else if (v_line[i][0] == "SUB") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			// (*mathVars)[var]->sub(params, mathVars);
-			// cout << (*mathVars)[var]->getValue() << endl;
-
-			// if ((*mathVars)[params[0]]->getType() == "Numeric") {
-			// 	int x = (*mathVars)[var]->sub(params, mathVars);
-			// 	(*mathVars)[var]->setValue(x);
-			// } else {
-			// 	double x = (*mathVars)[var]->sub(params, mathVars);
-			// 	(*mathVars)[var]->setValue(x);
-			// }
 
 			double x = (*mathVars)[var]->sub(params, *mathVars);
 			(*mathVars)[var]->setValue(x);
-
-			// cout << (*mathVars)[var]->getValue() << endl;e
 
 		} else if (v_line[i][0] == "MUL") {
 
@@ -369,11 +333,12 @@ void Mis::run(vector<string>* out, vector<string>* err)
 
 			} else if(stringVars->find(var) != stringVars->end()) {
 				int state = (*stringVars)[var]->setValue((*stringVars)[params[0]]->getValue());
+
 				//throw an error if the length of the new string exceeds the max of the current one
 				if(state != 0)
 				{
-					errBuffer->push_back("New String is longer than max size");
-					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+					bufferWrite(errBuffer,"New String is longer than max size");
+					throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 				}
 			}
 
@@ -383,17 +348,17 @@ void Mis::run(vector<string>* out, vector<string>* err)
 				string current = params[j];
 
 				if(mathVars->find(current) != mathVars->end()) {
-					outBuffer->push_back(to_string((*mathVars)[current]->getValue()));
+					bufferWrite(outBuffer,to_string((*mathVars)[current]->getValue()));
 				}
 				else if(charVars->find(current) != charVars->end()) {
-					outBuffer->push_back(to_string((*charVars)[current]->getValue()));
+					bufferWrite(outBuffer,to_string((*charVars)[current]->getValue()));
 				}
 				else if(stringVars->find(current) != stringVars->end()) {
-					outBuffer->push_back((*stringVars)[current]->getValue());
+					bufferWrite(outBuffer,(*stringVars)[current]->getValue());
 				}
 				else {
-					errBuffer->push_back("Invalid variable " + current + " on line " + to_string(i + 1));
-					exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+					bufferWrite(errBuffer,"Invalid variable " + current + " on line " + to_string(i + 1));
+					throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 				}
 			}
 		} else if (v_line[i][0] == "SET_STR_CHAR") {
@@ -404,8 +369,8 @@ void Mis::run(vector<string>* out, vector<string>* err)
 				(*stringVars)[var]->setStrChar((*mathVars)[params[0]], (*charVars)[params[1]]);
 
 			} else {
-				errBuffer->push_back("Error: one or more variables does not exist");
-				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+				bufferWrite(errBuffer,"Error: one or more variables does not exist");
+				throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 			}
 
 		} else if (v_line[i][0] == "GET_STR_CHAR") {
@@ -416,19 +381,17 @@ void Mis::run(vector<string>* out, vector<string>* err)
 				(*stringVars)[var]->getStrChar((*mathVars)[params[0]], (*charVars)[params[1]]);
 
 			} else {
-				errBuffer->push_back("Error: one or more variables does not exist");
-				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+				bufferWrite(errBuffer,"Error: one or more variables does not exist");
+				throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 			}
 
 		} else if (v_line[i][0] == "SLEEP") {
-			cout << v_line[i][0] << v_line[i][1] << endl;
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			if(params.size() != 1) {
-				errBuffer->push_back("Error, too many arguments");
-				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+				bufferWrite(errBuffer,"Error, too many arguments");
+				throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 
 			} else {
-				cout << "sleeping" << endl;
 				this->sleep((*mathVars)[params[0]]);
 			}
 		} else if (v_line[i][0].find("JMP") != string::npos) {
@@ -436,13 +399,13 @@ void Mis::run(vector<string>* out, vector<string>* err)
 			
 			int labelIndex = this->jmp.compare(params, v_line[i][0], *mathVars);
 			if (labelIndex == -2) {
-				errBuffer->push_back("Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
-				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+				bufferWrite(errBuffer,"Label " + v_line[i][1] + " called on line " + to_string(i + 1) + " does not exist");
+				throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 			}
 			
 			if(labelIndex == -2) {
-				errBuffer->push_back("Not of supported JMP type");
-				exit(EXIT_FAILURE);
+				bufferWrite(errBuffer,"Not of supported JMP type");
+				throw std::invalid_argument("Error during execution of program");
 			} else if (labelIndex == -1){
 				continue;
 			} else {
@@ -474,7 +437,7 @@ void Mis::run(vector<string>* out, vector<string>* err)
 
 			else
 			{
-				errBuffer->push_back("THREAD_BEGIN does not have matching THREAD_END");
+				bufferWrite(errBuffer,"THREAD_BEGIN does not have matching THREAD_END");
 				break;
 			}
 
@@ -485,15 +448,15 @@ void Mis::run(vector<string>* out, vector<string>* err)
 			}
 			else 
 			{
-				errBuffer->push_back("Error: this is not a client thread and cannot call BARRIER");
-				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+				bufferWrite(errBuffer,"Error: this is not a client thread and cannot call BARRIER");
+				throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 			}
 		} else if (v_line[i][0] == "LABEL") {
 			continue;
 		}
 		else {
-			errBuffer->push_back("Error: instruction " + v_line[i][0] +" on line " + to_string(i) +" is not a valid type");
-			exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
+			bufferWrite(errBuffer,"Error: instruction " + v_line[i][0] +" on line " + to_string(i) +" is not a valid type");
+			throw std::invalid_argument("Error during execution of program"); //change to something thatll exit to mis.out function
 		}
 	}
 }
@@ -580,13 +543,9 @@ void Mis::loadVariables(Mis* mis) {
 
 void Mis::initializeVariables(std::map<string, Math*>* threadMathVars, 
 	std::map<string, String*>* threadStringVars, std::map<string, Char*>* threadCharVars) {
-	cout << "test\n";
 	mathVars = threadMathVars;
-	cout << "test1\n";
 	stringVars = threadStringVars;
-	cout << "test2\n";
 	charVars = threadCharVars;
-	cout << "test3\n";
 }
 
 void Mis::setId(int num)

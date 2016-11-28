@@ -12,6 +12,7 @@ ofstream errfile;
 
 ifstream openFiles(string filename) {
 	size_t i = filename.rfind('.', filename.length());
+	size_t j = argv[3].rfind('.', filename.length());
 
 	ifstream infile(filename);
 	if (infile.fail()) {
@@ -19,13 +20,12 @@ ifstream openFiles(string filename) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (i == string::npos || filename.substr(i, 
-		filename.length()-i) != ".mis") {
+	if (i == string::npos || filename.substr(i, filename.length()-i) != ".mis") {
         cerr << "Incorrect input file. Please provide a .mis file" << endl;
         exit(EXIT_FAILURE);
     }
 
-	string basefile(basename(const_cast<char*> (filename.c_str())));
+	string basefile(basename(const_cast<char*> (argv[3].c_str())));
 
     char* out = strdup((basefile.substr(0, basefile.length()-3) + "out").c_str());
     outfile.open(out);
@@ -59,8 +59,6 @@ vector<string> parse_file(ifstream & input_file) {
 		
 		getline(input_file, LINE);	// read line into memory
 		lines.push_back(LINE);
-
-		cout << LINE << endl;	//FOR TESTING
 	}
 
 	lines.push_back("STOP"); //can replace with something else as stop message
@@ -75,22 +73,17 @@ void transmit(vector<string> in, TCPSocket* sock) { //need to check number of by
 	{
 		string testing = in[i];
 		int size = testing.length();
-		// cout << testing.length() << e=ndl;
 		char packet[size+1];
 
 		packet[0]=testing.length();
-		// memcpy(packet, &size, sizeof(size));
 
 		for (int i = 0; i < size+1; ++i)
 		{
 			packet[i+1] = testing[i];
-			// cout << "Value of packet" << packet[i] << endl;
 		}
 
-		cout << "Testing packet: " << testing << endl;
-		cout << "Size of packet: " << sizeof(packet) << endl;
 		status = sock->writeToSocket (packet, sizeof(packet));
-		// cout << " - Packet sent: " << status << endl;
+
 		if (status == -1)
 		{
 			exit(1);

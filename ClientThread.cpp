@@ -2,7 +2,6 @@
 
 ClientThread::ClientThread(vector<string>* instructions) //ClientThread Constructor
 {
-	// Mis mis;
 	mis.parseLines(instructions);
 };
 
@@ -11,7 +10,6 @@ ClientThread::~ClientThread() {};
 
 void ClientThread::run()
 {
-	// mis->initializeVariables(threadMathVars,threadStringVars,threadCharVars);
 	cout << "variables initialized\n";
 	mis.run(outBuffer, errorBuffer);
 }
@@ -35,7 +33,6 @@ vector<string> ClientThread::getOutput() {
 	return *outBuffer;
 }
 
-// int main()
-// {
-// 	return 0;
-// }
+vector<string> ClientThread::getError() {
+	return *errorBuffer;
+}
