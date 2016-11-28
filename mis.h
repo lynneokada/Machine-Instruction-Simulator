@@ -29,9 +29,12 @@ private:
 	vector<vector<string>> v_line;
 	string LINE;
 
-	std::map<string, Math*> *mathVars = new map<string, Math*>;
-	std::map<string, String*> *stringVars = new map<string, String*>;
-	std::map<string, Char*> *charVars = new map<string, Char*>;
+	Math* h;
+	std::map<int, Math*> map;
+
+	std::map<string, Math*> *mathVars;
+	std::map<string, String*> *stringVars;
+	std::map<string, Char*> *charVars;
 
 	bool isWorker = false;
 	vector<std::thread> workers;
@@ -63,9 +66,9 @@ public:
 	void lock(string variable);
 	void unlock(string variable);
 	void loadVariables(Mis* mis);
-	void initializeVariables(map<string, Math*>* threadMathVars,
-		map<string, String*>* threadStringVars,
-		map<string, Char*>* threadCharVars);
+	void initializeVariables(std::map<string, Math*>* threadMathVars,
+		std::map<string, String*>* threadStringVars,
+		std::map<string, Char*>* threadCharVars);
 	void setId(int num);
 };
 

@@ -19,6 +19,10 @@ Mis::Mis() // constructor
 {
 	outBuffer = new vector<string>(3000);
 	errBuffer = new vector<string>(3000);
+
+	mathVars = new std::map<string, Math*>;
+	stringVars = new std::map<string, String*>;
+	charVars = new std::map<string, Char*>;
 }
 
 Mis::~Mis() {} // destructor
@@ -586,8 +590,8 @@ void Mis::loadVariables(Mis* mis) {
 	this->charVars = mis->charVars;
 }
 
-void Mis::initializeVariables(map<string, Math*>* threadMathVars, 
-	map<string, String*>* threadStringVars, map<string, Char*>* threadCharVars) {
+void Mis::initializeVariables(std::map<string, Math*>* threadMathVars, 
+	std::map<string, String*>* threadStringVars, std::map<string, Char*>* threadCharVars) {
 	cout << "test\n";
 	mathVars = threadMathVars;
 	cout << "test1\n";
