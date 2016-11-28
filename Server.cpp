@@ -133,14 +133,15 @@ void Server::spawnClientWorker(TCPSocket *socket) //DOES THIS WORK CONCURRENTLY?
 	//parse output from mis object
 	//going to be a "setter" essentially
 	vector<string> output = clientThread.getOutput();
-	for (int i = 0; i < output.size(); ++i)
-	{
-		cout << output[i] << endl;
-	}
+	// for (int i = 0; i < output.size(); ++i)
+	// {
+	// 	cout << output[i] << endl;
+	// }
 
 	cout << "transmitting" << endl;
 	//send it back to client using socket
-	// transmit(output, socket);
+	transmit(output, socket);
+	cout << "transmitted" << endl;
 }
 
 std::thread Server::spawnClientWorkerThread(TCPSocket *socket)

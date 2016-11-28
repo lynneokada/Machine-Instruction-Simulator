@@ -10,7 +10,7 @@
 #	--Force the compiler to use the correct headers
 #	-ansi	--Don't use GNU ext; do use ansi standard.
 
-GPP = g++ -std=c++14
+GPP = g++ -std=c++14 -lpthread
 GPPFLAGS = -O3 -Wall
 
 all : server client

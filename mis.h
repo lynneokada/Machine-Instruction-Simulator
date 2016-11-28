@@ -63,9 +63,9 @@ public:
 	void lock(string variable);
 	void unlock(string variable);
 	void loadVariables(Mis* mis);
-	void initializeVariables(map<string, Math*>* threadMathVars,
-		map<string, String*>* threadStringVars,
-		map<string, Char*>* threadCharVars);
+	void initializeVariables(std::map<string, Math*>* threadMathVars,
+		std::map<string, String*>* threadStringVars,
+		std::map<string, Char*>* threadCharVars);
 	void setId(int num);
 };
 

@@ -193,29 +193,22 @@ void Mis::create_variable(vector<string> lines) {
 	string var_type = lines[2];
 
 	if (var_type == "REAL") {
+		cout << "real" << endl;
 		double real_value = stod(lines[3]);
 		mathVars->insert(pair<string,Real*>(name, new Real(name, real_value)));
-
 	} else if (var_type == "NUMERIC") {
 		cout << "numeric" << endl;
 		int num_value = stoi(lines[3]);
-
-		cout << "test1" << endl;
 		mathVars->insert(pair<string,Numeric*>(name, new Numeric(name, num_value)));
-		// (*mathVars)[name] = new Numeric(name, num_value);
-
-		cout << "test2" << endl;
-
 	} else if (var_type == "STRING") {
 		cout << "string" << endl;
 		string string_value = lines[4];
 		int size = stoi(lines[3]);
 		(*stringVars)[name] = new String(name, string_value, size);
-		cout << "stest" << endl;
 	} else if (var_type == "CHAR") {
+		cout << "char" << endl;
 		char char_value = lines[3][1];
 		(*charVars)[name] = new Char(name, char_value);
-
 	} else {
 		errBuffer->push_back("Not a supported type");
 		exit(EXIT_FAILURE);
@@ -317,15 +310,11 @@ void Mis::run(vector<string>* out, vector<string>* err)
 
 		string var = v_line[i][1];
 
-		cout << "test1" << endl;
 		if (v_line[i][0] == "VAR") {
-
-		cout << "test2" << endl;
+			
 			this->create_variable(v_line[i]);
 
-		cout << "test3" << endl;
-		}
-		else if (v_line[i][0] == "ADD") {
+		} else if (v_line[i][0] == "ADD") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
 			(*mathVars)[var]->add(params, *mathVars);
@@ -362,7 +351,7 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		} else if (v_line[i][0] == "ASSIGN") {
 
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			if(*mathVars->find(params[0]) != *mathVars->end()) {
+			if(mathVars->find(params[0]) != mathVars->end()) {
 				if((*mathVars)[params[0]]->getType() == "Numeric")
 				{
 					int x = (*mathVars)[params[0]]->getValue();
@@ -434,7 +423,6 @@ void Mis::run(vector<string>* out, vector<string>* err)
 		} else if (v_line[i][0] == "SLEEP") {
 			cout << v_line[i][0] << v_line[i][1] << endl;
 			vector<string> params = this->obtain_args(i,v_line[i]);
-			cout << "params size " << params.size() << endl;
 			if(params.size() != 1) {
 				errBuffer->push_back("Error, too many arguments");
 				exit(EXIT_FAILURE); //change to something thatll exit to mis.out function
@@ -590,8 +578,8 @@ void Mis::loadVariables(Mis* mis) {
 	this->charVars = mis->charVars;
 }
 
-void Mis::initializeVariables(map<string, Math*>* threadMathVars, 
-	map<string, String*>* threadStringVars, map<string, Char*>* threadCharVars) {
+void Mis::initializeVariables(std::map<string, Math*>* threadMathVars, 
+	std::map<string, String*>* threadStringVars, std::map<string, Char*>* threadCharVars) {
 	cout << "test\n";
 	mathVars = threadMathVars;
 	cout << "test1\n";
