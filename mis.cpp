@@ -17,8 +17,12 @@ const char* const DELIMITER_COMMA = ",";
 
 Mis::Mis() // constructor
 {
-	outBuffer = new vector<string>(3000);
-	errBuffer = new vector<string>(3000);
+	outBuffer = new vector<string>();
+	errBuffer = new vector<string>();
+
+	mathVars = new map<string, Math*>;
+	stringVars = new map<string, String*>;
+	charVars = new map<string, Char*>;
 }
 
 Mis::~Mis() {} // destructor

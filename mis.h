@@ -29,9 +29,9 @@ private:
 	vector<vector<string>> v_line;
 	string LINE;
 
-	std::map<string, Math*> *mathVars = new map<string, Math*>;
-	std::map<string, String*> *stringVars = new map<string, String*>;
-	std::map<string, Char*> *charVars = new map<string, Char*>;
+	std::map<string, Math*> *mathVars;
+	std::map<string, String*> *stringVars;
+	std::map<string, Char*> *charVars;
 
 	bool isWorker = false;
 	vector<std::thread> workers;
