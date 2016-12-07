@@ -135,7 +135,7 @@ int main(int argc, char const *argv[])
 	unsigned int port;
 	strValue >> port;
 
-	Server server(port, MAX_QUEUE);
+	Server server(MAX_QUEUE);
 	bool status = server.serve.initializeSocket();
 
 	if(status == false) {
